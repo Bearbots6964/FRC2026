@@ -23,7 +23,7 @@ public final class Constants {
     public static final Mode simMode = Mode.SIM;
     public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 
-    public static enum Mode {
+    public enum Mode {
         /** Running on a real robot. */
         REAL,
 
@@ -32,5 +32,17 @@ public final class Constants {
 
         /** Replaying from a log file. */
         REPLAY
+    }
+
+    public static final class ControllerPreferences {
+        public static final double countdownRumbleIntensity = 0.35;
+        public static final double hubActiveRumbleIntensity = 1.0;
+        public static final double hubInactiveRumbleIntensity = 0.25;
+        public static final double endgameRumbleIntensity = 1.0;
+    }
+
+    public static final class ShooterConstants {
+        public static final double velocityToleranceRevolutionsPerSecond = 1.0;
+        public static final double hoodPositionToleranceDegrees = 5.0;
     }
 }
