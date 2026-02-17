@@ -13,6 +13,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -41,8 +44,13 @@ public final class Constants {
         public static final double endgameRumbleIntensity = 1.0;
     }
 
-    public static final class ShooterConstants {
-        public static final double velocityToleranceRevolutionsPerSecond = 1.0;
-        public static final double hoodPositionToleranceDegrees = 5.0;
+    public static final class ShotCalculationConstants {
+        public static final InterpolatingDoubleTreeMap distanceToShotSpeed = new InterpolatingDoubleTreeMap();
+        // TODO -- populate with real values
+
+        public static final Transform3d BALL_TRANSFORM_LEFT = new Transform3d(-0.24, 0.09, 0.5, Rotation3d.kZero);
+        public static final Transform3d BALL_TRANSFORM_CENTER = new Transform3d(-0.24, 0, 0.5, Rotation3d.kZero);
+        public static final Transform3d BALL_TRANSFORM_RIGHT = new Transform3d(-0.24, -0.09, 0.5, Rotation3d.kZero);
     }
+
 }

@@ -23,9 +23,13 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.ShotCalculator;
 import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShooterIOSparkFlex;
 import frc.robot.subsystems.vision.*;
 import frc.robot.util.ControllerRumbleManager;
+import java.util.prefs.PreferencesFactory;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -42,6 +46,9 @@ public class RobotContainer {
     // Subsystems
     private final Drive drive;
     private final Vision vision;
+    private final Shooter shooter;
+
+    private final ShotCalculator shotCalculator;
 
     private SwerveDriveSimulation driveSimulation = null;
 
@@ -75,6 +82,10 @@ public class RobotContainer {
                     drive,
                     new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
                     new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
+                shotCalculator = new ShotCalculator(drive);
+                shooter = new Shooter(
+                    new ShooterIOSparkFlex(),
+                    () -> drive.getPose(), shotCalculator);
 
                 break;
             case SIM:
@@ -98,6 +109,7 @@ public class RobotContainer {
                         camera0Name, robotToCamera0, driveSimulation::getSimulatedDriveTrainPose),
                     new VisionIOPhotonVisionSim(
                         camera1Name, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose));
+                shotCalculator = new ShotCalculator(drive);
 
                 break;
 
