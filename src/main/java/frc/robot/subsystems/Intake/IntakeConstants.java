@@ -1,0 +1,16 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.subsystems.Intake;
+
+/** Add your docs here. */
+public class IntakeConstants {
+
+ static final int IntakeMotorCanID = 1;
+ static final double intakeCurrentLimits = 40.0;
+
+ static final int deployMotorCanID = 2;
+ static final double deployCurrentLimits = 20.0;
+
+}
