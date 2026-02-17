@@ -74,7 +74,7 @@ public class Turret extends SubsystemBase {
         
         turnMotorDisconnected = new Alert("Turret turn motor disconnected.", AlertType.kError);
         flywheelMotorDisconnected = new Alert("Turret flywheel motor disconnected.", AlertType.kError);
-        flywheelTurnMotorDisconnected = new Alert("Turret flywheel turn motor disconnected.", Alert
+        flywheelTurnMotorDisconnected = new Alert("Turret flywheel turn motor disconnected.", AlertType.kError);
     }
 
 

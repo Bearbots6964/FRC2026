@@ -23,10 +23,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.ShotCalculator;
+import frc.robot.subsystems.Intake.Intake;
+import frc.robot.subsystems.Intake.IntakeConstants;
+import frc.robot.subsystems.Intake.IntakeIO;
+import frc.robot.subsystems.Intake.IntakeIOTalonFX;
 import frc.robot.subsystems.drive.*;
-import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.shooter.ShooterIOSparkFlex;
 import frc.robot.subsystems.vision.*;
 import frc.robot.util.ControllerRumbleManager;
 import java.util.prefs.PreferencesFactory;
@@ -46,9 +47,7 @@ public class RobotContainer {
     // Subsystems
     private final Drive drive;
     private final Vision vision;
-    private final Shooter shooter;
-
-    private final ShotCalculator shotCalculator;
+    private final Intake intake;
 
     private SwerveDriveSimulation driveSimulation = null;
 
@@ -82,10 +81,7 @@ public class RobotContainer {
                     drive,
                     new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
                     new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
-                shotCalculator = new ShotCalculator(drive);
-                shooter = new Shooter(
-                    new ShooterIOSparkFlex(),
-                    () -> drive.getPose(), shotCalculator);
+                intake = new Intake(new IntakeIOTalonFX()); //Instantiate intake
 
                 break;
             case SIM:
@@ -109,7 +105,8 @@ public class RobotContainer {
                         camera0Name, robotToCamera0, driveSimulation::getSimulatedDriveTrainPose),
                     new VisionIOPhotonVisionSim(
                         camera1Name, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose));
-                shotCalculator = new ShotCalculator(drive);
+                intake = new Intake(new IntakeIO() {
+                });
 
                 break;
 
@@ -130,6 +127,8 @@ public class RobotContainer {
                     });
                 vision = new Vision(drive, new VisionIO() {
                 }, new VisionIO() {
+                });
+                intake = new Intake(new IntakeIO() {
                 });
 
                 break;
@@ -177,6 +176,16 @@ public class RobotContainer {
 
         // Switch to X pattern when X button is pressed
         controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+
+        //Deploy intake when B button is pressed
+        controller.b().onTrue(intake.deployToPosition(IntakeConstants.deployVoltage, Math.toRadians(90)));
+        //Retract intake when B button + Right Bumper is pressed
+        controller.b().and(controller.rightBumper()).whileTrue(intake.retractToPosition(IntakeConstants.deployVoltage, 0.0));
+        //Intake fuel while Y button is held
+        controller.y().whileTrue(intake.intake(IntakeConstants.intakeVoltage));
+        //Eject fuel while left bumper is held
+        controller.leftBumper().whileTrue(intake.eject(IntakeConstants.intakeVoltage));
+
 
         // Reset gyro / odometry
         final Runnable resetGyro =

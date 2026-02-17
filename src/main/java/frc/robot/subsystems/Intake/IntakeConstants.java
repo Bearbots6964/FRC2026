@@ -7,10 +7,12 @@ package frc.robot.subsystems.Intake;
 /** Add your docs here. */
 public class IntakeConstants {
 
- static final int IntakeMotorCanID = 1;
- static final double intakeCurrentLimits = 40.0;
+ public static final int IntakeMotorCanID = 1;
+ public static final double intakeCurrentLimits = 40.0;
+ public static final double intakeVoltage = 6.0;
 
- static final int deployMotorCanID = 2;
- static final double deployCurrentLimits = 20.0;
+ public static final int deployMotorCanID = 2;
+ public static final double deployCurrentLimits = 20.0;
+ public static final double deployVoltage = 6.0;
 
 }
