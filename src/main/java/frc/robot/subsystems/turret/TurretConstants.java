@@ -1,5 +1,6 @@
 package frc.robot.subsystems.turret;
 
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -10,12 +11,42 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
+import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
+import frc.robot.FieldConstants;
+import frc.robot.subsystems.turret.TurretCalculator.ShotData;
 
 public class TurretConstants {
 
     public static final double turretToleranceDegrees = 2.0;
+
+    public static final class TargetingConstants {
+        public static final Translation3d PASSING_SPOT_LEFT = new Translation3d(
+            Inches.of(90), Units.Meters.of(FieldConstants.fieldWidth / 2).plus(Inches.of(85)), Inches.zero());
+        public static final Translation3d PASSING_SPOT_CENTER =
+            new Translation3d(Inches.of(90), Units.Meters.of(FieldConstants.fieldWidth / 2), Inches.zero());
+        public static final Translation3d PASSING_SPOT_RIGHT = new Translation3d(
+            Inches.of(90), Units.Meters.of(FieldConstants.fieldWidth / 2).minus(Inches.of(85)), Inches.zero());
+
+        public static final Distance DISTANCE_ABOVE_FUNNEL = Inches.of(20.0);
+
+        public static final Distance FLYWHEEL_RADIUS = Inches.of(2.0);
+
+        public static final InterpolatingTreeMap<Double, ShotData> SHOT_MAP = new InterpolatingTreeMap<>(
+            InverseInterpolator.forDouble(), ShotData::interpolate);
+        public static final InterpolatingDoubleTreeMap TOF_MAP = new InterpolatingDoubleTreeMap();
+
+        static {
+            // TODO: Fill these maps with data from testing
+        }
+
+        public static final int LOOKAHEAD_ITERATIONS = 2;
+    }
 
     public static final class TalonFXConstants {
 
@@ -74,9 +105,9 @@ public class TurretConstants {
         public static final int HOOD_SERVO_FOLLOWER_CHANNEL = 1;
 
         public static final Transform3d ROBOT_TO_TURRET_TRANSFORM = new Transform3d(
-            Units.Inches.of(0.0),
-            Units.Inches.of(0.0),
-            Units.Inches.of(21.875),
+            Inches.of(0.0),
+            Inches.of(0.0),
+            Inches.of(21.875),
             new Rotation3d()
         );
     }

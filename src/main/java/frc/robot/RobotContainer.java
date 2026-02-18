@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -28,9 +29,14 @@ import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.turret.Turret;
+import frc.robot.subsystems.turret.TurretIO;
+import frc.robot.subsystems.turret.TurretIOSim;
+import frc.robot.subsystems.turret.TurretIOTalonFX;
 import frc.robot.subsystems.vision.*;
 import frc.robot.util.ControllerRumbleManager;
-import java.util.prefs.PreferencesFactory;
+import frc.robot.util.FuelSim;
+import java.util.function.BooleanSupplier;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
@@ -48,6 +54,7 @@ public class RobotContainer {
     private final Drive drive;
     private final Vision vision;
     private final Intake intake;
+    private final Turret turret;
 
     private SwerveDriveSimulation driveSimulation = null;
 
@@ -58,6 +65,8 @@ public class RobotContainer {
     private final LoggedDashboardChooser<Command> autoChooser;
 
     private final ControllerRumbleManager rumbleManager;
+
+    public FuelSim fuelSim;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -82,10 +91,12 @@ public class RobotContainer {
                     new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
                     new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
                 intake = new Intake(new IntakeIOTalonFX()); //Instantiate intake
+                turret = new Turret(new TurretIOTalonFX(), drive::getPose, drive::getChassisSpeeds);
 
                 break;
             case SIM:
                 // Sim robot, instantiate physics sim IO implementations
+                configureFuelSim();
 
                 driveSimulation = new SwerveDriveSimulation(Drive.mapleSimConfig,
                     new Pose2d(3, 3, new Rotation2d()));
@@ -107,29 +118,25 @@ public class RobotContainer {
                         camera1Name, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose));
                 intake = new Intake(new IntakeIO() {
                 });
+                TurretIOSim turretSim = new TurretIOSim(fuelSim);
+                turret = new Turret(turretSim, drive::getPose, drive::getChassisSpeeds);
+
+                configureFuelSimRobot(turretSim::canIntake, turretSim::intakeFuel);
 
                 break;
 
             default:
                 // Replayed robot, disable IO implementations
                 drive = new Drive(
-                    new GyroIO() {
-                    },
-                    new ModuleIO() {
-                    },
-                    new ModuleIO() {
-                    },
-                    new ModuleIO() {
-                    },
-                    new ModuleIO() {
-                    },
-                    (pose) -> {
-                    });
-                vision = new Vision(drive, new VisionIO() {
-                }, new VisionIO() {
-                });
-                intake = new Intake(new IntakeIO() {
-                });
+                    new GyroIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    new ModuleIO() {},
+                    (pose) -> {});
+                vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
+                intake = new Intake(new IntakeIO() {});
+                turret = new Turret(new TurretIO() {}, drive::getPose, drive::getChassisSpeeds);
 
                 break;
         }
@@ -178,14 +185,15 @@ public class RobotContainer {
         controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
         //Deploy intake when B button is pressed
-        controller.b().onTrue(intake.deployToPosition(IntakeConstants.deployVoltage, Math.toRadians(90)));
+        controller.b()
+            .onTrue(intake.deployToPosition(IntakeConstants.deployVoltage, Math.toRadians(90)));
         //Retract intake when B button + Right Bumper is pressed
-        controller.b().and(controller.rightBumper()).whileTrue(intake.retractToPosition(IntakeConstants.deployVoltage, 0.0));
+        controller.b().and(controller.rightBumper())
+            .whileTrue(intake.retractToPosition(IntakeConstants.deployVoltage, 0.0));
         //Intake fuel while Y button is held
         controller.y().whileTrue(intake.intake(IntakeConstants.intakeVoltage));
         //Eject fuel while left bumper is held
         controller.leftBumper().whileTrue(intake.eject(IntakeConstants.intakeVoltage));
-
 
         // Reset gyro / odometry
         final Runnable resetGyro =
@@ -196,6 +204,23 @@ public class RobotContainer {
                 : () -> drive.setPose(
                     new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
         controller.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+    }
+
+    private void configureFuelSim() {
+        fuelSim = new FuelSim();
+        fuelSim.spawnStartingFuel();
+
+        fuelSim.start();
+        SmartDashboard.putData(Commands.runOnce(() -> {
+                fuelSim.clearFuel();
+                fuelSim.spawnStartingFuel();
+            })
+            .withName("Reset Fuel")
+            .ignoringDisable(true));
+    }
+
+    private void configureFuelSimRobot(BooleanSupplier ableToIntake, Runnable intakeCallback) {
+        // TODO: implement method to link fuel sim with simulated intake
     }
 
     /**

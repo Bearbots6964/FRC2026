@@ -87,6 +87,7 @@ public class FieldConstants {
             Units.inchesToMeters(72.0); // includes the catcher at the top
         public static final double innerWidth = Units.inchesToMeters(41.7);
         public static final double innerHeight = Units.inchesToMeters(56.5);
+        public static final double funnelRadius = Units.inchesToMeters(24.0);
 
         // Relevant reference points on alliance side
         public static final Translation3d topCenterPoint =

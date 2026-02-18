@@ -26,6 +26,7 @@ public interface TurretIO {
         public boolean hoodAtPosition = false;
 
         public boolean flywheelMotorConnected = false;
+        public boolean flywheelFollowerMotorConnected = false;
         public Voltage flywheelAppliedVolts = Volts.zero();
         public Current flywheelCurrent = Amps.zero();
         public AngularVelocity flywheelSpeed = RadiansPerSecond.zero();

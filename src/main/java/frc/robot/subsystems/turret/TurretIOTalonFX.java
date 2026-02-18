@@ -26,12 +26,15 @@ import frc.robot.subsystems.turret.TurretConstants.TalonFXConstants.FlywheelMoto
 import frc.robot.subsystems.turret.TurretConstants.TalonFXConstants.TurnMotorConstants;
 import frc.robot.util.LinearServo;
 import frc.robot.util.PhoenixUtil;
+import java.util.prefs.PreferencesFactory;
 
 public class TurretIOTalonFX implements TurretIO {
 
     private final TalonFX turnMotor;
     private final TalonFX flywheelMotor;
     private final TalonFX flywheelFollowerMotor;
+
+    private final CANcoder encoder;
 
     private final LinearServo hoodServo;
     private final LinearServo hoodFollowerServo;
@@ -49,6 +52,7 @@ public class TurretIOTalonFX implements TurretIO {
     private final StatusSignal<AngularAcceleration> flywheelAccel;
     private final StatusSignal<Voltage> flywheelAppliedVolts;
     private final StatusSignal<Current> flywheelCurrent;
+    private final StatusSignal<Voltage> flywheelFollowerAppliedVolts;
 
     private final PositionVoltage turnPositionRequest = new PositionVoltage(0);
     private final VelocityTorqueCurrentFOC flywheelVelocityRequest = new VelocityTorqueCurrentFOC(
@@ -70,6 +74,7 @@ public class TurretIOTalonFX implements TurretIO {
         flywheelMotor = new TalonFX(FlywheelMotorConstants.FLYWHEEL_MOTOR_ID);
         flywheelFollowerMotor = new TalonFX(
             FlywheelMotorConstants.FLYWHEEL_FOLLOWER_MOTOR_ID);
+        encoder = new CANcoder(TurnMotorConstants.TURN_ENCODER_ID);
 
         hoodServo = new LinearServo(HOOD_SERVO_CHANNEL, 100, 32);
         hoodFollowerServo = new LinearServo(HOOD_SERVO_FOLLOWER_CHANNEL, 100, 32);
@@ -113,6 +118,7 @@ public class TurretIOTalonFX implements TurretIO {
         flywheelAccel = flywheelMotor.getAcceleration();
         flywheelAppliedVolts = flywheelMotor.getMotorVoltage();
         flywheelCurrent = flywheelMotor.getStatorCurrent();
+        flywheelFollowerAppliedVolts = flywheelFollowerMotor.getMotorVoltage();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
             50,
@@ -124,6 +130,7 @@ public class TurretIOTalonFX implements TurretIO {
             flywheelAccel,
             flywheelAppliedVolts,
             flywheelCurrent);
+        BaseStatusSignal.setUpdateFrequencyForAll(4, flywheelFollowerAppliedVolts);
         turnMotor.optimizeBusUtilization();
         flywheelMotor.optimizeBusUtilization();
         flywheelFollowerMotor.optimizeBusUtilization();
@@ -148,6 +155,7 @@ public class TurretIOTalonFX implements TurretIO {
         inputs.flywheelMotorConnected = BaseStatusSignal.refreshAll(
                 flywheelSpeed, flywheelAccel, flywheelAppliedVolts, flywheelCurrent)
             .isOK();
+        inputs.flywheelFollowerMotorConnected = BaseStatusSignal.refreshAll(flywheelFollowerAppliedVolts).isOK();
         inputs.flywheelSpeed = flywheelSpeed.getValue();
         inputs.flywheelAccel = flywheelAccel.getValue();
         inputs.flywheelAppliedVolts = flywheelAppliedVolts.getValue();
