@@ -64,6 +64,5 @@ public class Intake extends SubsystemBase {
   }
 
 
-
 //end of class
 }
