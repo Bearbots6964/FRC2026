@@ -8,6 +8,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -36,6 +37,7 @@ public class IndexerIOTalonFX implements IndexerIO {
     private final VoltageOut voltageRequest = new VoltageOut(0);
     private final DutyCycleOut dutyCycleRequest = new DutyCycleOut(0.0);
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0.0);
+    private final NeutralOut neutralRequest = new NeutralOut();
 
     public IndexerIOTalonFX() {
         motor = new TalonFX(IndexerConstants.TalonFXConstants.MOTOR_ID);
@@ -85,6 +87,11 @@ public class IndexerIOTalonFX implements IndexerIO {
         motor.setControl(velocityRequest
                 .withVelocity(Units.RotationsPerSecond.of(velocity * IndexerConstants.TalonFXConstants.GEAR_RATIO)));
 
+    }
+
+    @Override
+    public void stop() {
+        motor.setControl(neutralRequest);
     }
 
 }

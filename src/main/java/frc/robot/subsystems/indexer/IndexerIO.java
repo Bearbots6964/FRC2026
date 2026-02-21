@@ -11,10 +11,10 @@ public interface IndexerIO {
         public double indexerVoltage = 0.0;
         
     }
-    public default void updateInputs(IndexerIOInputs inputs){}
-    public default void setIndexerVoltage(double volts){}
-    public default void setIndexerOpenLoop(double input){}
-    public default void setIndexerVelocity(double velocity){}
-    public default void stop(){}
+    public default void updateInputs(IndexerIOInputs inputs) {}
+    public default void setIndexerVoltage(double volts) {}
+    public default void setIndexerOpenLoop(double input) {}
+    public default void setIndexerVelocity(double velocity) {}
+    public default void stop() {}
     
 } 
