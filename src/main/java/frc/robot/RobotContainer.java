@@ -28,6 +28,8 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
+import frc.robot.subsystems.intake.IntakeConstants.deployMotorConstants;
+import frc.robot.subsystems.intake.IntakeConstants.intakeMotorConstants;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIO;
@@ -186,14 +188,14 @@ public class RobotContainer {
 
         //Deploy intake when B button is pressed
         controller.b()
-            .onTrue(intake.deployToPosition(IntakeConstants.deployVoltage, Math.toRadians(90)));
+            .onTrue(intake.deployToPosition(deployMotorConstants.deployVoltage, Math.toRadians(90)));
         //Retract intake when B button + Right Bumper is pressed
         controller.b().and(controller.rightBumper())
-            .whileTrue(intake.retractToPosition(IntakeConstants.deployVoltage, 0.0));
+            .whileTrue(intake.retractToPosition(deployMotorConstants.deployVoltage, 0.0));
         //Intake fuel while Y button is held
-        controller.y().whileTrue(intake.intake(IntakeConstants.intakeVoltage));
+        controller.y().whileTrue(intake.intake(intakeMotorConstants.intakeVoltage));
         //Eject fuel while left bumper is held
-        controller.leftBumper().whileTrue(intake.eject(IntakeConstants.intakeVoltage));
+        controller.leftBumper().whileTrue(intake.eject(intakeMotorConstants.intakeVoltage));
 
         // Reset gyro / odometry
         final Runnable resetGyro =

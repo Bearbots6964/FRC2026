@@ -63,7 +63,6 @@ public class IntakeIOTalonFX implements IntakeIO{
         .withMotorOutput(intakeMotorConstants.intakeMotorOutputConfigs)
         .withCurrentLimits(intakeMotorConstants.intakeCurrentLimits)
         .withSlot0(intakeMotorConstants.intakeMotorGains);
-        intakeConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         intakeConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
@@ -71,7 +70,6 @@ public class IntakeIOTalonFX implements IntakeIO{
         .withMotorOutput(deployMotorConstants.deployMotorOutputConfigs)
         .withCurrentLimits(deployMotorConstants.deployCurrentLimits)
         .withSlot0(deployMotorConstants.deployMotorGains);
-        deployConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         deployConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         deployConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
        
@@ -106,7 +104,9 @@ public class IntakeIOTalonFX implements IntakeIO{
              deployMotorVelocityRotPerSec,
              deployMotorAppliedVolts,
              deployMotorCurrentAmps);
-             ParentDevice.optimizeBusUtilizationForAll(intakeMotor);
+             
+      ParentDevice.optimizeBusUtilizationForAll(intakeMotor);
+      ParentDevice.optimizeBusUtilizationForAll(deployMotor);
       //end of constructor
     }
 
