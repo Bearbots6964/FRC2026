@@ -21,6 +21,8 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.subsystems.intake.IntakeConstants.deployMotorConstants;
+import frc.robot.subsystems.intake.IntakeConstants.intakeMotorConstants;
 
 /** Add your docs here. */
 public class IntakeIOTalonFX implements IntakeIO{
@@ -57,25 +59,29 @@ public class IntakeIOTalonFX implements IntakeIO{
 
        //configure the TalonFX for the intake motor, 
        //this is a single motor subsystem so we don't need to worry about multiple motors working together
-       var intakeConfig = new TalonFXConfiguration();
-       intakeConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-       intakeConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.intakeCurrentLimits;
-       intakeConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-       intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+       var intakeConfig = new TalonFXConfiguration()
+        .withMotorOutput(intakeMotorConstants.intakeMotorOutputConfigs)
+        .withCurrentLimits(intakeMotorConstants.intakeCurrentLimits)
+        .withSlot0(intakeMotorConstants.intakeMotorGains);
+        intakeConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        intakeConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-       var deployConfig = new TalonFXConfiguration();
+       var deployConfig = new TalonFXConfiguration()
+        .withMotorOutput(deployMotorConstants.deployMotorOutputConfigs)
+        .withCurrentLimits(deployMotorConstants.deployCurrentLimits)
+        .withSlot0(deployMotorConstants.deployMotorGains);
         deployConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        deployConfig.CurrentLimits.SupplyCurrentLimit = IntakeConstants.deployCurrentLimits;
         deployConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         deployConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
        
        
        //create motor object and apply configuration to intake motor, retrying up to 5 times with 0.25s delay
-        intakeMotor = new TalonFX(IntakeConstants.IntakeMotorCanID);
+        intakeMotor = new TalonFX(intakeMotorConstants.intakeMotorCanID);
         tryUntilOk(5, () -> intakeMotor.getConfigurator().apply(intakeConfig, 0.25));
        
        //create motor object and apply configuration to deploy motor, retrying up to 5 times with 0.25s delay
-        deployMotor = new TalonFX(IntakeConstants.deployMotorCanID);
+        deployMotor = new TalonFX(deployMotorConstants.deployMotorCanID);
         tryUntilOk(5, () -> deployMotor.getConfigurator().apply(deployConfig, 0.25));
 
          //create status signals for intake motor
