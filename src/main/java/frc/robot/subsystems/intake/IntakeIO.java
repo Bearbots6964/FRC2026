@@ -10,6 +10,8 @@ import org.littletonrobotics.junction.AutoLog;
 public interface IntakeIO {
 @AutoLog
     public static class IntakeIOInputs {
+        public boolean intakeMotorConnected = false;
+        
         public double intakeMotorPositionRad = 0.0;
         public double intakeMotorVelocityRadPerSec = 0.0;
         public double intakeMotorAppliedVolts = 0.0;
@@ -29,5 +31,11 @@ public interface IntakeIO {
 
     /** Run the deploy motor at the specified voltage. */
     public default void setDeployVoltage(double volts) {}
+
+    /** Stop the intake motor. */
+    public default void stopIntake() {}
+
+    /** Stop the deploy motor. */
+    public default void stopDeploy() {}
 
 }

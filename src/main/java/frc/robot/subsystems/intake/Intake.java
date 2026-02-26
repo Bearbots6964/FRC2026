@@ -5,6 +5,7 @@
 package frc.robot.subsystems.intake;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import org.littletonrobotics.junction.Logger;
 
@@ -12,12 +13,18 @@ public class Intake extends SubsystemBase {
      private final IntakeIO io;
      // will compile after run
       private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
-
+      
+      //Alert for intake motor disconnection
+      private final Alert intakeMotorDisconnectedAlert;
+      //Alert for deploy motor disconnection
+      private final Alert deployMotorDisconnectedAlert;
     
 
   /** Creates a new Intake. */
   public Intake(IntakeIO intakeIO) {
     this.io = intakeIO;
+    intakeMotorDisconnectedAlert = new Alert("Intake motor disconnected.", Alert.AlertType.kWarning);
+    deployMotorDisconnectedAlert = new Alert("Deploy motor disconnected.", Alert.AlertType.kWarning);
   }
 
   @Override
@@ -26,7 +33,12 @@ public class Intake extends SubsystemBase {
     //update the inputs from the IO and log them
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
-  //end of periodic
+  
+    //check for intake motor disconnection and display if true
+    intakeMotorDisconnectedAlert.set(!inputs.intakeMotorConnected);
+    deployMotorDisconnectedAlert.set(!inputs.deployMotorConnected);
+
+    //end of periodic
   }
   
   //command to deploy the intake
@@ -61,6 +73,14 @@ public class Intake extends SubsystemBase {
         () -> io.setIntakeVoltage(-voltage),
         () -> io.setIntakeVoltage(0.0)
     );
+  }
+
+  public void stopIntake() {
+    io.stopIntake();
+  }
+
+  public void stopDeploy() {
+    io.stopDeploy();
   }
 
 

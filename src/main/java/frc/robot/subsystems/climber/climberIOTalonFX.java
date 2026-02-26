@@ -5,4 +5,8 @@
 package frc.robot.subsystems.climber;
 
 /** Add your docs here. */
-public class climberIOTalonFX {}
+public class climberIOTalonFX {
+
+    public climberIOTalonFX() {
+    }
+}

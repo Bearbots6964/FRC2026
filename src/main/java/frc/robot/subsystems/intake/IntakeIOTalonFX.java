@@ -9,6 +9,7 @@ import static frc.robot.util.PhoenixUtil.tryUntilOk;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -41,6 +42,7 @@ public class IntakeIOTalonFX implements IntakeIO{
 
     //create a new request to reuse for setting voltages and using commands
     private final VoltageOut voltageRequest = new VoltageOut(0);
+    private final NeutralOut neutralOut = new NeutralOut();
 
     public IntakeIOTalonFX() {
 
@@ -104,7 +106,7 @@ public class IntakeIOTalonFX implements IntakeIO{
 
     @Override
     public void updateInputs(IntakeIOInputs inputs) {
-        BaseStatusSignal.refreshAll(
+        inputs.intakeMotorConnected = BaseStatusSignal.refreshAll(
             intakeMotorPositionRot,
             intakeMotorVelocityRotPerSec,
             intakeMotorAppliedVolts,
@@ -113,7 +115,7 @@ public class IntakeIOTalonFX implements IntakeIO{
             deployMotorVelocityRotPerSec,
             deployMotorAppliedVolts,
             deployMotorCurrentAmps
-            );
+            ).isOK();
 
             //update the logged inputs with the latest values from the status signals
             inputs.intakeMotorPositionRad = Units.rotationsToRadians(intakeMotorPositionRot.getValueAsDouble());
@@ -135,4 +137,15 @@ public class IntakeIOTalonFX implements IntakeIO{
     public void setDeployVoltage(double volts) {
       deployMotor.setControl(voltageRequest.withOutput(volts));
     }
+
+  @Override
+    public void stopIntake() {
+      intakeMotor.setControl(neutralOut);
+   }
+
+  @Override
+    public void stopDeploy() {
+      deployMotor.setControl(neutralOut);
+    }
+
 }

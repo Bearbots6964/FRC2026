@@ -7,9 +7,15 @@ package frc.robot.subsystems.climber;
 import org.littletonrobotics.junction.AutoLog;
 
 /** Add your docs here. */
-public class climberIO {
+public interface climberIO {
     @AutoLog
         public static class climberIOInputs{
-            
+            public double climberMotorPositionRad = 0.0;
+            public double climberMotorAppliedVolts = 0.0;
+            public double climberMotorCurrentAmps = 0.0;
         }
-}
+     
+    public default void updateInputs(climberIOInputs inputs) {}
+    public default void setClimberVoltage(double volts) {}
+
+    }
