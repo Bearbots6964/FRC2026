@@ -9,7 +9,7 @@ import org.littletonrobotics.junction.AutoLog;
 /** Add your docs here. */
 public interface ClimberIO {
     @AutoLog
-        public static class climberIOInputs{
+        public static class ClimberIOInputs{
             public boolean climberMotorConnected = false;
             public double climberMotorPositionRad = 0.0;
             public double climberMotorVelocityRadPerSec = 0.0;
@@ -17,7 +17,7 @@ public interface ClimberIO {
             public double climberMotorCurrentAmps = 0.0;
         }
      /** Updates the set of loggable inputs. */
-    public default void updateInputs(climberIOInputs inputs) {}
+    public default void updateInputs(ClimberIOInputs inputs) {}
     /** Run the climber motor at the specified voltage. */
     public default void setClimberVoltage(double volts) {}
     /** Stop the climber motor. */

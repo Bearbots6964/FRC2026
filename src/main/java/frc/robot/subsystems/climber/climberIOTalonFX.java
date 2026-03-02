@@ -6,13 +6,13 @@ package frc.robot.subsystems.climber;
 
 import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
-import java.io.ObjectInputFilter.Status;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -26,8 +26,10 @@ import frc.robot.subsystems.climber.ClimberConstants.climberMotorConstants;
 /** Add your docs here. */
 public class ClimberIOTalonFX implements ClimberIO{
 
-    //instantiate climber motor and status signals
+    //instantiate climber motor
     TalonFX climberMotor;
+    //instantiate climber encoder
+    CANcoder climberEncoder;
 
     //climber motor status signals
     StatusSignal<Angle> climberMotorPositionRot; //use rotations because getPosition returns rotations
@@ -41,7 +43,7 @@ public class ClimberIOTalonFX implements ClimberIO{
 
 
     public ClimberIOTalonFX() {
-     //structure for constructor is as follows:
+      //structure for constructor is as follows:
       //1. config
       //2. create motor objects
       //3. apply config to motors, retrying up to 5 times with 0.25s delay
@@ -81,7 +83,7 @@ public class ClimberIOTalonFX implements ClimberIO{
     }
 
     @Override
-    public void updateInputs(climberIOInputs inputs) {
+    public void updateInputs(ClimberIOInputs inputs) {
         //refresh the status signals to get the latest data from the motor
         inputs.climberMotorConnected = BaseStatusSignal.refreshAll(
             climberMotorPositionRot,

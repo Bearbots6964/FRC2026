@@ -8,6 +8,7 @@ import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -57,7 +58,6 @@ public class IntakeIOTalonFX implements IntakeIO{
 
 
        //configure the TalonFX for the intake motor, 
-       //this is a single motor subsystem so we don't need to worry about multiple motors working together
        var intakeConfig = new TalonFXConfiguration()
         .withMotorOutput(intakeMotorConstants.intakeMotorOutputConfigs)
         .withCurrentLimits(intakeMotorConstants.intakeCurrentLimits)

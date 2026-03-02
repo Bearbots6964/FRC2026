@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems.climber;
 
-import java.util.logging.Logger;
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
@@ -36,9 +36,6 @@ public class Climber extends SubsystemBase {
     //check for climber motor disconnection and display if true
     climberMotorDisconnectedAlert.set(!inputs.climberMotorConnected);
   }
-
-
-
 
   //command to climb
   public Command climb(){

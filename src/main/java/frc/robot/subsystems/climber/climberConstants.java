@@ -15,6 +15,7 @@ public class ClimberConstants {
 
     public static final class climberMotorConstants {
         public static final int climberMotorCanID = 1;
+        public static final int climberEncoderCanID = 2;
          //gear ratio is 1:1 brake, 9:1, 5:1 to be implemented
         public static final double climberVoltage = 6.0;
         public static final double climbDegrees = 300.0;
