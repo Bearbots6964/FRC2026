@@ -4,16 +4,62 @@
 
 package frc.robot.subsystems.climber;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.logging.Logger;
 
-public class climber extends SubsystemBase {
-    private final climberIO io;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.Intake.IntakeIOInputsAutoLogged;
+
+public class Climber extends SubsystemBase {
+    private final ClimberIO io;
+    // will compile after run
+    private final ClimberIOInputsAutoLogged inputs = new ClimberIOInputsAutoLogged();
+
+    //Alert for climber motor disconnection
+    private final Alert climberMotorDisconnectedAlert;
   
   /** Creates a new climber. */
-  public climber() {}
+  public Climber(ClimberIO io) {
+    this.io = io;
+    climberMotorDisconnectedAlert =
+       new Alert("Climber motor disconnected.", Alert.AlertType.kError);
+         //critical alert for motor disconnection
+      }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    io.updateInputs(inputs);
+    Logger.processInputs("Climber", inputs);
+    //check for climber motor disconnection and display if true
+    climberMotorDisconnectedAlert.set(!inputs.climberMotorConnected);
   }
+
+
+
+
+  //command to climb
+  public Command climb(){
+    return runEnd(
+      () -> io.setClimberVoltage(12.0), //climb at full voltage when this command is scheduled
+      () -> io.setClimberVoltage(0.0) //stop the climber motor when the command ends
+    ).until(() -> Units.radiansToDegrees(inputs.climberMotorPositionRad) > 300.0); 
+    //end the command when the climber motor is 300 degrees
+  }
+  
+  //command to descend
+  public Command descend(){
+    return runEnd(
+      () -> io.setClimberVoltage(-12.0), //descend at full voltage when this command is scheduled
+      () -> io.setClimberVoltage(0.0) //stop the climber motor when the command ends
+    ).until(() -> Units.radiansToDegrees(inputs.climberMotorPositionRad) < 3.0); 
+    //end the command when the climber motor is below 3 degrees
+  }
+
+  //stop the climber motor
+  public void stopClimber(){io.setClimberVoltage(0.0);}
+
+
 }

@@ -11,6 +11,7 @@ public interface IntakeIO {
 @AutoLog
     public static class IntakeIOInputs {
         public boolean intakeMotorConnected = false;
+        public boolean deployMotorConnected = false;
         
         public double intakeMotorPositionRad = 0.0;
         public double intakeMotorVelocityRadPerSec = 0.0;

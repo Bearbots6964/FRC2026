@@ -11,7 +11,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 /** Add your docs here. */
-public class climberConstants {
+public class ClimberConstants {
 
     public static final class climberMotorConstants {
         public static final int climberMotorCanID = 1;

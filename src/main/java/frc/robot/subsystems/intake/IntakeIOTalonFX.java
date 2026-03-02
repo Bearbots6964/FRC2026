@@ -116,20 +116,23 @@ public class IntakeIOTalonFX implements IntakeIO{
             intakeMotorPositionRot,
             intakeMotorVelocityRotPerSec,
             intakeMotorAppliedVolts,
-            intakeMotorCurrentAmps,
-            deployMotorPositionRot,
-            deployMotorVelocityRotPerSec,
-            deployMotorAppliedVolts,
-            deployMotorCurrentAmps
+            intakeMotorCurrentAmps
+            ).isOK();
+
+        inputs.deployMotorConnected = BaseStatusSignal.refreshAll(
+              deployMotorPositionRot,
+              deployMotorVelocityRotPerSec,
+              deployMotorAppliedVolts,
+              deployMotorCurrentAmps
             ).isOK();
 
             //update the logged inputs with the latest values from the status signals
             inputs.intakeMotorPositionRad = Units.rotationsToRadians(intakeMotorPositionRot.getValueAsDouble());
-            inputs.intakeMotorVelocityRadPerSec = Units.rotationsToRadians(intakeMotorVelocityRotPerSec.getValueAsDouble());
+            inputs.intakeMotorVelocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(intakeMotorVelocityRotPerSec.getValueAsDouble());
             inputs.intakeMotorAppliedVolts = intakeMotorAppliedVolts.getValueAsDouble();
             inputs.intakeMotorCurrentAmps = intakeMotorCurrentAmps.getValueAsDouble();
             inputs.deployMotorPositionRad = Units.rotationsToRadians(deployMotorPositionRot.getValueAsDouble());
-            inputs.deployMotorVelocityRadPerSec = Units.rotationsToRadians(deployMotorVelocityRotPerSec.getValueAsDouble());
+            inputs.deployMotorVelocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(deployMotorVelocityRotPerSec.getValueAsDouble());
             inputs.deployMotorAppliedVolts = deployMotorAppliedVolts.getValueAsDouble();
             inputs.deployMotorCurrentAmps = deployMotorCurrentAmps.getValueAsDouble();
     }
