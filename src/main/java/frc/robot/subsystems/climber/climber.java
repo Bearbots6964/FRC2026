@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Intake.IntakeIOInputsAutoLogged;
+import frc.robot.subsystems.climber.ClimberConstants.climberMotorConstants;
 
 public class Climber extends SubsystemBase {
     private final ClimberIO io;
@@ -43,23 +44,23 @@ public class Climber extends SubsystemBase {
   //command to climb
   public Command climb(){
     return runEnd(
-      () -> io.setClimberVoltage(12.0), //climb at full voltage when this command is scheduled
+      () -> io.setClimberVoltage(climberMotorConstants.climberVoltage), //climb at 6 volts when this command is scheduled
       () -> io.setClimberVoltage(0.0) //stop the climber motor when the command ends
-    ).until(() -> Units.radiansToDegrees(inputs.climberMotorPositionRad) > 300.0); 
+    ).until(() -> Units.radiansToDegrees(inputs.climberMotorPositionRad) > climberMotorConstants.climbDegrees); 
     //end the command when the climber motor is 300 degrees
   }
   
   //command to descend
   public Command descend(){
     return runEnd(
-      () -> io.setClimberVoltage(-12.0), //descend at full voltage when this command is scheduled
+      () -> io.setClimberVoltage(-climberMotorConstants.climberVoltage), //descend at 6 volts when this command is scheduled
       () -> io.setClimberVoltage(0.0) //stop the climber motor when the command ends
-    ).until(() -> Units.radiansToDegrees(inputs.climberMotorPositionRad) < 3.0); 
+    ).until(() -> Units.radiansToDegrees(inputs.climberMotorPositionRad) < climberMotorConstants.descendDegrees); 
     //end the command when the climber motor is below 3 degrees
   }
 
   //stop the climber motor
-  public void stopClimber(){io.setClimberVoltage(0.0);}
+  public void stopClimber(){io.stopClimber();}
 
 
 }

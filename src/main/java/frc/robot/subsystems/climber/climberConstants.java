@@ -17,6 +17,9 @@ public class ClimberConstants {
         public static final int climberMotorCanID = 1;
          //gear ratio is 1:1 brake, 9:1, 5:1 to be implemented
         public static final double climberVoltage = 6.0;
+        public static final double climbDegrees = 300.0;
+        public static final double descendDegrees = 3.0;
+
         public static final Slot0Configs climberMotorGains = new Slot0Configs()
                 .withKP(0.0)
                 .withKD(0.0)
