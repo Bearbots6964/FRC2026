@@ -5,6 +5,9 @@
 package frc.robot.subsystems.intake;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.intake.IntakeConstants.deployMotorConstants;
+import frc.robot.subsystems.intake.IntakeConstants.intakeMotorConstants;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import org.littletonrobotics.junction.Logger;
@@ -46,35 +49,35 @@ public class Intake extends SubsystemBase {
   }
   
   //command to deploy the intake
-  public Command deployToPosition(double voltage, double targetPositionRad) {
+  public Command deploy() {
     //run the deploy motor at the specified voltage when this command is scheduled, and stop it when the command ends
     return runEnd(
-        () -> io.setDeployVoltage(voltage), //deploy at the specified voltage
+        () -> io.setDeployVoltage(deployMotorConstants.deployVoltage), //deploy at the specified voltage
         () -> io.setDeployVoltage(0.0) //stop the deploy motor when the command ends
-    ).until(() -> Math.abs(inputs.deployMotorPositionRad - targetPositionRad) < 0.1); //end the command when the deploy motor is within 0.1 radians of the target position
+    ).until(() -> Units.radiansToDegrees(inputs.deployMotorPositionRad) > deployMotorConstants.deployTargetPositionDegrees); 
   }
 
-  public Command retractToPosition(double voltage, double targetPositionRad){
+  public Command retract(){
     //run the deploy motor in reverse at the specified voltage when this command is scheduled, and stop it when the command ends
     return runEnd(
-        () -> io.setDeployVoltage(-voltage), //retract at the specified voltage
+        () -> io.setDeployVoltage(-deployMotorConstants.deployVoltage), //retract at the specified voltage
         () -> io.setDeployVoltage(0.0)
-    ).until(() -> Math.abs(inputs.deployMotorPositionRad - targetPositionRad) < 0.1); //end the command when the deploy motor is within 0.1 radians of the target position
+    ).until(() -> Units.radiansToDegrees(inputs.deployMotorPositionRad) < deployMotorConstants.retractTargetPositionDegrees);
   }
 
   //command to intake fuel
-  public Command intake(double voltage) {
+  public Command intake() {
     //run the intake at the specified voltage when this command is scheduled, and stop it when the command ends
     return runEnd(
-        () -> io.setIntakeVoltage(voltage),
+        () -> io.setIntakeVoltage(intakeMotorConstants.intakeVoltage),
         () -> io.setIntakeVoltage(0.0)
     );
   }
 
-  public Command eject(double voltage) {
+  public Command eject() {
     //run the intake in reverse at the specified voltage when this command is scheduled, and stop it when the command ends
     return runEnd(
-        () -> io.setIntakeVoltage(-voltage),
+        () -> io.setIntakeVoltage(-intakeMotorConstants.intakeVoltage), //eject at the specified voltage
         () -> io.setIntakeVoltage(0.0)
     );
   }

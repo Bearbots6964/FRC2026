@@ -36,6 +36,8 @@ public class IntakeConstants {
     public static final int deployMotorCanID = 2;
     //gear ratio is to be implemented, 4:1, 3:1, 3:1
     public static final double deployVoltage = 6.0;
+    public static final double deployTargetPositionDegrees = 200; //target position for deploying the intake, to be tuned
+    public static final double retractTargetPositionDegrees = 5; //target position for retracting the intake, to be tuned
     public static final Slot0Configs deployMotorGains = new Slot0Configs()
             .withKP(0.0)
             .withKD(0.0)
