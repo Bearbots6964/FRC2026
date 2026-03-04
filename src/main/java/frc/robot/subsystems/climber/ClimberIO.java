@@ -11,10 +11,12 @@ public interface ClimberIO {
     @AutoLog
         public static class ClimberIOInputs{
             public boolean climberMotorConnected = false;
+            public boolean climberEncoderConnected = false;
             public double climberMotorPositionRad = 0.0;
             public double climberMotorVelocityRadPerSec = 0.0;
             public double climberMotorAppliedVolts = 0.0;
             public double climberMotorCurrentAmps = 0.0;
+            public double climberEncoderAbsolutePositionRad = 0.0;
         }
      /** Updates the set of loggable inputs. */
     public default void updateInputs(ClimberIOInputs inputs) {}
