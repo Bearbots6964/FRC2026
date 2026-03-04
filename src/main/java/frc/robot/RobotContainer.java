@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
@@ -58,7 +59,27 @@ public class RobotContainer {
     private SwerveDriveSimulation driveSimulation = null;
 
     // Controller
-    private final CommandXboxController controller = new CommandXboxController(0);
+    private final CommandXboxController driverController = new CommandXboxController(0);
+    private final CommandXboxController operatorController = new CommandXboxController(1);
+
+    // Bindings
+    // Driver
+    private final Trigger slowMovementTrigger = driverController.leftTrigger();
+    private final Trigger fineTuningTrigger = driverController.rightTrigger();
+    private final Trigger traverseBumpTrigger = driverController.a();
+    private final Trigger lockWheelsTrigger = driverController.x();
+    private final Trigger alignToTowerTrigger = driverController.start();
+    private final Trigger resetGyroTrigger = driverController.back();
+    private final Trigger killAutoTrigger = driverController.b();
+    private final Trigger rotationFollowsMovementTrigger = driverController.y();
+    // Operator
+    private final Trigger spinShooterTrigger = operatorController.leftTrigger();
+    private final Trigger shootTrigger = operatorController.rightTrigger();
+    private final Trigger intakeTrigger = operatorController.y();
+    private final Trigger deployIntakeTrigger = operatorController.b();
+    private final Trigger retractIntakeTrigger = operatorController.b().and(operatorController.rightBumper());
+    private final Trigger reverseIntakeTrigger = operatorController.leftBumper();
+    private final Trigger manualTurretControlTrigger = operatorController.a();
 
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
@@ -161,7 +182,7 @@ public class RobotContainer {
         configureButtonBindings();
 
         rumbleManager = new ControllerRumbleManager(
-            (c) -> controller.setRumble(RumbleType.kBothRumble, c));
+            (c) -> driverController.setRumble(RumbleType.kBothRumble, c));
     }
 
     /**
@@ -172,27 +193,20 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         // Default command, normal field-relative drive
-        drive.setDefaultCommand(DriveCommands.joystickDrive(drive, () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(), () -> -controller.getRightX()));
-
-        // Lock to 0° when A button is held
-        controller.a().whileTrue(
-            DriveCommands.joystickDriveAtAngle(drive, () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(), () -> Rotation2d.kZero));
+        drive.setDefaultCommand(DriveCommands.joystickDrive(drive, () -> -driverController.getLeftY(),
+            () -> -driverController.getLeftX(), () -> -driverController.getRightX()));
 
         // Switch to X pattern when X button is pressed
-        controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+        lockWheelsTrigger.onTrue(Commands.runOnce(drive::stopWithX, drive));
 
         //Deploy intake when B button is pressed
-        controller.b()
-            .onTrue(intake.deploy());
+        deployIntakeTrigger.onTrue(intake.deploy());
         //Retract intake when B button + Right Bumper is pressed
-        controller.b().and(controller.rightBumper())
-            .whileTrue(intake.retract());
+        retractIntakeTrigger.whileTrue(intake.retract());
         //Intake fuel while Y button is held
-        controller.y().whileTrue(intake.intake());
+        intakeTrigger.whileTrue(intake.intake());
         //Eject fuel while left bumper is held
-        controller.leftBumper().whileTrue(intake.eject());
+        reverseIntakeTrigger.whileTrue(intake.eject());
 
         // Reset gyro / odometry
         final Runnable resetGyro =
@@ -202,7 +216,7 @@ public class RobotContainer {
                 // simulation
                 : () -> drive.setPose(
                     new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
-        controller.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+        resetGyroTrigger.onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
     }
 
     private void configureFuelSim() {
