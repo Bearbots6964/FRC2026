@@ -27,8 +27,8 @@ import frc.robot.subsystems.intake.IntakeConstants.intakeMotorConstants;
 /** Add your docs here. */
 public class IntakeIOTalonFX implements IntakeIO{
     //instantiate intake motor and status signals
-    TalonFX intakeMotor;
-    TalonFX deployMotor;
+    private final TalonFX intakeMotor;
+    private final TalonFX deployMotor;
     
     //intake motor status signals
     StatusSignal<Angle> intakeMotorPositionRot;
@@ -58,14 +58,14 @@ public class IntakeIOTalonFX implements IntakeIO{
 
 
        //configure the TalonFX for the intake motor, 
-       var intakeConfig = new TalonFXConfiguration()
+        var intakeConfig = new TalonFXConfiguration()
         .withMotorOutput(intakeMotorConstants.intakeMotorOutputConfigs)
         .withCurrentLimits(intakeMotorConstants.intakeCurrentLimits)
         .withSlot0(intakeMotorConstants.intakeMotorGains);
         intakeConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-       var deployConfig = new TalonFXConfiguration()
+        var deployConfig = new TalonFXConfiguration()
         .withMotorOutput(deployMotorConstants.deployMotorOutputConfigs)
         .withCurrentLimits(deployMotorConstants.deployCurrentLimits)
         .withSlot0(deployMotorConstants.deployMotorGains);
