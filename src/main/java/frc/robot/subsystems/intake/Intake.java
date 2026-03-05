@@ -5,6 +5,7 @@
 package frc.robot.subsystems.intake;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.intake.IntakeConstants.deployMotorConstants;
 import frc.robot.subsystems.intake.IntakeConstants.intakeMotorConstants;
 import edu.wpi.first.math.util.Units;
@@ -21,7 +22,21 @@ public class Intake extends SubsystemBase {
       private final Alert intakeMotorDisconnectedAlert;
       //Alert for deploy motor disconnection
       private final Alert deployMotorDisconnectedAlert;
+
+      //triggers: prevent subsystems from knowing each other to reduce dependency
+      public final Trigger isDeployed = new Trigger( //trigger that is true when the intake is fully deployed
+          () -> Units.radiansToDegrees(inputs.deployMotorPositionRad) 
+                >= deployMotorConstants.deployTargetPositionDegrees);
     
+      public final Trigger isRetracted = new Trigger( //trigger that is true when the intake is fully retracted
+          () -> Units.radiansToDegrees(inputs.deployMotorPositionRad) 
+                <= deployMotorConstants.retractTargetPositionDegrees);
+
+      public final Trigger isDeployMotorDisconnected = new Trigger(
+          () -> !inputs.deployMotorConnected);
+
+      public final Trigger isIntakeMotorDisconnected = new Trigger(
+          () -> !inputs.intakeMotorConnected);
 
   /** Creates a new Intake. */
   public Intake(IntakeIO intakeIO) {
