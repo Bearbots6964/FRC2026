@@ -77,7 +77,8 @@ public class RobotContainer {
     private final Trigger shootTrigger = operatorController.rightTrigger();
     private final Trigger intakeTrigger = operatorController.y();
     private final Trigger deployIntakeTrigger = operatorController.b();
-    private final Trigger retractIntakeTrigger = operatorController.b().and(operatorController.rightBumper());
+    private final Trigger retractIntakeTrigger = operatorController.b()
+        .and(operatorController.rightBumper());
     private final Trigger reverseIntakeTrigger = operatorController.leftBumper();
     private final Trigger manualTurretControlTrigger = operatorController.a();
 
@@ -193,8 +194,13 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         // Default command, normal field-relative drive
-        drive.setDefaultCommand(DriveCommands.joystickDrive(drive, () -> -driverController.getLeftY(),
-            () -> -driverController.getLeftX(), () -> -driverController.getRightX()));
+        drive.setDefaultCommand(
+            DriveCommands.joystickDrive(drive, () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(), () -> -driverController.getRightX()));
+
+        drive.nearBumpTrigger.whileTrue(
+            DriveCommands.joystickDriveOverBump(drive, () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX()));
 
         // Switch to X pattern when X button is pressed
         lockWheelsTrigger.onTrue(Commands.runOnce(drive::stopWithX, drive));
