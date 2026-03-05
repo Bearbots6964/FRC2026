@@ -17,7 +17,7 @@ import edu.wpi.first.math.util.Units;
 public class ClimberConstants {
 
     public static final class climberMotorConstants {
-        public static final int climberMotorCanID = 1;
+        public static final int climberMotorCanID = 5;
          
         //gear ratio
         public static final double encoderToMechanismRatio = 2.0;
@@ -46,7 +46,7 @@ public class ClimberConstants {
         public static final double absoluteSensorDiscontinuityPoint = 0.5;
         public static final SensorDirectionValue sensorDirection = SensorDirectionValue.CounterClockwise_Positive;
         public static final double magnetOffset = 0.5;
-        public static final int climberEncoderCanID = 2;
+        public static final int climberEncoderCanID = 6;
     }
 
 
