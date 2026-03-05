@@ -28,6 +28,9 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberIO;
+import frc.robot.subsystems.climber.ClimberIOTalonFX;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIO;
@@ -54,6 +57,7 @@ public class RobotContainer {
     private final Drive drive;
     private final Vision vision;
     private final Intake intake;
+    private final Climber climber;
     private final Turret turret;
 
     private SwerveDriveSimulation driveSimulation = null;
@@ -111,7 +115,8 @@ public class RobotContainer {
                     drive,
                     new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
                     new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
-                intake = new Intake(new IntakeIOTalonFX()); //Instantiate intake
+                intake = new Intake(new IntakeIOTalonFX());
+                climber = new Climber(new ClimberIOTalonFX());
                 turret = new Turret(new TurretIOTalonFX(), drive::getPose, drive::getChassisSpeeds);
 
                 break;
@@ -137,8 +142,8 @@ public class RobotContainer {
                         camera0Name, robotToCamera0, driveSimulation::getSimulatedDriveTrainPose),
                     new VisionIOPhotonVisionSim(
                         camera1Name, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose));
-                intake = new Intake(new IntakeIO() {
-                });
+                intake = new Intake(new IntakeIO() {});
+                climber = new Climber(new ClimberIO() {});
                 TurretIOSim turretSim = new TurretIOSim(fuelSim);
                 turret = new Turret(turretSim, drive::getPose, drive::getChassisSpeeds);
 
@@ -157,6 +162,7 @@ public class RobotContainer {
                     (pose) -> {});
                 vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
                 intake = new Intake(new IntakeIO() {});
+                climber = new Climber(new ClimberIO() {});
                 turret = new Turret(new TurretIO() {}, drive::getPose, drive::getChassisSpeeds);
 
                 break;
