@@ -54,7 +54,8 @@ public class Intake extends SubsystemBase {
     return runEnd(
         () -> io.setDeployVoltage(deployMotorConstants.deployVoltage), //deploy at the specified voltage
         () -> io.setDeployVoltage(0.0) //stop the deploy motor when the command ends
-    ).until(() -> Units.radiansToDegrees(inputs.deployMotorPositionRad) > deployMotorConstants.deployTargetPositionDegrees); 
+    ).until(() -> Units.radiansToDegrees(inputs.deployMotorPositionRad) > deployMotorConstants.deployTargetPositionDegrees)
+     .withTimeout(deployMotorConstants.deployTimeoutSeconds); //safety timeout
   }
 
   public Command retract(){
@@ -62,7 +63,8 @@ public class Intake extends SubsystemBase {
     return runEnd(
         () -> io.setDeployVoltage(-deployMotorConstants.deployVoltage), //retract at the specified voltage
         () -> io.setDeployVoltage(0.0)
-    ).until(() -> Units.radiansToDegrees(inputs.deployMotorPositionRad) < deployMotorConstants.retractTargetPositionDegrees);
+    ).until(() -> Units.radiansToDegrees(inputs.deployMotorPositionRad) < deployMotorConstants.retractTargetPositionDegrees)
+     .withTimeout(deployMotorConstants.retractTimeoutSeconds); //safety timeout
   }
 
   //command to intake fuel
