@@ -212,9 +212,9 @@ public class RobotContainer {
         lockWheelsTrigger.onTrue(Commands.runOnce(drive::stopWithX, drive));
 
         //Deploy intake when B button is pressed
-        deployIntakeTrigger.onTrue(intake.deploy());
+        deployIntakeTrigger.and(intake.isDeployed.negate()).onTrue(intake.deploy());
         //Retract intake when B button + Right Bumper is pressed
-        retractIntakeTrigger.whileTrue(intake.retract());
+        retractIntakeTrigger.and(intake.isRetracted.negate()).whileTrue(intake.retract());
         //Intake fuel while Y button is held
         intakeTrigger.whileTrue(intake.intake());
         //Eject fuel while left bumper is held

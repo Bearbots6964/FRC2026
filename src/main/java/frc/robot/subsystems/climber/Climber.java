@@ -10,6 +10,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.climber.ClimberConstants.climberMotorConstants;
 
 public class Climber extends SubsystemBase {
@@ -20,6 +21,21 @@ public class Climber extends SubsystemBase {
     //Alert for climber disconnection
     private final Alert climberMotorDisconnectedAlert;
     private final Alert climberEncoderDisconnectedAlert;
+
+    //triggers: prevent subsystems from knowing each other to reduce dependency
+    public final Trigger isAtTop = new Trigger( //trigger that is true when the climber has fully climbed
+        () -> Units.radiansToDegrees(inputs.climberEncoderAbsolutePositionRad) 
+              >= climberMotorConstants.climbDegrees);
+    
+    public final Trigger isAtBottom = new Trigger( //trigger that is true when the climber has fully descended
+        () -> Units.radiansToDegrees(inputs.climberEncoderAbsolutePositionRad) 
+              <= climberMotorConstants.descendDegrees);
+
+    public final Trigger isClimberMotorDisconnected = new Trigger(
+        () -> !inputs.climberMotorConnected);
+
+    public final Trigger isClimberEncoderDisconnected = new Trigger(
+        () -> !inputs.climberEncoderConnected);
   
   /** Creates a new climber. */
   public Climber(ClimberIO io) {
