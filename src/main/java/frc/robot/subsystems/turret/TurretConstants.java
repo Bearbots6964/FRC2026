@@ -51,8 +51,8 @@ public class TurretConstants {
     public static final class TalonFXConstants {
 
         public static final class TurnMotorConstants {
-            public static final int TURN_MOTOR_ID = 10;
-            public static final int TURN_ENCODER_ID = 20;
+            public static final int TURN_MOTOR_ID = 8;
+            public static final int TURN_ENCODER_ID = 9;
 
             public static final Angle MAX_TURN_ANGLE = Units.Degrees.of(180.0);
             public static final Angle MIN_TURN_ANGLE = Units.Degrees.of(-180.0);

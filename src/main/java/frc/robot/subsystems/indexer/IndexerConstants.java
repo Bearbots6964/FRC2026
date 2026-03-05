@@ -11,7 +11,7 @@ public class IndexerConstants {
     public static final double MOTOR_SPEED_PERCENTAGE = 0.3;
 
     public static final class TalonFXConstants {
-        public static final int MOTOR_ID = 17;
+        public static final int MOTOR_ID = 7;
         public static final double GEAR_RATIO = (64 / 16) * 3; // 3:1 gearbox with a 16:64 belt reduction
         public static final Slot0Configs MOTOR_GAINS = new Slot0Configs()
                 .withKP(0.0)
