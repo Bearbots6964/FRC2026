@@ -17,8 +17,9 @@ public class Climber extends SubsystemBase {
     // will compile after run
     private final ClimberIOInputsAutoLogged inputs = new ClimberIOInputsAutoLogged();
 
-    //Alert for climber motor disconnection
+    //Alert for climber disconnection
     private final Alert climberMotorDisconnectedAlert;
+    private final Alert climberEncoderDisconnectedAlert;
   
   /** Creates a new climber. */
   public Climber(ClimberIO io) {
@@ -26,6 +27,9 @@ public class Climber extends SubsystemBase {
     climberMotorDisconnectedAlert =
        new Alert("Climber motor disconnected.", Alert.AlertType.kError);
          //critical alert for motor disconnection
+    climberEncoderDisconnectedAlert = 
+       new Alert("Climber encoder disconnected.", Alert.AlertType.kError);
+         //critical alert for encoder disconnection
       }
 
   @Override
@@ -35,6 +39,8 @@ public class Climber extends SubsystemBase {
     Logger.processInputs("Climber", inputs);
     //check for climber motor disconnection and display if true
     climberMotorDisconnectedAlert.set(!inputs.climberMotorConnected);
+    //check for climber encoder disconnection and display if true
+    climberEncoderDisconnectedAlert.set(!inputs.climberEncoderConnected);
   }
 
   //command to climb
@@ -42,8 +48,8 @@ public class Climber extends SubsystemBase {
     return runEnd(
       () -> io.setClimberVoltage(climberMotorConstants.climberVoltage), //climb at 6 volts when this command is scheduled
       () -> io.setClimberVoltage(0.0) //stop the climber motor when the command ends
-    ).until(() -> Units.radiansToDegrees(inputs.climberMotorPositionRad) > climberMotorConstants.climbDegrees); 
-    //end the command when the climber motor is 300 degrees
+    ).until(() -> Units.radiansToDegrees(inputs.climberEncoderAbsolutePositionRad) > climberMotorConstants.climbDegrees) //use absolute position from CANcoder
+     .withTimeout(climberMotorConstants.climbTimeoutSeconds); //safety timeout in case encoder fails or mechanism stalls
   }
   
   //command to descend
@@ -51,8 +57,8 @@ public class Climber extends SubsystemBase {
     return runEnd(
       () -> io.setClimberVoltage(-climberMotorConstants.climberVoltage), //descend at 6 volts when this command is scheduled
       () -> io.setClimberVoltage(0.0) //stop the climber motor when the command ends
-    ).until(() -> Units.radiansToDegrees(inputs.climberMotorPositionRad) < climberMotorConstants.descendDegrees); 
-    //end the command when the climber motor is below 3 degrees
+    ).until(() -> Units.radiansToDegrees(inputs.climberEncoderAbsolutePositionRad) < climberMotorConstants.descendDegrees) //use absolute position from CANcoder
+     .withTimeout(climberMotorConstants.climbTimeoutSeconds); //safety timeout in case encoder fails or mechanism stalls
   }
 
   //stop the climber motor
