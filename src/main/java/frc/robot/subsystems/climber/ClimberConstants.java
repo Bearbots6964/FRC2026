@@ -11,8 +11,6 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
-import edu.wpi.first.math.util.Units;
-
 /** Add your docs here. */
 public class ClimberConstants {
 
@@ -26,6 +24,7 @@ public class ClimberConstants {
         public static final double climberVoltage = 6.0;
         public static final double climbDegrees = 300.0;
         public static final double descendDegrees = 3.0;
+        public static final double climbTimeoutSeconds = 10.0; //safety timeout — tune based on how long a full climb takes
 
         public static final Slot0Configs climberMotorGains = new Slot0Configs()
                 .withKP(0.0)
@@ -46,6 +45,7 @@ public class ClimberConstants {
         public static final double absoluteSensorDiscontinuityPoint = 0.5;
         public static final SensorDirectionValue sensorDirection = SensorDirectionValue.CounterClockwise_Positive;
         public static final double magnetOffset = 0.5;
+        
         public static final int climberEncoderCanID = 6;
     }
 
