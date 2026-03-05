@@ -18,7 +18,6 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -32,9 +31,9 @@ import frc.robot.subsystems.climber.ClimberConstants.climberMotorConstants;
 public class ClimberIOTalonFX implements ClimberIO{
 
     //instantiate climber motor
-    TalonFX climberMotor;
+    private final TalonFX climberMotor;
     //instantiate climber encoder
-    CANcoder climberEncoder;
+    private final CANcoder climberEncoder;
 
     //climber motor status signals
     StatusSignal<Angle> climberMotorPositionRot; //use rotations because getPosition returns rotations
