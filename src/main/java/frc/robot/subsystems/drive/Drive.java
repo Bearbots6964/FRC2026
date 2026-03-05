@@ -33,12 +33,14 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
@@ -46,6 +48,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.ChassisAccelerations;
 import frc.robot.util.LocalADStarAK;
+import frc.robot.util.Zones;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
@@ -84,6 +87,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
         getModuleTranslations());
 
     public static final DriveTrainSimulationConfig mapleSimConfig = DriveTrainSimulationConfig.Default()
+        .withBumperSize(Units.Inches.of(35.0), Units.Inches.of(35.0))
         .withRobotMass(Kilograms.of(ROBOT_MASS_KG))
         .withCustomModuleTranslations(getModuleTranslations())
         .withGyro(COTS.ofPigeon2())
@@ -122,6 +126,9 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     private final Consumer<Pose2d> resetSimulationPoseCallBack;
 
     private ChassisSpeeds previousSpeeds = new ChassisSpeeds();
+
+    @AutoLogOutput
+    public final Trigger nearBumpTrigger = Zones.BUMP_ZONES.willContain(this::getPose, this::getChassisSpeeds, Seconds.of(0.3));
 
     public Drive(
         GyroIO gyroIO,

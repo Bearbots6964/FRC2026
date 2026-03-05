@@ -13,9 +13,13 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inches;
+
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -51,6 +55,27 @@ public final class Constants {
         public static final Transform3d BALL_TRANSFORM_LEFT = new Transform3d(-0.24, 0.09, 0.5, Rotation3d.kZero);
         public static final Transform3d BALL_TRANSFORM_CENTER = new Transform3d(-0.24, 0, 0.5, Rotation3d.kZero);
         public static final Transform3d BALL_TRANSFORM_RIGHT = new Transform3d(-0.24, -0.09, 0.5, Rotation3d.kZero);
+    }
+
+    public static final class Dimensions {
+        public static final Distance BUMPER_THICKNESS = Inches.of(3.625); // frame to edge of bumper
+        public static final Distance BUMPER_HEIGHT = Inches.of(6); // height from floor to top of bumper
+        public static final Distance FRAME_SIZE_Y = Inches.of(27.5); // left to right (y-axis)
+        public static final Distance FRAME_SIZE_X = Inches.of(27.5); // front to back (x-axis)
+
+        public static final Distance FULL_WIDTH = FRAME_SIZE_Y.plus(BUMPER_THICKNESS.times(2));
+        public static final Distance FULL_LENGTH = FRAME_SIZE_X.plus(BUMPER_THICKNESS.times(2));
+    }
+
+    public static final class AutoConstants {
+        public static final Rotation2d[] BUMP_TRAVERSAL_HEADINGS = new Rotation2d[] { // TODO: get real values
+            Rotation2d.fromDegrees(0),
+            Rotation2d.fromDegrees(90),
+            Rotation2d.fromDegrees(180),
+            Rotation2d.fromDegrees(270)
+        };
+        // TODO: get real value
+        public static final double BUMP_TRAVERSAL_SPEED = 1.5; // m/s
     }
 
 }
