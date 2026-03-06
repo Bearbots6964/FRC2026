@@ -28,6 +28,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
+import frc.robot.subsystems.intake.Intake.IntakeGoal;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOTalonFX;
@@ -213,13 +214,13 @@ public class RobotContainer {
 
         //Deploy intake when B button is pressed, 
         //negate means the command will only run if the intake isn't already deployed
-        deployIntakeTrigger.and(intake.isDeployed.negate()).onTrue(intake.deploy());
+        deployIntakeTrigger.and(intake.isDeployed.negate()).onTrue(intake.setGoal(IntakeGoal.DEPLOY));
         //Retract intake when B button + Right Bumper is pressed
-        retractIntakeTrigger.and(intake.isRetracted.negate()).whileTrue(intake.retract());
+        retractIntakeTrigger.and(intake.isRetracted.negate()).whileTrue(intake.setGoal(IntakeGoal.STOW));
         //Intake fuel while Y button is held
-        intakeTrigger.whileTrue(intake.intake());
+        intakeTrigger.whileTrue(intake.setGoal(IntakeGoal.DEPLOY));
         //Eject fuel while left bumper is held
-        reverseIntakeTrigger.whileTrue(intake.eject());
+        reverseIntakeTrigger.whileTrue(intake.setGoal(IntakeGoal.EJECT));
 
         // Reset gyro / odometry
         final Runnable resetGyro =
