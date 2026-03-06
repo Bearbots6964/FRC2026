@@ -76,8 +76,8 @@ public class TurretConstants {
         }
 
         public static final class FlywheelMotorConstants {
-            public static final int FLYWHEEL_MOTOR_ID = 11;
-            public static final int FLYWHEEL_FOLLOWER_MOTOR_ID = 12;
+            public static final int FLYWHEEL_MOTOR_ID = 3;
+            public static final int FLYWHEEL_FOLLOWER_MOTOR_ID = 4;
 
             public static final Slot0Configs FLYWHEEL_GAINS = new Slot0Configs()
                 .withKP(0.0)

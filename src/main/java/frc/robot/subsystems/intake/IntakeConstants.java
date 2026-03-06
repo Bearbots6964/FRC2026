@@ -34,7 +34,7 @@ public class IntakeConstants {
 
 
  public static final class deployMotorConstants {
-    public static final int deployMotorCanID = 2;
+    public static final int deployMotorCanID = 50;
     public static final double gearRatio = 4.0 * 3.0 * 3.0; //gear ratio is 4:1, 3:1, 3:1
     public static final double deployVoltage = 6.0;
     public static final double deployTargetPositionDegrees = 200; //target position for deploying the intake, to be tuned

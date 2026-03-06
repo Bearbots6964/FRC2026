@@ -211,7 +211,8 @@ public class RobotContainer {
         // Switch to X pattern when X button is pressed
         lockWheelsTrigger.onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-        //Deploy intake when B button is pressed
+        //Deploy intake when B button is pressed, 
+        //negate means the command will only run if the intake isn't already deployed
         deployIntakeTrigger.and(intake.isDeployed.negate()).onTrue(intake.deploy());
         //Retract intake when B button + Right Bumper is pressed
         retractIntakeTrigger.and(intake.isRetracted.negate()).whileTrue(intake.retract());
