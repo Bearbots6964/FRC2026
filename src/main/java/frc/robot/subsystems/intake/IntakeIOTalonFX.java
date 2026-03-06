@@ -10,6 +10,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -23,12 +24,15 @@ import edu.wpi.first.units.measure.Voltage;
 import frc.robot.subsystems.intake.IntakeConstants.deployMotorConstants;
 import frc.robot.subsystems.intake.IntakeConstants.intakeMotorConstants;
 
-/** Add your docs here. */
-public class IntakeIOTalonFX implements IntakeIO{
+/**
+ * Add your docs here.
+ */
+public class IntakeIOTalonFX implements IntakeIO {
+
     //instantiate intake motor and status signals
     private final TalonFX intakeMotor;
     private final TalonFX deployMotor;
-    
+
     //intake motor status signals
     StatusSignal<Angle> intakeMotorPositionRot;
     StatusSignal<AngularVelocity> intakeMotorVelocityRotPerSec;
@@ -43,69 +47,73 @@ public class IntakeIOTalonFX implements IntakeIO{
 
     //create a new request to reuse for setting voltages and using commands
     private final VoltageOut voltageRequest = new VoltageOut(0);
+    private final PositionVoltage positionRequest = new PositionVoltage(0);
     private final NeutralOut neutralOut = new NeutralOut();
 
     public IntakeIOTalonFX() {
 
-      //structure for constructor is as follows:
-      //1. config
-      //2. create motor objects
-      //3. apply config to motors, retrying up to 5 times with 0.25s delay
-      //4. create status signals
-      //5. set update frequency for all status signals
-      //6. optimize bus utilization
+        //structure for constructor is as follows:
+        //1. config
+        //2. create motor objects
+        //3. apply config to motors, retrying up to 5 times with 0.25s delay
+        //4. create status signals
+        //5. set update frequency for all status signals
+        //6. optimize bus utilization
 
-
-       //configure the TalonFX for the intake motor, 
+        //configure the TalonFX for the intake motor,
         var intakeConfig = new TalonFXConfiguration()
-        .withMotorOutput(intakeMotorConstants.intakeMotorOutputConfigs)
-        .withCurrentLimits(intakeMotorConstants.intakeCurrentLimits)
-        .withSlot0(intakeMotorConstants.intakeMotorGains);
+            .withMotorOutput(intakeMotorConstants.intakeMotorOutputConfigs)
+            .withCurrentLimits(intakeMotorConstants.intakeCurrentLimits)
+            .withSlot0(intakeMotorConstants.intakeMotorGains);
         intakeConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         var deployConfig = new TalonFXConfiguration()
-        .withMotorOutput(deployMotorConstants.deployMotorOutputConfigs)
-        .withCurrentLimits(deployMotorConstants.deployCurrentLimits)
-        .withSlot0(deployMotorConstants.deployMotorGains);
+            .withMotorOutput(deployMotorConstants.deployMotorOutputConfigs)
+            .withCurrentLimits(deployMotorConstants.deployCurrentLimits)
+            .withSlot0(deployMotorConstants.deployMotorGains)
+            .withSoftwareLimitSwitch(deployMotorConstants.deploySoftwareLimitSwitchConfigs)
+            .withFeedback(deployMotorConstants.deployFeedbackConfigs);
         deployConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         deployConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-       
-       
-       //create motor object and apply configuration to intake motor, retrying up to 5 times with 0.25s delay
+
+        //create motor object and apply configuration to intake motor, retrying up to 5 times with 0.25s delay
         intakeMotor = new TalonFX(intakeMotorConstants.intakeMotorCanID);
         tryUntilOk(5, () -> intakeMotor.getConfigurator().apply(intakeConfig, 0.25));
-       
-       //create motor object and apply configuration to deploy motor, retrying up to 5 times with 0.25s delay
+
+        //create motor object and apply configuration to deploy motor, retrying up to 5 times with 0.25s delay
         deployMotor = new TalonFX(deployMotorConstants.deployMotorCanID);
         tryUntilOk(5, () -> deployMotor.getConfigurator().apply(deployConfig, 0.25));
 
-         //create status signals for intake motor
-         intakeMotorPositionRot = intakeMotor.getPosition();
-         intakeMotorVelocityRotPerSec = intakeMotor.getVelocity();
-         intakeMotorAppliedVolts = intakeMotor.getMotorVoltage();
-         intakeMotorCurrentAmps = intakeMotor.getSupplyCurrent();
+        // set the deploy motor to the retracted position on startup to ensure it starts in a known state, and to prevent it from trying to move to an out-of-bounds position
+        deployMotor.setPosition(IntakeConstants.RETRACTED_ANGLE);
 
-         //create status signals for deploy motor
-          deployMotorPositionRot = deployMotor.getPosition();
-          deployMotorVelocityRotPerSec = deployMotor.getVelocity();
-          deployMotorAppliedVolts = deployMotor.getMotorVoltage();
-          deployMotorCurrentAmps = deployMotor.getSupplyCurrent();
+        //create status signals for intake motor
+        intakeMotorPositionRot = intakeMotor.getPosition();
+        intakeMotorVelocityRotPerSec = intakeMotor.getVelocity();
+        intakeMotorAppliedVolts = intakeMotor.getMotorVoltage();
+        intakeMotorCurrentAmps = intakeMotor.getSupplyCurrent();
 
-          //set update frequency for all status signals to 50Hz, 
-       BaseStatusSignal.setUpdateFrequencyForAll(50.0,
-             intakeMotorPositionRot,
-             intakeMotorVelocityRotPerSec,
-             intakeMotorAppliedVolts,
-             intakeMotorCurrentAmps,
-             deployMotorPositionRot,
-             deployMotorVelocityRotPerSec,
-             deployMotorAppliedVolts,
-             deployMotorCurrentAmps);
-             
-      ParentDevice.optimizeBusUtilizationForAll(intakeMotor);
-      ParentDevice.optimizeBusUtilizationForAll(deployMotor);
-      //end of constructor
+        //create status signals for deploy motor
+        deployMotorPositionRot = deployMotor.getPosition();
+        deployMotorVelocityRotPerSec = deployMotor.getVelocity();
+        deployMotorAppliedVolts = deployMotor.getMotorVoltage();
+        deployMotorCurrentAmps = deployMotor.getSupplyCurrent();
+
+        //set update frequency for all status signals to 50Hz,
+        BaseStatusSignal.setUpdateFrequencyForAll(50.0,
+            intakeMotorPositionRot,
+            intakeMotorVelocityRotPerSec,
+            intakeMotorAppliedVolts,
+            intakeMotorCurrentAmps,
+            deployMotorPositionRot,
+            deployMotorVelocityRotPerSec,
+            deployMotorAppliedVolts,
+            deployMotorCurrentAmps);
+
+        ParentDevice.optimizeBusUtilizationForAll(intakeMotor);
+        ParentDevice.optimizeBusUtilizationForAll(deployMotor);
+        //end of constructor
     }
 
     @Override
@@ -115,44 +123,53 @@ public class IntakeIOTalonFX implements IntakeIO{
             intakeMotorVelocityRotPerSec,
             intakeMotorAppliedVolts,
             intakeMotorCurrentAmps
-            ).isOK();
+        ).isOK();
 
         inputs.deployMotorConnected = BaseStatusSignal.refreshAll(
-              deployMotorPositionRot,
-              deployMotorVelocityRotPerSec,
-              deployMotorAppliedVolts,
-              deployMotorCurrentAmps
-            ).isOK();
+            deployMotorPositionRot,
+            deployMotorVelocityRotPerSec,
+            deployMotorAppliedVolts,
+            deployMotorCurrentAmps
+        ).isOK();
 
-            //update the logged inputs with the latest values from the status signals
-            inputs.intakeMotorPositionRad = Units.rotationsToRadians(intakeMotorPositionRot.getValueAsDouble());
-            inputs.intakeMotorVelocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(intakeMotorVelocityRotPerSec.getValueAsDouble());
-            inputs.intakeMotorAppliedVolts = intakeMotorAppliedVolts.getValueAsDouble();
-            inputs.intakeMotorCurrentAmps = intakeMotorCurrentAmps.getValueAsDouble();
-            inputs.deployMotorPositionRad = Units.rotationsToRadians(deployMotorPositionRot.getValueAsDouble());
-            inputs.deployMotorVelocityRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(deployMotorVelocityRotPerSec.getValueAsDouble());
-            inputs.deployMotorAppliedVolts = deployMotorAppliedVolts.getValueAsDouble();
-            inputs.deployMotorCurrentAmps = deployMotorCurrentAmps.getValueAsDouble();
+        //update the logged inputs with the latest values from the status signals
+        inputs.intakeMotorPositionDegrees =
+            intakeMotorPositionRot.getValueAsDouble() * 360.0;
+        inputs.intakeMotorVelocityDegreesPerSec =
+            intakeMotorVelocityRotPerSec.getValueAsDouble() * 360.0;
+        inputs.intakeMotorAppliedVolts = intakeMotorAppliedVolts.getValueAsDouble();
+        inputs.intakeMotorCurrentAmps = intakeMotorCurrentAmps.getValueAsDouble();
+        inputs.deployMotorPositionDegrees =
+            deployMotorPositionRot.getValueAsDouble() * 360.0;
+        inputs.deployMotorVelocityDegreesPerSec =
+            deployMotorVelocityRotPerSec.getValueAsDouble() * 360.0;
+        inputs.deployMotorAppliedVolts = deployMotorAppliedVolts.getValueAsDouble();
+        inputs.deployMotorCurrentAmps = deployMotorCurrentAmps.getValueAsDouble();
     }
 
-   @Override
-   public void setIntakeVoltage(double volts) {
-     intakeMotor.setControl(voltageRequest.withOutput(volts));
-   }
-   
-   @Override
+    @Override
+    public void setIntakeVoltage(double volts) {
+        intakeMotor.setControl(voltageRequest.withOutput(volts));
+    }
+
+    @Override
     public void setDeployVoltage(double volts) {
-      deployMotor.setControl(voltageRequest.withOutput(volts));
+        deployMotor.setControl(voltageRequest.withOutput(volts));
     }
 
-  @Override
-    public void stopIntake() {
-      intakeMotor.setControl(neutralOut);
-   }
+    @Override
+    public void setDeployPosition(Angle angle) {
+        deployMotor.setControl(positionRequest.withPosition(angle));
+    }
 
-  @Override
+    @Override
+    public void stopIntake() {
+        intakeMotor.setControl(neutralOut);
+    }
+
+    @Override
     public void stopDeploy() {
-      deployMotor.setControl(neutralOut);
+        deployMotor.setControl(neutralOut);
     }
 
 }

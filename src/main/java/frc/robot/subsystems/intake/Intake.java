@@ -14,23 +14,27 @@ import edu.wpi.first.wpilibj2.command.Command;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
-     private final IntakeIO io;
-     // will compile after run
-      private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
-      
-      //Alert for intake motor disconnection
-      private final Alert intakeMotorDisconnectedAlert;
-      //Alert for deploy motor disconnection
-      private final Alert deployMotorDisconnectedAlert;
 
-      //triggers: prevent subsystems from knowing each other to reduce dependency
-      public final Trigger isDeployed = new Trigger( //trigger that is true when the intake is fully deployed
-          () -> Units.radiansToDegrees(inputs.deployMotorPositionRad) 
-                >= deployMotorConstants.deployTargetPositionDegrees);
-    
-      public final Trigger isRetracted = new Trigger( //trigger that is true when the intake is fully retracted
-          () -> Units.radiansToDegrees(inputs.deployMotorPositionRad) 
-                <= deployMotorConstants.retractTargetPositionDegrees);
+    private final IntakeIO io;
+    // will compile after run
+    private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
+
+    //Alert for intake motor disconnection
+    private final Alert intakeMotorDisconnectedAlert;
+    //Alert for deploy motor disconnection
+    private final Alert deployMotorDisconnectedAlert;
+    //triggers: prevent subsystems from knowing each other to reduce dependency
+    public final Trigger isDeployed = new Trigger(
+        //trigger that is true when the intake is fully deployed
+        () -> Math.abs(inputs.deployMotorPositionDegrees
+            - IntakeConstants.DEPLOYED_ANGLE.in(Degrees))
+            <= IntakeConstants.DEPLOY_TOLERANCE.in(Degrees));
+
+    public final Trigger isRetracted = new Trigger(
+        //trigger that is true when the intake is fully retracted
+        () -> Math.abs(inputs.deployMotorPositionDegrees
+            - IntakeConstants.RETRACTED_ANGLE.in(Degrees))
+            <= IntakeConstants.DEPLOY_TOLERANCE.in(Degrees));
 
       public final Trigger isDeployMotorDisconnected = new Trigger(
           () -> !inputs.deployMotorConnected);
