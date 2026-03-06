@@ -8,9 +8,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.intake.IntakeConstants.deployMotorConstants;
 import frc.robot.subsystems.intake.IntakeConstants.intakeMotorConstants;
-import edu.wpi.first.math.util.Units;
+import static edu.wpi.first.units.Units.Degrees;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
@@ -67,13 +69,29 @@ public class Intake extends SubsystemBase {
     //end of periodic
   }
   
+  //setGoal command to set the intake to a specific position, either deployed or retracted
+  public Command setGoal(IntakeGoal goal) {
+    return switch (goal) {
+        case STOW   -> retract();
+        
+        case DEPLOY -> Commands.sequence(deploy(), intake());
+        
+        case TILT  -> retract(); // placeholder
+
+        case EJECT  -> eject();
+        
+        case IDLE   -> Commands.runOnce(this::stopIntake, this);  
+    };
+}
+
+
   //command to deploy the intake
   public Command deploy() {
     //run the deploy motor at the specified voltage when this command is scheduled, and stop it when the command ends
     return runEnd(
         () -> io.setDeployVoltage(deployMotorConstants.deployVoltage), //deploy at the specified voltage
         () -> io.setDeployVoltage(0.0) //stop the deploy motor when the command ends
-    ).until(() -> Units.radiansToDegrees(inputs.deployMotorPositionRad) > deployMotorConstants.deployTargetPositionDegrees)
+    ).until(() -> isDeployed.getAsBoolean()) //end the command when the deploy motor reaches the deployed position
      .withTimeout(deployMotorConstants.deployTimeoutSeconds); //safety timeout
   }
 
@@ -82,7 +100,7 @@ public class Intake extends SubsystemBase {
     return runEnd(
         () -> io.setDeployVoltage(-deployMotorConstants.deployVoltage), //retract at the specified voltage
         () -> io.setDeployVoltage(0.0)
-    ).until(() -> Units.radiansToDegrees(inputs.deployMotorPositionRad) < deployMotorConstants.retractTargetPositionDegrees)
+    ).until(() -> isRetracted.getAsBoolean()) //end the command when the deploy motor reaches the retracted position
      .withTimeout(deployMotorConstants.retractTimeoutSeconds); //safety timeout
   }
 
@@ -109,6 +127,16 @@ public class Intake extends SubsystemBase {
 
   public void stopDeploy() {
     io.stopDeploy();
+  }
+
+
+  //enums
+  public enum IntakeGoal {
+    STOW, //nothing is out, Stow the intake inside frame perimeter.
+    DEPLOY, //Deploy the intake and run the intake motor to collect fuel.
+    TILT,  //Tilt the intake back to assist with funneling balls into the indexer.
+    IDLE,  //Stop the intake and hold position.
+    EJECT //Reverse the intake and spit out balls.
   }
 
 
