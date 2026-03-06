@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.intake;
 
+import edu.wpi.first.units.measure.Angle;
 import org.littletonrobotics.junction.AutoLog;
 
 /** Add your docs here. */
@@ -13,13 +14,13 @@ public interface IntakeIO {
         public boolean intakeMotorConnected = false;
         public boolean deployMotorConnected = false;
         
-        public double intakeMotorPositionRad = 0.0;
-        public double intakeMotorVelocityRadPerSec = 0.0;
+        public double intakeMotorPositionDegrees = 0.0;
+        public double intakeMotorVelocityDegreesPerSec = 0.0;
         public double intakeMotorAppliedVolts = 0.0;
         public double intakeMotorCurrentAmps = 0.0;
 
-        public double deployMotorPositionRad = 0.0;
-        public double deployMotorVelocityRadPerSec = 0.0;
+        public double deployMotorPositionDegrees = 0.0;
+        public double deployMotorVelocityDegreesPerSec = 0.0;
         public double deployMotorAppliedVolts = 0.0;
         public double deployMotorCurrentAmps = 0.0;
     }
@@ -32,6 +33,8 @@ public interface IntakeIO {
 
     /** Run the deploy motor at the specified voltage. */
     public default void setDeployVoltage(double volts) {}
+
+    public default void setDeployPosition(Angle angle) {}
 
     /** Stop the intake motor. */
     public default void stopIntake() {}
