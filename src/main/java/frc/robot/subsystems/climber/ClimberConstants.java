@@ -22,7 +22,7 @@ public class ClimberConstants {
         public static final double rotorToEncoderRatio = 45.0/2.0;
         
         public static final double climberVoltage = 6.0;
-        public static final double climbDegrees = 300.0;
+        public static final double climbDegrees =   90.0;
         public static final double descendDegrees = 3.0;
         public static final double climbTimeoutSeconds = 10.0; //safety timeout — tune based on how long a full climb takes
 
