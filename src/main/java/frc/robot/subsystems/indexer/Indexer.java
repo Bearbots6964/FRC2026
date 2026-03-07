@@ -29,6 +29,16 @@ public class Indexer extends SubsystemBase {
         motorDisconnected.set(!inputs.indexerMotorConnected);
     }
 
+    public Command setGoal(IndexerGoal goal) {
+        return switch(goal) {
+            case OPEN_SPIN -> runIndexerOpenLoopCommand(1.0);
+            
+            case VELOCITY_SPIN -> runIndexerVelocityCommand(1.0);
+            
+            case VOLTAGE_SPIN -> runIndexerVoltageCommand(12.0);
+        };
+    }
+
     public Command runIndexerOpenLoopCommand(double input) {
         return runEnd(
                 () -> io.setIndexerOpenLoop(input * IndexerConstants.MOTOR_SPEED_PERCENTAGE),
@@ -48,4 +58,12 @@ public class Indexer extends SubsystemBase {
                 () -> io.setIndexerVoltage(volts),
                 () -> io.stop());
     }
+
+
+    public enum IndexerGoal {
+        OPEN_SPIN,
+        VELOCITY_SPIN,
+        VOLTAGE_SPIN
+    }
+
 }
