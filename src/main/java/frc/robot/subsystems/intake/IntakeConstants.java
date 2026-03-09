@@ -4,10 +4,13 @@
 
 package frc.robot.subsystems.intake;
 
+import static edu.wpi.first.units.Units.Degrees;
+
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -23,15 +26,16 @@ public class IntakeConstants {
 
     // Angles measured from robot, stored as Rotation2d(x, y) vector components
     // DEPLOYED_ANGLE ≈ 13.45°, RETRACTED_ANGLE ≈ 86.67°
-    public static final Angle DEPLOYED_ANGLE = new Rotation2d(10.479423, 2.509233).getMeasure();
-    public static final Angle RETRACTED_ANGLE = new Rotation2d(0.464414, 7.980500).getMeasure();
-    public static final Angle DEPLOY_TOLERANCE = Units.Degrees.of(0.5);
+    public static final Angle DEPLOYED_ANGLE = Degrees.of(38.75);
+    public static final Angle RETRACTED_ANGLE = Degrees.of(87.187);
+    public static final Angle TILT_ANGLE = Degrees.of(60.0);
+    public static final Angle DEPLOY_TOLERANCE = Degrees.of(0.5);
 
     public static final class intakeMotorConstants {
 
         public static final int intakeMotorCanID = 1;
         public static final double gearRatio = 5.0; //gear ratio is 5:1
-        public static final double intakeVoltage = 6.0;
+        public static final double intakeVoltage = 8.0;
 
         public static final Slot0Configs intakeMotorGains = new Slot0Configs()
             .withKP(0.0)
@@ -40,7 +44,7 @@ public class IntakeConstants {
             .withKV(0.0);
 
         public static final CurrentLimitsConfigs intakeCurrentLimits = new CurrentLimitsConfigs()
-            .withStatorCurrentLimit(20.0);
+            .withStatorCurrentLimit(60.0);
 
         public static final MotorOutputConfigs intakeMotorOutputConfigs = new MotorOutputConfigs()
             .withInverted(InvertedValue.CounterClockwise_Positive)
@@ -56,19 +60,28 @@ public class IntakeConstants {
         public static final double retractTimeoutSeconds = 5.0;
         // https://www.reca.lc/arm?armMass=%7B%22s%22%3A9.781%2C%22u%22%3A%22lbs%22%7D&comLength=%7B%22s%22%3A10.7756464614%2C%22u%22%3A%22in%22%7D&currentLimit=%7B%22s%22%3A80%2C%22u%22%3A%22A%22%7D&efficiency=100&endAngle=%7B%22s%22%3A90%2C%22u%22%3A%22deg%22%7D&iterationLimit=10000&motor=%7B%22quantity%22%3A1%2C%22name%22%3A%22Kraken%20X44%20%28FOC%29%22%7D&ratio=%7B%22magnitude%22%3A48%2C%22ratioType%22%3A%22Reduction%22%7D&startAngle=%7B%22s%22%3A0%2C%22u%22%3A%22deg%22%7D
         public static final Slot0Configs deployMotorGains = new Slot0Configs()
-            .withKP(0.0)
-            .withKD(0.0)
+            .withKP(40.0)
+            .withKD(7.0)
             .withKS(0.0)
             .withKV(4.69)
             .withKA(0.10)
             .withKG(0.59)
             .withGravityType(GravityTypeValue.Arm_Cosine);
+        public static final Slot1Configs retractGains = new Slot1Configs()
+            .withKP(30.0)
+            .withKD(2.0)
+            .withKS(0.5)
+            .withKV(4.69)
+            .withKA(0.10)
+            .withKG(10.0)
+            .withGravityType(GravityTypeValue.Arm_Cosine);
+
 
         public static final CurrentLimitsConfigs deployCurrentLimits = new CurrentLimitsConfigs()
-            .withStatorCurrentLimit(20.0);
+            .withStatorCurrentLimit(120.0);
 
         public static final MotorOutputConfigs deployMotorOutputConfigs = new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withInverted(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake);
 
         public static final FeedbackConfigs deployFeedbackConfigs = new FeedbackConfigs()
