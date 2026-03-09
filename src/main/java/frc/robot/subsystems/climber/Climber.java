@@ -4,11 +4,13 @@
 
 package frc.robot.subsystems.climber;
 
+import static edu.wpi.first.units.Units.Degrees;
+
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.climber.ClimberConstants.climberMotorConstants;
@@ -24,12 +26,14 @@ public class Climber extends SubsystemBase {
 
     //triggers: prevent subsystems from knowing each other to reduce dependency
     public final Trigger isAtTop = new Trigger( //trigger that is true when the climber has fully climbed
-        () -> Units.radiansToDegrees(inputs.climberEncoderAbsolutePositionRad) 
-              >= climberMotorConstants.climbDegrees);
+        () -> Math.abs(inputs.climberEncoderAbsolutePositionDegrees - 
+        climberMotorConstants.climbAngle.in(Degrees)) 
+        <= climberMotorConstants.climbTolerance.in(Degrees));
     
     public final Trigger isAtBottom = new Trigger( //trigger that is true when the climber has fully descended
-        () -> Units.radiansToDegrees(inputs.climberEncoderAbsolutePositionRad) 
-              <= climberMotorConstants.descendDegrees);
+        () -> Math.abs(inputs.climberEncoderAbsolutePositionDegrees - 
+        climberMotorConstants.descendAngle.in(Degrees)) 
+        <= climberMotorConstants.climbTolerance.in(Degrees));
 
     public final Trigger isClimberMotorDisconnected = new Trigger(
         () -> !inputs.climberMotorConnected);
@@ -59,12 +63,20 @@ public class Climber extends SubsystemBase {
     climberEncoderDisconnectedAlert.set(!inputs.climberEncoderConnected);
   }
 
+  public Command setGoal(ClimberGoal goal){
+    return switch(goal){
+      case CLIMB -> climb();
+      case DESCEND -> descend();
+      case IDLE -> Commands.runOnce(this::stopClimber, this);
+    };
+  }
+
   //command to climb
   public Command climb(){
     return runEnd(
       () -> io.setClimberVoltage(climberMotorConstants.climberVoltage), //climb at 6 volts when this command is scheduled
       () -> io.setClimberVoltage(0.0) //stop the climber motor when the command ends
-    ).until(() -> Units.radiansToDegrees(inputs.climberEncoderAbsolutePositionRad) > climberMotorConstants.climbDegrees) //use absolute position from CANcoder
+    ).until(isAtTop) //use absolute position from CANcoder
      .withTimeout(climberMotorConstants.climbTimeoutSeconds); //safety timeout in case encoder fails or mechanism stalls
   }
   
@@ -73,12 +85,19 @@ public class Climber extends SubsystemBase {
     return runEnd(
       () -> io.setClimberVoltage(-climberMotorConstants.climberVoltage), //descend at 6 volts when this command is scheduled
       () -> io.setClimberVoltage(0.0) //stop the climber motor when the command ends
-    ).until(() -> Units.radiansToDegrees(inputs.climberEncoderAbsolutePositionRad) < climberMotorConstants.descendDegrees) //use absolute position from CANcoder
+    ).until(isAtBottom) //use absolute position from CANcoder
      .withTimeout(climberMotorConstants.climbTimeoutSeconds); //safety timeout in case encoder fails or mechanism stalls
   }
 
   //stop the climber motor
   public void stopClimber(){io.stopClimber();}
+
+
+  public enum ClimberGoal{
+    CLIMB,
+    DESCEND,
+    IDLE
+  }
 
 
 }
