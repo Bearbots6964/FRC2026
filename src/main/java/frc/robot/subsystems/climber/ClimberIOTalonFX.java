@@ -19,7 +19,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -120,12 +119,11 @@ public class ClimberIOTalonFX implements ClimberIO{
         inputs.climberEncoderConnected = BaseStatusSignal.refreshAll(
             climberEncoderAbsolutePositionRot
         ).isOK();
-        inputs.climberEncoderAbsolutePositionRad = Units.rotationsToRadians(climberEncoderAbsolutePositionRot.getValueAsDouble());
+        inputs.climberEncoderAbsolutePositionDegrees = climberEncoderAbsolutePositionRot.getValueAsDouble() * 360.0;
 
         //update the logged inputs with the latest values from the status signals
-        inputs.climberMotorPositionRad = Units.rotationsToRadians(climberMotorPositionRot.getValueAsDouble());
-        inputs.climberMotorVelocityRadPerSec = Units
-           .rotationsPerMinuteToRadiansPerSecond(climberMotorVelocityRadPerSec.getValueAsDouble());
+        inputs.climberMotorPositionDegrees = climberMotorPositionRot.getValueAsDouble() * 360.0;
+        inputs.climberMotorVelocityDegreesPerSec = climberMotorVelocityRadPerSec.getValueAsDouble() * 360.0;
         inputs.climberMotorAppliedVolts = climberMotorAppliedVolts.getValueAsDouble();
         inputs.climberMotorCurrentAmps = climberMotorCurrentAmps.getValueAsDouble();
     }

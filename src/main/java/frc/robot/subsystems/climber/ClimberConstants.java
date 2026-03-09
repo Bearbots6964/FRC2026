@@ -9,7 +9,11 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import static edu.wpi.first.units.Units.Degrees;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
 
 /** Add your docs here. */
 public class ClimberConstants {
@@ -22,8 +26,9 @@ public class ClimberConstants {
         public static final double rotorToEncoderRatio = 45.0/2.0;
         
         public static final double climberVoltage = 6.0;
-        public static final double climbDegrees =   90.0;
-        public static final double descendDegrees = 3.0;
+        public static final Angle climbAngle = Degrees.of(90.0);
+        public static final Angle descendAngle = Degrees.of(0.0);
+        public static final Angle climbTolerance = Degrees.of(0.5);
         public static final double climbTimeoutSeconds = 10.0; //safety timeout — tune based on how long a full climb takes
 
         public static final Slot0Configs climberMotorGains = new Slot0Configs()

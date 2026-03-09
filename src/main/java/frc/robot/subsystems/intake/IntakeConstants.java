@@ -21,6 +21,8 @@ import edu.wpi.first.units.measure.Angle;
  */
 public class IntakeConstants {
 
+    // Angles measured from robot, stored as Rotation2d(x, y) vector components
+    // DEPLOYED_ANGLE ≈ 13.45°, RETRACTED_ANGLE ≈ 86.67°
     public static final Angle DEPLOYED_ANGLE = new Rotation2d(10.479423, 2.509233).getMeasure();
     public static final Angle RETRACTED_ANGLE = new Rotation2d(0.464414, 7.980500).getMeasure();
     public static final Angle DEPLOY_TOLERANCE = Units.Degrees.of(0.5);
