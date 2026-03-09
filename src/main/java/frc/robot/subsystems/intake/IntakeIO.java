@@ -35,6 +35,7 @@ public interface IntakeIO {
     public default void setDeployVoltage(double volts) {}
 
     public default void setDeployPosition(Angle angle) {}
+    public default void setDeployPositionGainSlotTwo(Angle angle) {}
 
     /** Stop the intake motor. */
     public default void stopIntake() {}
