@@ -1,5 +1,6 @@
 package frc.robot.subsystems.turret;
 
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.subsystems.turret.TurretConstants.TalonFXConstants.HOOD_SERVO_CHANNEL;
 import static frc.robot.subsystems.turret.TurretConstants.TalonFXConstants.HOOD_SERVO_FOLLOWER_CHANNEL;
@@ -15,23 +16,24 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.turret.TurretConstants.TalonFXConstants.FlywheelMotorConstants;
 import frc.robot.subsystems.turret.TurretConstants.TalonFXConstants.TurnMotorConstants;
 import frc.robot.util.LinearServo;
 import frc.robot.util.PhoenixUtil;
-import java.util.prefs.PreferencesFactory;
 
 public class TurretIOTalonFX implements TurretIO {
 
@@ -146,6 +148,8 @@ public class TurretIOTalonFX implements TurretIO {
         flywheelFollowerMotor.optimizeBusUtilization();
 
         flywheelFollowerMotor.setControl(followRequest);
+
+        SmartDashboard.putData(new InstantCommand(() -> turnMotor.setPosition(MathUtil.inputModulus(turnMotor.getPosition().getValue().in(Rotations), -0.1, 0.1))).withName("Reset Turret Encoder (\"Zero\")"));
 
     }
 
