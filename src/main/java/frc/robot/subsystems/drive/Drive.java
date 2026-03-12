@@ -128,7 +128,8 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     private ChassisSpeeds previousSpeeds = new ChassisSpeeds();
 
     @AutoLogOutput
-    public final Trigger nearBumpTrigger = Zones.BUMP_ZONES.willContain(this::getPose, this::getChassisSpeeds, Seconds.of(0.3));
+    public final Trigger nearBumpTrigger = Zones.BUMP_ZONES.willContain(this::getPose,
+        this::getChassisSpeeds, Seconds.of(0.3)).or(Zones.BUMP_ZONES.contains(this::getPose));
 
     public Drive(
         GyroIO gyroIO,
