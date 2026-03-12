@@ -35,6 +35,7 @@ public interface TurretIO {
     public default void updateInputs(TurretIOInputs inputs) {}
 
     public default void setTurnSetpoint(Angle position, AngularVelocity velocity) {}
+    public default void setTurnSetpoint(Angle position) {}
 
     public default void setHoodPosition(double position) {}
 
@@ -49,4 +50,6 @@ public interface TurretIO {
     public default void setTurnPIDConstants(double kP, double kD, double kV, double kS) {}
 
     public default void setFlywheelPIDConstants(double kP, double kD, double kV, double kS) {}
+    public default void setFlywheelVoltage(Voltage voltage) {}
+    public default void setTurretVoltage(Voltage voltage) {}
 }

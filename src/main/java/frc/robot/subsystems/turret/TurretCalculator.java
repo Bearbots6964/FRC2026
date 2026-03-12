@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.turret;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.InchesPerSecondPerSecond;
@@ -13,6 +14,7 @@ import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.subsystems.turret.TurretConstants.TalonFXConstants.ROBOT_TO_TURRET_TRANSFORM;
 import static frc.robot.subsystems.turret.TurretConstants.TalonFXConstants.TurnMotorConstants.MAX_TURN_ANGLE;
@@ -25,6 +27,7 @@ import static frc.robot.subsystems.turret.TurretConstants.TargetingConstants.TOF
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -82,11 +85,11 @@ public class TurretCalculator {
 
         Translation2d direction = target.toTranslation2d().minus(turretTranslation);
         double angle = MathUtil.inputModulus(
-            direction.getAngle().minus(robot.getRotation()).getRotations(), -0.5, 0.5);
+            direction.getAngle().minus(robot.getRotation()).minus(Rotation2d.k180deg).getRotations(), -0.5, 0.5);
         double current = currentAngle.in(Rotations);
         if (current > 0 && angle + 1 <= MAX_TURN_ANGLE.in(Rotations)) angle += 1;
         if (current < 0 && angle - 1 >= MIN_TURN_ANGLE.in(Rotations)) angle -= 1;
-        Logger.recordOutput("Turret/DesiredAzimuthRad", angle);
+        Logger.recordOutput("Turret/DesiredAzimuthRot", angle);
         return Rotations.of(angle);
     }
 
@@ -176,7 +179,7 @@ public class TurretCalculator {
 
     public record ShotData(double exitVelocity, double hoodAngle, Translation3d target) {
         public ShotData(AngularVelocity exitVelocity, Angle hoodAngle, Translation3d target) {
-            this(exitVelocity.in(RadiansPerSecond), hoodAngle.in(Radians), target);
+            this(exitVelocity.in(RotationsPerSecond), hoodAngle.in(Degrees), target);
         }
 
         public ShotData(AngularVelocity exitVelocity, Angle hoodAngle) {
@@ -188,11 +191,14 @@ public class TurretCalculator {
         }
 
         public LinearVelocity getExitVelocity() {
-            return angularToLinearVelocity(RadiansPerSecond.of(this.exitVelocity), FLYWHEEL_RADIUS);
+            return angularToLinearVelocity(RotationsPerSecond.of(this.exitVelocity), FLYWHEEL_RADIUS);
+        }
+        public AngularVelocity getExitAngularVelocity() {
+            return RotationsPerSecond.of(this.exitVelocity);
         }
 
         public Angle getHoodAngle() {
-            return Radians.of(this.hoodAngle);
+            return Degrees.of(this.hoodAngle);
         }
 
         public Translation3d getTarget() {

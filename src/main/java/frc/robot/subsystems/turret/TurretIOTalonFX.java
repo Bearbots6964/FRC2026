@@ -1,18 +1,23 @@
 package frc.robot.subsystems.turret;
 
+import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.subsystems.turret.TurretConstants.TalonFXConstants.HOOD_SERVO_CHANNEL;
 import static frc.robot.subsystems.turret.TurretConstants.TalonFXConstants.HOOD_SERVO_FOLLOWER_CHANNEL;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.VoltageConfigs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -55,16 +60,15 @@ public class TurretIOTalonFX implements TurretIO {
     private final StatusSignal<Voltage> flywheelFollowerAppliedVolts;
 
     private final PositionVoltage turnPositionRequest = new PositionVoltage(0);
-    private final VelocityTorqueCurrentFOC flywheelVelocityRequest = new VelocityTorqueCurrentFOC(
+    private final VelocityVoltage flywheelVelocityRequest = new VelocityVoltage(
         0);
     private final TorqueCurrentFOC flywheelTorqueRequest = new TorqueCurrentFOC(0);
 
+    private final VoltageOut voltageReq = new VoltageOut(0.0);
+
     private final Follower followRequest = new Follower(
         FlywheelMotorConstants.FLYWHEEL_MOTOR_ID,
-        FlywheelMotorConstants.FLYWHEEL_OUTPUT_CONFIGS.Inverted
-            == FlywheelMotorConstants.FLYWHEEL_FOLLOWER_OUTPUT_CONFIGS.Inverted
-            ? MotorAlignmentValue.Aligned
-            : MotorAlignmentValue.Opposed
+        MotorAlignmentValue.Opposed
     );
 
     private final NeutralOut neutralOut = new NeutralOut();
@@ -87,8 +91,13 @@ public class TurretIOTalonFX implements TurretIO {
                     / TurnMotorConstants.ENCODER_TO_TURRET_RATIO)
                 .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder))
             .withSlot0(TurnMotorConstants.TURN_GAINS)
+            .withClosedLoopGeneral(new ClosedLoopGeneralConfigs()
+                .withContinuousWrap(false))
             .withCurrentLimits(TurnMotorConstants.TURN_CURRENT_LIMITS)
             .withMotorOutput(TurnMotorConstants.TURN_OUTPUT_CONFIGS)
+            .withVoltage(new VoltageConfigs()
+                .withPeakForwardVoltage(TurnMotorConstants.MAX_OUTPUT_VOLTS)
+                .withPeakReverseVoltage(-TurnMotorConstants.MAX_OUTPUT_VOLTS))
             .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                 .withForwardSoftLimitEnable(true)
                 .withForwardSoftLimitThreshold(TurnMotorConstants.MAX_TURN_ANGLE)
@@ -102,6 +111,7 @@ public class TurretIOTalonFX implements TurretIO {
             .withFeedback(FlywheelMotorConstants.FLYWHEEL_FEEDBACK_CONFIGS);
 
         flywheelFollowerConfig = new TalonFXConfiguration()
+            .withSlot0(FlywheelMotorConstants.FLYWHEEL_GAINS)
             .withCurrentLimits(FlywheelMotorConstants.FLYWHEEL_CURRENT_LIMITS)
             .withMotorOutput(FlywheelMotorConstants.FLYWHEEL_FOLLOWER_OUTPUT_CONFIGS);
 
@@ -171,6 +181,11 @@ public class TurretIOTalonFX implements TurretIO {
     }
 
     @Override
+    public void setTurnSetpoint(Angle position) {
+        turnMotor.setControl(turnPositionRequest.withPosition(position));
+    }
+
+    @Override
     public void setHoodPosition(double position) {
         hoodServo.setPosition(position);
         hoodFollowerServo.setPosition(position);
@@ -214,5 +229,15 @@ public class TurretIOTalonFX implements TurretIO {
         flywheelConfig.Slot0.kV = kV;
         flywheelConfig.Slot0.kS = kS;
         PhoenixUtil.tryUntilOk(5, () -> flywheelMotor.getConfigurator().apply(flywheelConfig));
+    }
+
+    @Override
+    public void setFlywheelVoltage(Voltage voltage) {
+        flywheelMotor.setControl(voltageReq.withOutput(voltage));
+    }
+
+    @Override
+    public void setTurretVoltage(Voltage voltage) {
+        turnMotor.setVoltage(voltage.in(Volts));
     }
 }
