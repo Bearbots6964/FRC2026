@@ -11,6 +11,7 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -23,8 +24,13 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.indexer.Indexer.IndexerGoal;
+import frc.robot.subsystems.indexer.IndexerIO;
+import frc.robot.subsystems.indexer.IndexerIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
@@ -33,7 +39,10 @@ import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOTalonFX;
 import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.superstructure.Superstructure;
+import frc.robot.subsystems.superstructure.Superstructure.Goal;
 import frc.robot.subsystems.turret.Turret;
+import frc.robot.subsystems.turret.Turret.TurretGoal;
 import frc.robot.subsystems.turret.TurretIO;
 import frc.robot.subsystems.turret.TurretIOSim;
 import frc.robot.subsystems.turret.TurretIOTalonFX;
@@ -58,8 +67,11 @@ public class RobotContainer {
     private final Drive drive;
     private final Vision vision;
     private final Intake intake;
-    private final Climber climber;
+//    private final Climber climber;
     private final Turret turret;
+    private final Indexer indexer;
+
+    private final Superstructure superstructure;
 
     private SwerveDriveSimulation driveSimulation = null;
 
@@ -70,17 +82,16 @@ public class RobotContainer {
     // Bindings
     // Driver
     private final Trigger slowMovementTrigger = driverController.leftTrigger();
-    private final Trigger fineTuningTrigger = driverController.rightTrigger();
+    private final Trigger fineTurningTrigger = driverController.rightTrigger();
     private final Trigger traverseBumpTrigger = driverController.a();
     private final Trigger lockWheelsTrigger = driverController.x();
     private final Trigger alignToTowerTrigger = driverController.start();
     private final Trigger resetGyroTrigger = driverController.back();
     private final Trigger killAutoTrigger = driverController.b();
-    private final Trigger rotationFollowsMovementTrigger = driverController.y();
     // Operator
     private final Trigger spinShooterTrigger = operatorController.leftTrigger();
     private final Trigger shootTrigger = operatorController.rightTrigger();
-    private final Trigger intakeTrigger = operatorController.y();
+    private final Trigger stopIntakeTrigger = operatorController.y();
     private final Trigger deployIntakeTrigger = operatorController.b();
     private final Trigger retractIntakeTrigger = operatorController.b()
         .and(operatorController.rightBumper());
@@ -112,14 +123,16 @@ public class RobotContainer {
                         new ModuleIOTalonFX(TunerConstants.BackRight),
                         (pose) -> {
                         });
+                intake = new Intake(new IntakeIOTalonFX());
+//                climber = new Climber(new ClimberIOTalonFX());
+                turret = new Turret(new TurretIOTalonFX(), drive::getPose, drive::getChassisSpeeds);
+                indexer = new Indexer(new IndexerIOTalonFX());
+
                 this.vision = new Vision(
                     drive,
-                    new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
-                    new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation));
-                intake = new Intake(new IntakeIOTalonFX());
-                climber = new Climber(new ClimberIOTalonFX());
-                turret = new Turret(new TurretIOTalonFX(), drive::getPose, drive::getChassisSpeeds);
-
+                    new VisionIOPhotonVision(camera0Name, robotToCamera0),
+                    new VisionIOPhotonVision(camera1Name, robotToCamera1),
+                    new VisionIOLimelightOnTurret("limelight", drive::getRotation, () -> drive.getAngularVelocity().plus(turret.getTurretVelocity()), turret::getTurretRotation));
                 break;
             case SIM:
                 // Sim robot, instantiate physics sim IO implementations
@@ -144,11 +157,13 @@ public class RobotContainer {
                     new VisionIOPhotonVisionSim(
                         camera1Name, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose));
                 intake = new Intake(new IntakeIO() {});
-                climber = new Climber(new ClimberIO() {});
+//                climber = new Climber(new ClimberIO() {});
                 TurretIOSim turretSim = new TurretIOSim(fuelSim);
                 turret = new Turret(turretSim, drive::getPose, drive::getChassisSpeeds);
-
+                indexer = new Indexer(new IndexerIO() {
+                });
                 configureFuelSimRobot(turretSim::canIntake, turretSim::intakeFuel);
+
 
                 break;
 
@@ -163,12 +178,16 @@ public class RobotContainer {
                     (pose) -> {});
                 vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
                 intake = new Intake(new IntakeIO() {});
-                climber = new Climber(new ClimberIO() {});
+//                climber = new Climber(new ClimberIO() {});
                 turret = new Turret(new TurretIO() {}, drive::getPose, drive::getChassisSpeeds);
 
+                indexer = new Indexer(new IndexerIO() {
+                });
                 break;
         }
+        superstructure = new Superstructure(turret, intake, indexer, drive::getPose);
 
+        configureAutonomous();
         // Set up auto routines
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -205,6 +224,9 @@ public class RobotContainer {
             DriveCommands.joystickDrive(drive, () -> -driverController.getLeftY(),
                 () -> -driverController.getLeftX(), () -> -driverController.getRightX()));
 
+        slowMovementTrigger.whileTrue(DriveCommands.joystickDriveSlowly(drive, () -> -driverController.getLeftY(),
+            () -> -driverController.getLeftX(), () -> -driverController.getRightX()));
+        fineTurningTrigger.whileTrue(DriveCommands.joystickDriveFollowingVelocity(drive, () -> -driverController.getLeftY(), () -> -driverController.getLeftX()));
         drive.nearBumpTrigger.whileTrue(
             DriveCommands.joystickDriveOverBump(drive, () -> -driverController.getLeftY(),
                 () -> -driverController.getLeftX()));
@@ -218,9 +240,21 @@ public class RobotContainer {
         //Retract intake when B button + Right Bumper is pressed
         retractIntakeTrigger.and(intake.isRetracted.negate()).whileTrue(intake.setGoal(IntakeGoal.STOW));
         //Intake fuel while Y button is held
-        intakeTrigger.whileTrue(intake.setGoal(IntakeGoal.DEPLOY));
+        stopIntakeTrigger.whileTrue(intake.setGoal(IntakeGoal.IDLE));
         //Eject fuel while left bumper is held
         reverseIntakeTrigger.whileTrue(intake.setGoal(IntakeGoal.EJECT));
+
+        shootTrigger.onTrue(indexer.setGoal(
+                IndexerGoal.ACTIVE));
+//        shootTrigger.onTrue(indexer.setGoal(IndexerGoal.ACTIVE));
+        shootTrigger.onFalse(indexer.setGoal(IndexerGoal.IDLE));
+        manualTurretControlTrigger.whileTrue(turret.setGoal(TurretGoal.TUNING).repeatedly());
+
+//        operatorController.povUp().onTrue(intake.setGoal(IntakeGoal.TILT));
+//        operatorController.povUp().whileTrue(turret.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+//        operatorController.povRight().whileTrue(turret.sysIdQuasistatic(Direction.kReverse));
+//        operatorController.povDown().whileTrue(turret.sysIdDynamic(SysIdRoutine.Direction.kForward));
+//        operatorController.povLeft().whileTrue(turret.sysIdDynamic(Direction.kReverse));
 
         // Reset gyro / odometry
         final Runnable resetGyro =
@@ -231,6 +265,12 @@ public class RobotContainer {
                 : () -> drive.setPose(
                     new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
         resetGyroTrigger.onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+    }
+
+    private void configureAutonomous() {
+        NamedCommands.registerCommand("Lock Wheels", Commands.runOnce(drive::stopWithX, drive));
+        NamedCommands.registerCommand("Shoot",  superstructure.setGoal(Goal.SCORING));
+        NamedCommands.registerCommand("Deploy Intake", Commands.runOnce(() -> intake.setGoal(IntakeGoal.DEPLOY), intake));
     }
 
     private void configureFuelSim() {

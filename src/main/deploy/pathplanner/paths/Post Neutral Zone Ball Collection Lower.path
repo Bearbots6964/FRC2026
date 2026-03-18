@@ -1,0 +1,80 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.656091843377975,
+        "y": 5.901806082589286
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.656091843377975,
+        "y": 8.833980095941568
+      },
+      "isLocked": false,
+      "linkedName": "Neutral Zone Post Ball Collection Upper"
+    },
+    {
+      "anchor": {
+        "x": 3.311997302827381,
+        "y": 5.553966936383929
+      },
+      "prevControl": {
+        "x": 6.852990838913691,
+        "y": 4.829169503348214
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.6696688122923591,
+      "rotationDegrees": 90.0
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.7528152465820312,
+      "maxWaypointRelativePos": 0.9364242553710938,
+      "constraints": {
+        "maxVelocity": 1.5,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Shoot",
+      "waypointRelativePos": 0.8965329230401532,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 90.0
+  },
+  "reversed": false,
+  "folder": "NZ Lower",
+  "idealStartingState": {
+    "velocity": 4.0,
+    "rotation": 90.0
+  },
+  "useDefaultConstraints": true
+}

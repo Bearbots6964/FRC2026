@@ -110,6 +110,47 @@ public class DriveCommands {
     }
 
     /**
+     * Field relative drive command using two joysticks (controlling linear and angular
+     * velocities) with limited speed.
+     */
+    public static Command joystickDriveSlowly(
+        Drive drive,
+        DoubleSupplier xSupplier,
+        DoubleSupplier ySupplier,
+        DoubleSupplier omegaSupplier) {
+        return Commands.run(
+            () -> {
+                // Get linear velocity
+                Translation2d linearVelocity =
+                    getLinearVelocityFromJoysticks(xSupplier.getAsDouble(),
+                        ySupplier.getAsDouble());
+
+                // Apply rotation deadband
+                double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
+
+                // Square rotation value for more precise control
+                omega = Math.copySign(omega * omega, omega);
+
+                // Convert to field relative speeds & send command
+                ChassisSpeeds speeds =
+                    new ChassisSpeeds(
+                        linearVelocity.getX() * AutoConstants.SLOW_SPEED,
+                        linearVelocity.getY() * AutoConstants.SLOW_SPEED,
+                        omega * drive.getMaxAngularSpeedRadPerSec());
+                boolean isFlipped =
+                    DriverStation.getAlliance().isPresent()
+                        && DriverStation.getAlliance().get() == Alliance.Red;
+                drive.runVelocity(
+                    ChassisSpeeds.fromFieldRelativeSpeeds(
+                        speeds,
+                        isFlipped
+                            ? drive.getRotation().plus(new Rotation2d(Math.PI))
+                            : drive.getRotation()));
+            },
+            drive);
+    }
+
+    /**
      * Field relative drive command using joystick for linear control and PID for angular control.
      * Possible use cases include snapping to an angle, aiming at a vision target, or controlling
      * absolute rotation with a joystick.
@@ -287,9 +328,7 @@ public class DriveCommands {
 
             // Allow modules to orient
             Commands.run(
-                    () -> {
-                        drive.runCharacterization(0.0);
-                    },
+                    () -> drive.runCharacterization(0.0),
                     drive)
                 .withTimeout(FF_START_DELAY),
 
@@ -343,9 +382,7 @@ public class DriveCommands {
             Commands.sequence(
                 // Reset acceleration limiter
                 Commands.runOnce(
-                    () -> {
-                        limiter.reset(0.0);
-                    }),
+                    () -> limiter.reset(0.0)),
 
                 // Turn in place, accelerating up to full speed
                 Commands.run(

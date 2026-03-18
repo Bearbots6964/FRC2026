@@ -4,11 +4,13 @@
 
 package frc.robot.subsystems.intake;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -48,6 +50,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     //create a new request to reuse for setting voltages and using commands
     private final VoltageOut voltageRequest = new VoltageOut(0);
     private final PositionVoltage positionRequest = new PositionVoltage(0);
+    private final MotionMagicVoltage motionMagicRequest = new MotionMagicVoltage(0);
     private final NeutralOut neutralOut = new NeutralOut();
 
     public IntakeIOTalonFX() {
@@ -75,6 +78,7 @@ public class IntakeIOTalonFX implements IntakeIO {
             .withSlot1(
                 deployMotorConstants.retractGains) // the intake extends quite fast when assisted by gravity deploying, and I partially can't figure out why, partially can't get it tuned, and partially am lazy, so I'm adding a separate slot with more aggressive gains to use when retracting, which should help it retract faster and more reliably which we'll need in the defense-heavy neutral zone
             .withSoftwareLimitSwitch(deployMotorConstants.deploySoftwareLimitSwitchConfigs)
+            .withMotionMagic(deployMotorConstants.MOTION_MAGIC_CONFIGS)
             .withFeedback(deployMotorConstants.deployFeedbackConfigs);
         deployConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         deployConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -88,7 +92,7 @@ public class IntakeIOTalonFX implements IntakeIO {
         tryUntilOk(5, () -> deployMotor.getConfigurator().apply(deployConfig, 0.25));
 
         // set the deploy motor to the retracted position on startup to ensure it starts in a known state, and to prevent it from trying to move to an out-of-bounds position
-        deployMotor.setPosition(IntakeConstants.RETRACTED_ANGLE);
+        deployMotor.setPosition(IntakeConstants.START_ANGLE);
 
         //create status signals for intake motor
         intakeMotorPositionRot = intakeMotor.getPosition();
@@ -166,7 +170,7 @@ public class IntakeIOTalonFX implements IntakeIO {
 
     @Override
     public void setDeployPositionGainSlotTwo(Angle angle) {
-        deployMotor.setControl(positionRequest.withPosition(angle).withSlot(1));
+        deployMotor.setControl(motionMagicRequest.withPosition(angle).withSlot(1));
     }
 
     @Override

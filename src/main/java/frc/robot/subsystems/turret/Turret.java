@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Millimeters;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.subsystems.turret.TurretConstants.TalonFXConstants.ROBOT_TO_TURRET_TRANSFORM;
@@ -117,7 +118,7 @@ public class Turret extends SubsystemBase {
             "Turret flywheel follower motor disconnected.", AlertType.kError);
 
         SmartDashboard.putData(
-            Commands.runOnce(() -> setGoal(TurretGoal.TUNING)).withName("Turret Tuning Mode"));
+            Commands.runOnce(() -> setGoal(TurretGoal.TUNING)).withName("Turret Tuning Mode").ignoringDisable(true));
 
         routine = new SysIdRoutine(
             new Config(null, null, null,
@@ -201,11 +202,11 @@ public class Turret extends SubsystemBase {
             TargetingConstants.LOOKAHEAD_ITERATIONS);
         Angle azimuthAngle = TurretCalculator.calculateAzimuthAngle(robotPose,
             calculatedShot.target(), inputs.turnPosition);
-        AngularVelocity azimuthVelocity = RotationsPerSecond.of(
-            -fieldSpeeds.omegaRadiansPerSecond);
+        AngularVelocity azimuthVelocity = RadiansPerSecond.of(
+            -fieldSpeeds.omegaRadiansPerSecond / 2);
         Logger.recordOutput("Turret/vel", azimuthVelocity);
-        io.setTurnSetpoint(azimuthAngle);
-//        io.setTurnSetpoint(azimuthAngle, azimuthVelocity);
+//        io.setTurnSetpoint(azimuthAngle);
+        io.setTurnSetpoint(azimuthAngle, azimuthVelocity);
         io.setHoodPosition(actualHoodAngleToPosition(calculatedShot.getHoodAngle()));
         io.setFlywheelSpeed(
             TurretCalculator.linearToAngularVelocity(calculatedShot.getExitVelocity(),

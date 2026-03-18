@@ -172,6 +172,8 @@ public class TurretCalculator {
             shot = SHOT_MAP.get(distance);
             shot = new ShotData(shot.exitVelocity, shot.hoodAngle, predictedTarget);
             timeOfFlight = Seconds.of(TOF_MAP.get(distance));
+//            timeOfFlight = calculateTimeOfFlight(
+//                shot.getExitVelocity(), shot.getHoodAngle(), getDistanceToTarget(robot, predictedTarget));
         }
 
         return shot;

@@ -34,6 +34,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -52,6 +53,7 @@ import frc.robot.util.Zones;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
+import limelight.networktables.AngularVelocity3d;
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
@@ -71,8 +73,8 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
             Math.hypot(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)));
 
     // PathPlanner config constants
-    private static final double ROBOT_MASS_KG = 74.088;
-    private static final double ROBOT_MOI = 6.883;
+    private static final double ROBOT_MASS_KG = 61.68856232;
+    private static final double ROBOT_MOI = 6.2639058241;
     private static final double WHEEL_COF = 1.2;
     private static final RobotConfig PP_CONFIG = new RobotConfig(
         ROBOT_MASS_KG,
@@ -93,7 +95,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
         .withGyro(COTS.ofPigeon2())
         .withSwerveModule(new SwerveModuleSimulationConfig(
             DCMotor.getKrakenX60(1),
-            DCMotor.getFalcon500(1),
+            DCMotor.getKrakenX60(1),
             TunerConstants.FrontLeft.DriveMotorGearRatio,
             TunerConstants.FrontLeft.SteerMotorGearRatio,
             Volts.of(TunerConstants.FrontLeft.DriveFrictionVoltage),
@@ -164,12 +166,11 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
             () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
             this);
         Pathfinding.setPathfinder(new LocalADStarAK());
-        PathPlannerLogging.setLogActivePathCallback((activePath) -> {
-            Logger.recordOutput("Odometry/Trajectory", activePath.toArray(new Pose2d[0]));
-        });
-        PathPlannerLogging.setLogTargetPoseCallback((targetPose) -> {
-            Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
-        });
+        PathPlannerLogging.setLogActivePathCallback(
+            (activePath) -> Logger.recordOutput("Odometry/Trajectory",
+                activePath.toArray(new Pose2d[0])));
+        PathPlannerLogging.setLogTargetPoseCallback(
+            (targetPose) -> Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose));
 
         // Configure SysId
         sysId = new SysIdRoutine(
@@ -377,6 +378,10 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
      */
     public Rotation2d getRotation() {
         return getPose().getRotation();
+    }
+
+    public AngularVelocity getAngularVelocity() {
+        return RadiansPerSecond.of(getChassisSpeeds().omegaRadiansPerSecond);
     }
 
     /**

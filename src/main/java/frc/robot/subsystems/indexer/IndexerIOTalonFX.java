@@ -19,6 +19,7 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.subsystems.indexer.IndexerConstants.TalonFXConstants;
 import frc.robot.util.PhoenixUtil;
 
 public class IndexerIOTalonFX implements IndexerIO {
@@ -45,6 +46,7 @@ public class IndexerIOTalonFX implements IndexerIO {
         motorConfig = new TalonFXConfiguration()
                 .withSlot0(IndexerConstants.TalonFXConstants.MOTOR_GAINS)
                 .withCurrentLimits(IndexerConstants.TalonFXConstants.MOTOR_CURRENT_LIMITS)
+            .withOpenLoopRamps(TalonFXConstants.MOTOR_OPEN_LOOP_RAMPS)
                 .withMotorOutput(IndexerConstants.TalonFXConstants.MOTOR_OUTPUT_CONFIGS);
 
         PhoenixUtil.tryUntilOk(5, () -> motor.getConfigurator().apply(motorConfig));
