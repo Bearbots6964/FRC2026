@@ -49,6 +49,7 @@ public class Intake extends SubsystemBase {
     public final Trigger isIntakeMotorDisconnected = new Trigger(
         () -> !inputs.intakeMotorConnected);
 
+    @AutoLogOutput
     private IntakeGoal goal = IntakeGoal.IDLE;
 
     /**
@@ -132,7 +133,7 @@ public class Intake extends SubsystemBase {
         return defer(() -> {
             Commands.none();
             Command toSchedule = switch (goal) {
-                case STOW -> retract();
+                case STOW -> retract().andThen(intake());
                 case DEPLOY -> deploy().andThen(intake());
                 case TILT -> tilt().andThen(intake());
                 case IDLE -> Commands.run(this::stopIntake);

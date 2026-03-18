@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.Degrees;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
@@ -26,16 +27,18 @@ public class IntakeConstants {
 
     // Angles measured from robot, stored as Rotation2d(x, y) vector components
     // DEPLOYED_ANGLE ≈ 13.45°, RETRACTED_ANGLE ≈ 86.67°
-    public static final Angle DEPLOYED_ANGLE = Degrees.of(38.75);
-    public static final Angle RETRACTED_ANGLE = Degrees.of(87.187);
+    public static final Angle DEPLOYED_ANGLE = Degrees.of(31.5);
+    public static final Angle RETRACTED_ANGLE = Degrees.of(110.0);
     public static final Angle TILT_ANGLE = Degrees.of(60.0);
     public static final Angle DEPLOY_TOLERANCE = Degrees.of(0.5);
+
+    public static final Angle START_ANGLE = Degrees.of(81.123);
 
     public static final class intakeMotorConstants {
 
         public static final int intakeMotorCanID = 1;
         public static final double gearRatio = 5.0; //gear ratio is 5:1
-        public static final double intakeVoltage = 8.0;
+        public static final double intakeVoltage = 10.0;
 
         public static final Slot0Configs intakeMotorGains = new Slot0Configs()
             .withKP(0.0)
@@ -68,12 +71,13 @@ public class IntakeConstants {
             .withKG(0.59)
             .withGravityType(GravityTypeValue.Arm_Cosine);
         public static final Slot1Configs retractGains = new Slot1Configs()
-            .withKP(30.0)
+            .withKP(50.0)
             .withKD(2.0)
             .withKS(0.5)
             .withKV(4.69)
             .withKA(0.10)
             .withKG(10.0)
+            .withGravityArmPositionOffset(RETRACTED_ANGLE.minus(Degrees.of(81.123)))
             .withGravityType(GravityTypeValue.Arm_Cosine);
 
 
@@ -92,6 +96,9 @@ public class IntakeConstants {
             .withForwardSoftLimitThreshold(RETRACTED_ANGLE)
             .withReverseSoftLimitEnable(true)
             .withReverseSoftLimitThreshold(DEPLOYED_ANGLE);
+
+        public static final MotionMagicConfigs MOTION_MAGIC_CONFIGS = new MotionMagicConfigs()
+            .withMotionMagicAcceleration(1.0);
     }
 
 }

@@ -49,7 +49,7 @@ public class ClimberConstants {
     public static final class climberEncoderConstants {
         public static final double absoluteSensorDiscontinuityPoint = 0.5;
         public static final SensorDirectionValue sensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-        public static final double magnetOffset = 0.5;
+        public static final double magnetOffset = 0.40380859375;
         
         public static final int climberEncoderCanID = 6;
     }

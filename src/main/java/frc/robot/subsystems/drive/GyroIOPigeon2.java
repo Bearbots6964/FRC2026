@@ -17,6 +17,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import frc.robot.generated.TunerConstants;
+import java.util.Objects;
 import java.util.Queue;
 
 /** IO implementation for Pigeon 2. */
@@ -29,11 +30,9 @@ public class GyroIOPigeon2 implements GyroIO {
   private final StatusSignal<AngularVelocity> yawVelocity = pigeon.getAngularVelocityZWorld();
 
   public GyroIOPigeon2() {
-    if (TunerConstants.DrivetrainConstants.Pigeon2Configs != null) {
-      pigeon.getConfigurator().apply(TunerConstants.DrivetrainConstants.Pigeon2Configs);
-    } else {
-      pigeon.getConfigurator().apply(new Pigeon2Configuration());
-    }
+      pigeon.getConfigurator().apply(
+          Objects.requireNonNullElseGet(TunerConstants.DrivetrainConstants.Pigeon2Configs,
+              Pigeon2Configuration::new));
 
     pigeon.getConfigurator().setYaw(0.0);
     yaw.setUpdateFrequency(Drive.ODOMETRY_FREQUENCY);
@@ -53,7 +52,7 @@ public class GyroIOPigeon2 implements GyroIO {
         yawTimestampQueue.stream().mapToDouble((Double value) -> value).toArray();
     inputs.odometryYawPositions =
         yawPositionQueue.stream()
-            .map((Double value) -> Rotation2d.fromDegrees(value))
+            .map(Rotation2d::fromDegrees)
             .toArray(Rotation2d[]::new);
     yawTimestampQueue.clear();
     yawPositionQueue.clear();

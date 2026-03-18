@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.ControllerPreferences;
 import java.util.Set;
 import java.util.function.DoubleConsumer;
+import lombok.Getter;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public class ControllerRumbleManager {
 
@@ -24,7 +26,15 @@ public class ControllerRumbleManager {
     private Alliance firstAlliance;
     private Alliance ourAlliance;
 
+    /**
+     * -- GETTER --
+     *  Checks if the rumble manager has been initialized and started.
+     */
+    @Getter
     private boolean initialized = false;
+
+    @AutoLogOutput
+    private boolean isOurPhase = true; // whether the currently active hub is our alliance's or not, for logging purposes
 
     /**
      * Constructor for ControllerRumbleManager, which manages rumble feedback for controllers during
@@ -50,7 +60,8 @@ public class ControllerRumbleManager {
 
     // Hub active rumble pattern
     private Command hubActive() {
-        return on(0.25, ControllerPreferences.hubActiveRumbleIntensity).andThen(off(0.25))
+        return Commands.runOnce(() -> isOurPhase = true)
+            .andThen(on(0.25, ControllerPreferences.hubActiveRumbleIntensity)).andThen(off(0.25))
             .andThen(on(0.25, ControllerPreferences.hubActiveRumbleIntensity)).andThen(off(0.25))
             .andThen(on(1.0, ControllerPreferences.hubActiveRumbleIntensity))
             .finallyDo(() -> rumble.accept(0.0));
@@ -58,7 +69,9 @@ public class ControllerRumbleManager {
 
     // Hub inactive rumble pattern
     private Command hubInactive() {
-        return on(0.125, ControllerPreferences.hubInactiveRumbleIntensity).andThen(off(0.125))
+        return Commands.runOnce(() -> isOurPhase = false)
+            .andThen(on(0.125, ControllerPreferences.hubInactiveRumbleIntensity))
+            .andThen(off(0.125))
             .andThen(on(0.125, ControllerPreferences.hubInactiveRumbleIntensity))
             .andThen(off(0.125))
             .andThen(on(0.125, ControllerPreferences.hubInactiveRumbleIntensity))
@@ -132,7 +145,7 @@ public class ControllerRumbleManager {
     public Command fullMatchSequence() {
         initialized = true;
         // defer construction of commands requiring knowledge of which alliance is first until the end of the first 10 seconds of teleop
-        return Commands.waitSeconds(5.0).andThen(countdownSequence())
+        return Commands.runOnce(() -> isOurPhase = true).andThen(Commands.waitSeconds(5.0)).andThen(countdownSequence())
             .alongWith( // fetch our alliance
                 Commands.runOnce(this::populateAllianceData))
             .andThen(Commands.defer(() -> Commands.sequence(
@@ -140,13 +153,6 @@ public class ControllerRumbleManager {
                     selectHub(), selectOtherHub(), selectHub(), selectOtherHub(), endgameSequence()),
                 Set.of()));
 
-    }
-
-    /**
-     * Checks if the rumble manager has been initialized and started.
-     */
-    public boolean isInitialized() {
-        return initialized;
     }
 
     // Rumble on command

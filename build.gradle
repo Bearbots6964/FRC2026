@@ -4,6 +4,7 @@ plugins {
     id "com.peterabeles.gversion" version "1.10"
     id("com.diffplug.spotless") version "7.0.0.BETA4"
     id "io.freefair.lombok" version "8.4"
+    id "com.github.mrsarm.jshell.plugin" version "1.2.1"
 }
 
 java {
@@ -40,6 +41,14 @@ deploy {
                     jvmArgs.add("-XX:GCTimeRatio=5")
                     jvmArgs.add("-XX:+UseSerialGC")
                     jvmArgs.add("-XX:MaxGCPauseMillis=50")
+
+                    // Enable VisualVM connection
+//                    jvmArgs.add("-Dcom.sun.management.jmxremote=true")
+//                    jvmArgs.add("-Dcom.sun.management.jmxremote.port=1198")
+//                    jvmArgs.add("-Dcom.sun.management.jmxremote.local.only=false")
+//                    jvmArgs.add("-Dcom.sun.management.jmxremote.ssl=false")
+//                    jvmArgs.add("-Dcom.sun.management.jmxremote.authenticate=false")
+//                    jvmArgs.add("-Djava.rmi.server.hostname=10.69.64.2") // Replace TE.AM with team number
                 }
 
                 // Static files artifact

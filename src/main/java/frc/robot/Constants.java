@@ -19,7 +19,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -76,6 +78,9 @@ public final class Constants {
         };
         // TODO: get real value
         public static final double BUMP_TRAVERSAL_SPEED = 1.5; // m/s
+        public static final double SLOW_SPEED = 1.5; // m/s
+
+        public static final Time ACTIVE_PRESHOOT_TIME = Units.Seconds.of(2);
     }
 
 }

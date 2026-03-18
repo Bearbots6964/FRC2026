@@ -1,6 +1,7 @@
 package frc.robot.subsystems.turret;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -44,12 +45,25 @@ public class TurretConstants {
         static {
             // TODO: Fill these maps with data from testing
 //            SHOT_MAP.put(1.0, new ShotData(5, 1));
-            SHOT_MAP.put(1.469509, new ShotData(Units.RotationsPerSecond.of(40.0), Turret.actualHoodPositionToAngle(40.0)));
-            SHOT_MAP.put(2.005032, new ShotData(Units.RotationsPerSecond.of(45.0), Turret.actualHoodPositionToAngle(45.0)));
-            SHOT_MAP.put(2.507583, new ShotData(Units.RotationsPerSecond.of(47.0), Turret.actualHoodPositionToAngle(50.0)));
-            SHOT_MAP.put(3.033000, new ShotData(Units.RotationsPerSecond.of(50.0), Turret.actualHoodPositionToAngle(60.0)));
-            SHOT_MAP.put(3.504614, new ShotData(Units.RotationsPerSecond.of(53.0), Turret.actualHoodPositionToAngle(70.0)));
-            TOF_MAP.put(1.0, 1.0);
+            SHOT_MAP.put(1.469509, new ShotData(RotationsPerSecond.of(40.0), Turret.actualHoodPositionToAngle(40.0)));
+            SHOT_MAP.put(2.005032, new ShotData(RotationsPerSecond.of(45.0), Turret.actualHoodPositionToAngle(45.0)));
+//            SHOT_MAP.put(2.507583, new ShotData(RotationsPerSecond.of(47.0), Turret.actualHoodPositionToAngle(50.0)));
+//            SHOT_MAP.put(3.033000, new ShotData(RotationsPerSecond.of(50.0), Turret.actualHoodPositionToAngle(60.0)));
+//            SHOT_MAP.put(3.504614, new ShotData(RotationsPerSecond.of(53.0), Turret.actualHoodPositionToAngle(70.0)));
+//            SHOT_MAP.put(5.135334, new ShotData(RotationsPerSecond.of(81.0), Turret.actualHoodPositionToAngle(83.0)));
+            SHOT_MAP.put(5.135334, new ShotData(RotationsPerSecond.of(76.0), Turret.actualHoodPositionToAngle(59.0)));
+
+            SHOT_MAP.put(4.687540, new ShotData(RotationsPerSecond.of(68.0), Turret.actualHoodPositionToAngle(55.0)));
+            SHOT_MAP.put(4.25, new ShotData(RotationsPerSecond.of(68.0), Turret.actualHoodPositionToAngle(52.0)));
+            SHOT_MAP.put(3.654, new ShotData(RotationsPerSecond.of(55.0), Turret.actualHoodPositionToAngle(55.0)));
+            SHOT_MAP.put(3.269, new ShotData(RotationsPerSecond.of(50.0), Turret.actualHoodPositionToAngle(58.0)));
+            SHOT_MAP.put(2.755, new ShotData(RotationsPerSecond.of(50.0), Turret.actualHoodPositionToAngle(58.0)));
+
+            TOF_MAP.put(5.227626, 1.5458333333);
+            TOF_MAP.put(4.25, 1.525);
+            TOF_MAP.put(3.654, 1.15);
+            TOF_MAP.put(3.269, 1.0916666667);
+            TOF_MAP.put(2.755, 0.8458333333);
         }
 
         public static final int LOOKAHEAD_ITERATIONS = 2;
@@ -62,7 +76,7 @@ public class TurretConstants {
             public static final int TURN_ENCODER_ID = 9;
 
             public static final Angle MAX_TURN_ANGLE = Units.Degrees.of(180.0);
-            public static final Angle MIN_TURN_ANGLE = Units.Degrees.of(-180.0);
+            public static final Angle MIN_TURN_ANGLE = Units.Degrees.of(-190.0);
 
             public static final double MOTOR_TO_TURRET_RATIO = 4.8
                 * 10.0; // 4.8:1 gearing from motor to encoder, 10:1 gearing from encoder to turret
@@ -79,10 +93,10 @@ public class TurretConstants {
                 .withSupplyCurrentLowerLimit(30.0);
 
             public static final MotorOutputConfigs TURN_OUTPUT_CONFIGS = new MotorOutputConfigs()
-                .withInverted(InvertedValue.CounterClockwise_Positive)
+                .withInverted(InvertedValue.Clockwise_Positive)
                 .withNeutralMode(NeutralModeValue.Brake);
 
-            public static final double MAX_OUTPUT_VOLTS = 2.0;
+            public static final double MAX_OUTPUT_VOLTS = 7.0;
         }
 
         public static final class FlywheelMotorConstants {

@@ -22,6 +22,8 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import java.util.ArrayList;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
+import lombok.Getter;
+import lombok.Setter;
 
 public class FuelSim {
     protected static final double PERIOD = 0.02; // sec
@@ -307,7 +309,7 @@ public class FuelSim {
         }
     }
 
-    protected ArrayList<Fuel> fuels = new ArrayList<Fuel>();
+    protected ArrayList<Fuel> fuels = new ArrayList<>();
     protected boolean running = false;
     protected boolean simulateAirResistance = false;
     protected Supplier<Pose2d> robotPoseSupplier = null;
@@ -316,6 +318,13 @@ public class FuelSim {
     protected double robotLength; // size along the robot's x axis
     protected double bumperHeight;
     protected ArrayList<SimIntake> intakes = new ArrayList<>();
+    /**
+     * -- SETTER --
+     *  Sets the number of physics iterations per loop (0.02s)
+     *
+     * @param subticks
+     */
+    @Setter
     protected int subticks = 5;
 
     /**
@@ -326,7 +335,7 @@ public class FuelSim {
         // Initialize grid
         for (int i = 0; i < GRID_COLS; i++) {
             for (int j = 0; j < GRID_ROWS; j++) {
-                grid[i][j] = new ArrayList<Fuel>();
+                grid[i][j] = new ArrayList<>();
             }
         }
 
@@ -412,14 +421,6 @@ public class FuelSim {
     /** Enables accounting for drag force in physics step **/
     public void enableAirResistance() {
         simulateAirResistance = true;
-    }
-
-    /**
-     * Sets the number of physics iterations per loop (0.02s)
-     * @param subticks
-     */
-    public void setSubticks(int subticks) {
-        this.subticks = subticks;
     }
 
     /**
@@ -689,6 +690,13 @@ public class FuelSim {
         protected final Translation3d exit;
         protected final int exitVelXMult;
 
+        /**
+         * -- GETTER --
+         *  Get the current count of fuel scored in this hub
+         *
+         * @return
+         */
+        @Getter
         protected int score = 0;
 
         protected Hub(Translation2d center, Translation3d exit, int exitVelXMult) {
@@ -720,14 +728,6 @@ public class FuelSim {
          */
         public void resetScore() {
             score = 0;
-        }
-
-        /**
-         * Get the current count of fuel scored in this hub
-         * @return
-         */
-        public int getScore() {
-            return score;
         }
 
         protected void fuelCollideSide(Fuel fuel) {
