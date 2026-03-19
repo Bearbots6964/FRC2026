@@ -269,7 +269,7 @@ public class RobotContainer {
 
     private void configureAutonomous() {
         NamedCommands.registerCommand("Lock Wheels", Commands.runOnce(drive::stopWithX, drive));
-        NamedCommands.registerCommand("Shoot",  superstructure.setGoal(Goal.SCORING));
+        NamedCommands.registerCommand("Shoot",  indexer.runStopIndexer());
         NamedCommands.registerCommand("Deploy Intake", Commands.runOnce(() -> intake.setGoal(IntakeGoal.DEPLOY), intake));
     }
 

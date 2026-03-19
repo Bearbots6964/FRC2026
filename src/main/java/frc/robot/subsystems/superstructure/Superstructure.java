@@ -79,36 +79,36 @@ public class Superstructure extends SubsystemBase {
             Goal.SCORING,
             () -> Commands.sequence(
                     this.turret.setGoal(TurretGoal.SCORING),
-                    this.intake.setGoal(IntakeGoal.DEPLOY),
-                    this.indexer.setGoal(IndexerGoal.ACTIVE)
+                    this.intake.setGoal(IntakeGoal.DEPLOY)
+//                    this.indexer.setGoal(IndexerGoal.ACTIVE)
                 )
                 .withName("Start scoring"),
             Goal.PASSING,
             () -> Commands.sequence(
                     this.turret.setGoal(TurretGoal.PASSING).onlyIf(inAllianceZoneTrigger.negate()),
-                    this.intake.setGoal(IntakeGoal.DEPLOY),
-                    this.indexer.setGoal(IndexerGoal.ACTIVE).onlyIf(inAllianceZoneTrigger.negate())
+                    this.intake.setGoal(IntakeGoal.DEPLOY)
+//                    this.indexer.setGoal(IndexerGoal.ACTIVE).onlyIf(inAllianceZoneTrigger.negate())
                 )
                 .withName("Start passing"),
             Goal.COLLECTING,
             () -> Commands.sequence(
                     this.turret.setGoal(TurretGoal.IDLE),
-                    this.intake.setGoal(IntakeGoal.DEPLOY),
-                    this.indexer.setGoal(IndexerGoal.IDLE)
+                    this.intake.setGoal(IntakeGoal.DEPLOY)
+//                    this.indexer.setGoal(IndexerGoal.IDLE)
                 )
                 .withName("Start collecting"),
             Goal.EXPANDED,
             () -> Commands.sequence(
                     this.turret.setGoal(TurretGoal.IDLE),
-                    this.intake.setGoal(IntakeGoal.IDLE),
-                    this.indexer.setGoal(IndexerGoal.IDLE)
+                    this.intake.setGoal(IntakeGoal.IDLE)
+//                    this.indexer.setGoal(IndexerGoal.IDLE)
                 )
                 .withName("Start expanded"),
             Goal.IDLE,
             () -> Commands.sequence(
                     this.turret.setGoal(TurretGoal.IDLE),
-                    this.intake.setGoal(IntakeGoal.STOW),
-                    this.indexer.setGoal(IndexerGoal.IDLE)
+                    this.intake.setGoal(IntakeGoal.STOW)
+//                    this.indexer.setGoal(IndexerGoal.IDLE)
                 )
                 .withName("Idle"));
 
