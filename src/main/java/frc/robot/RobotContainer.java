@@ -131,8 +131,8 @@ public class RobotContainer {
                 this.vision = new Vision(
                     drive,
                     new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                    new VisionIOPhotonVision(camera1Name, robotToCamera1),
-                    new VisionIOLimelightOnTurret("limelight", drive::getRotation, () -> drive.getAngularVelocity().plus(turret.getTurretVelocity()), turret::getTurretRotation));
+                    new VisionIOPhotonVision(camera1Name, robotToCamera1)
+                    );
                 break;
             case SIM:
                 // Sim robot, instantiate physics sim IO implementations
