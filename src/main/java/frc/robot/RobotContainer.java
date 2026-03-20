@@ -289,6 +289,9 @@ public class RobotContainer {
     private void configureFuelSimRobot(BooleanSupplier ableToIntake, Runnable intakeCallback) {
         // TODO: implement method to link fuel sim with simulated intake
     }
+    public void a() {
+        turret.recalc();
+    }
 
     /**
      * Starts the controller rumble manager to provide rumble feedback during the match. Should be

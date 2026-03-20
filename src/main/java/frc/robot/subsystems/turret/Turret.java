@@ -97,6 +97,12 @@ public class Turret extends SubsystemBase {
 
     private final SysIdRoutine routine;
 
+    public void recalc() {
+        currentTarget = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+            ? Hub.topCenterPoint
+            : Hub.oppTopCenterPoint;
+    }
+
 
     public Turret(TurretIO io, Supplier<Pose2d> poseSupplier,
         Supplier<ChassisSpeeds> fieldSpeedsSupplier) {
