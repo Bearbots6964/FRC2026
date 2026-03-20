@@ -63,7 +63,7 @@ public class IntakeConstants {
         public static final double retractTimeoutSeconds = 5.0;
         // https://www.reca.lc/arm?armMass=%7B%22s%22%3A9.781%2C%22u%22%3A%22lbs%22%7D&comLength=%7B%22s%22%3A10.7756464614%2C%22u%22%3A%22in%22%7D&currentLimit=%7B%22s%22%3A80%2C%22u%22%3A%22A%22%7D&efficiency=100&endAngle=%7B%22s%22%3A90%2C%22u%22%3A%22deg%22%7D&iterationLimit=10000&motor=%7B%22quantity%22%3A1%2C%22name%22%3A%22Kraken%20X44%20%28FOC%29%22%7D&ratio=%7B%22magnitude%22%3A48%2C%22ratioType%22%3A%22Reduction%22%7D&startAngle=%7B%22s%22%3A0%2C%22u%22%3A%22deg%22%7D
         public static final Slot0Configs deployMotorGains = new Slot0Configs()
-            .withKP(70.0)
+            .withKP(80.0)
             .withKD(7.0)
             .withKS(0.0)
             .withKV(4.69)
