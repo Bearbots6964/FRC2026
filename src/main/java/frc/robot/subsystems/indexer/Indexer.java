@@ -33,7 +33,8 @@ public class Indexer extends SubsystemBase {
 
         motorDisconnected = new Alert("Indexer motor disconnected", AlertType.kError);
         overcurrentDebouncer = new Debouncer(0.2);
-        overcurrentTrigger = new Trigger(() -> overcurrentDebouncer.calculate(inputs.indexerCurrentAmps > 90.0));
+        overcurrentTrigger = new Trigger(
+            () -> overcurrentDebouncer.calculate(inputs.indexerCurrentAmps > 90.0));
         overcurrentTrigger.onTrue(runIndexer());
         overcurrentAlert = new Alert("Indexer hitting current limit!", AlertType.kWarning);
         visualizer = new IndexerVisualizer();
@@ -74,9 +75,13 @@ public class Indexer extends SubsystemBase {
     }
 
     public Command runStopIndexer() {
-        return runOnce(() -> io.setIndexerOpenLoop(-IndexerConstants.AGITATE_SPEED_PERCENTAGE))
+        return runOnce(() -> {
+            io.setIndexerOpenLoop(-IndexerConstants.AGITATE_SPEED_PERCENTAGE);
+            goal = IndexerGoal.ACTIVE;
+        })
             .andThen(Commands.waitSeconds(IndexerConstants.AGITATE_DURATION_SECONDS))
-            .andThen(runOnce(() -> io.setIndexerOpenLoop(IndexerConstants.MOTOR_SPEED_PERCENTAGE)).repeatedly());
+            .andThen(runOnce(
+                () -> io.setIndexerOpenLoop(IndexerConstants.MOTOR_SPEED_PERCENTAGE)).repeatedly());
     }
 
     public Command stopIndexer() {

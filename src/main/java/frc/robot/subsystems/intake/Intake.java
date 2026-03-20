@@ -111,6 +111,14 @@ public class Intake extends SubsystemBase {
             () -> io.setIntakeVoltage(0.0)
         );
     }
+    public Command autoIntake() {
+        return runOnce(
+            () -> io.setDeployPosition(IntakeConstants.DEPLOYED_ANGLE)
+            //deploy at the specified voltage
+        ).andThen(run(
+            () -> io.setIntakeVoltage(intakeMotorConstants.intakeVoltage)
+        ));
+    }
 
     public Command eject() {
         //run the intake in reverse at the specified voltage when this command is scheduled, and stop it when the command ends
