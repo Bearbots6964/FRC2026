@@ -227,18 +227,18 @@ public class RobotContainer {
         slowMovementTrigger.whileTrue(DriveCommands.joystickDriveSlowly(drive, () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(), () -> -driverController.getRightX()));
         fineTurningTrigger.whileTrue(DriveCommands.joystickDriveFollowingVelocity(drive, () -> -driverController.getLeftY(), () -> -driverController.getLeftX()));
-        drive.nearBumpTrigger.whileTrue(
-            DriveCommands.joystickDriveOverBump(drive, () -> -driverController.getLeftY(),
-                () -> -driverController.getLeftX()));
+//        drive.nearBumpTrigger.whileTrue(
+//            DriveCommands.joystickDriveOverBump(drive, () -> -driverController.getLeftY(),
+//                () -> -driverController.getLeftX()));
 
         // Switch to X pattern when X button is pressed
         lockWheelsTrigger.onTrue(Commands.runOnce(drive::stopWithX, drive));
 
         //Deploy intake when B button is pressed, 
         //negate means the command will only run if the intake isn't already deployed
-        deployIntakeTrigger.and(intake.isDeployed.negate()).onTrue(intake.setGoal(IntakeGoal.DEPLOY));
+        deployIntakeTrigger.onTrue(intake.setGoal(IntakeGoal.DEPLOY)).onFalse(intake.setGoal(IntakeGoal.STOW));
         //Retract intake when B button + Right Bumper is pressed
-        retractIntakeTrigger.and(intake.isRetracted.negate()).whileTrue(intake.setGoal(IntakeGoal.STOW));
+//        retractIntakeTrigger.and(intake.isRetracted.negate()).whileTrue(intake.setGoal(IntakeGoal.STOW));
         //Intake fuel while Y button is held
         stopIntakeTrigger.whileTrue(intake.setGoal(IntakeGoal.IDLE));
         //Eject fuel while left bumper is held
