@@ -9,6 +9,7 @@ import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
@@ -67,6 +68,8 @@ public class IntakeIOTalonFX implements IntakeIO {
         var intakeConfig = new TalonFXConfiguration()
             .withMotorOutput(intakeMotorConstants.intakeMotorOutputConfigs)
             .withCurrentLimits(intakeMotorConstants.intakeCurrentLimits)
+            .withOpenLoopRamps(new OpenLoopRampsConfigs()
+                .withVoltageOpenLoopRampPeriod(0.5))
             .withSlot0(intakeMotorConstants.intakeMotorGains);
         intakeConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
