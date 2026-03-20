@@ -111,13 +111,13 @@ public class Intake extends SubsystemBase {
             () -> io.setIntakeVoltage(0.0)
         );
     }
+
     public Command autoIntake() {
-        return runOnce(
-            () -> io.setDeployPosition(IntakeConstants.DEPLOYED_ANGLE)
-            //deploy at the specified voltage
-        ).andThen(run(
-            () -> io.setIntakeVoltage(intakeMotorConstants.intakeVoltage)
-        ));
+        return
+            runOnce(() -> goal = IntakeGoal.DEPLOY).andThen(
+                runOnce(() -> io.setDeployPosition(IntakeConstants.DEPLOYED_ANGLE)).repeatedly()
+                    .alongWith(runOnce(() -> io.setIntakeVoltage(
+                        intakeMotorConstants.intakeVoltage)).repeatedly()));
     }
 
     public Command eject() {

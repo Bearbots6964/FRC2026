@@ -25,6 +25,12 @@
                 "data": {
                   "waitTime": 20.0
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Deploy Intake"
+                }
               }
             ]
           }
