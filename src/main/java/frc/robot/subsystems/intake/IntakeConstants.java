@@ -68,7 +68,7 @@ public class IntakeConstants {
             .withKS(0.0)
             .withKV(4.69)
             .withKA(0.10)
-            .withKG(0.59)
+            .withKG(0.0)
             .withGravityType(GravityTypeValue.Arm_Cosine);
         public static final Slot1Configs retractGains = new Slot1Configs()
             .withKP(60.0)
