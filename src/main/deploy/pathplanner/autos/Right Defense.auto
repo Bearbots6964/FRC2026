@@ -11,9 +11,28 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Lock Wheels"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Lock Wheels"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 5.0
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Followup"
           }
         }
       ]
