@@ -32,16 +32,16 @@
     },
     {
       "anchor": {
-        "x": 8.441941592261905,
-        "y": 2.0526961495535714
+        "x": 8.601158854166666,
+        "y": 2.0357711588541667
       },
       "prevControl": {
-        "x": 7.712658017113096,
-        "y": 1.6885029761904762
+        "x": 7.871875279017857,
+        "y": 1.6715779854910715
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Right Defense"
     }
   ],
   "rotationTargets": [],
