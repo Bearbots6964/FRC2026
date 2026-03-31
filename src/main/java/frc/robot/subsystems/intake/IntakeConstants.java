@@ -8,8 +8,8 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class IntakeConstants {
   public static final class IntakeConsts {
-    public static final int INTAKE_LEAD_ID = 15;
-    public static final int INTAKE_FOLLOWER_ID = 16;
+    public static final int INTAKE_LEAD_ID = 2;
+    public static final int INTAKE_FOLLOWER_ID = 3;
 
     public static final double TARGET_RPS = 25.0;
 
@@ -31,7 +31,7 @@ public class IntakeConstants {
   }
 
   public static final class intakeDeploy {
-    public static final int INTAKE_DEPLOY_ID = 17;
+    public static final int INTAKE_DEPLOY_ID = 1;
 
     public static final Slot0Configs INTAKE_DEPLOY_SLOT0_CONFIGS =
         new Slot0Configs().withKP(0.0).withKD(0.0).withKS(0.0).withKV(0.0);

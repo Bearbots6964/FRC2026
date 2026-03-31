@@ -10,11 +10,11 @@ public class ShooterConstants {
   public static final class Constants {
 
     public static final class mainShooterConstants {
-      public static final int SHOOTER_LEAD_MOTOR_ID = 10;
+      public static final int SHOOTER_LEAD_MOTOR_ID = 6;
 
-      public static final int SHOOTER_FOLLOW1_MOTOR_ID = 11;
-      public static final int SHOOTER_FOLLO2_MOTOR_ID = 12;
-      public static final int SHOOTER_FOLLOW3_MOTOR_ID = 13;
+      public static final int SHOOTER_FOLLOW1_MOTOR_ID = 7;
+      public static final int SHOOTER_FOLLO2_MOTOR_ID = 8;
+      public static final int SHOOTER_FOLLOW3_MOTOR_ID = 9;
 
       public static final double GEAR_RATIO_SHOOTER_LEAD =
           (14 * 42) / (55 * 18); // gear ratio 14:55 and 42:18
@@ -54,7 +54,7 @@ public class ShooterConstants {
     }
 
     public static final class hoodConstants {
-      public static final int HOOD_MOTOR_ID = 14;
+      public static final int HOOD_MOTOR_ID = 10;
 
       public static final Slot0Configs HOOD_GAINS =
           new Slot0Configs().withKP(0.0).withKD(0.0).withKS(0.0).withKV(0.0);
