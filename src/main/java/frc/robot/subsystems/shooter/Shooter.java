@@ -61,6 +61,7 @@ public class Shooter extends SubsystemBase {
     hoodAlert = new Alert("Hood motor disconnected", AlertType.kError);
   }
 
+  @Override
   public void periodic() {
     io.updateInputs(logged);
 
@@ -70,6 +71,8 @@ public class Shooter extends SubsystemBase {
     follower1Alert.set(!logged.followerMotor1Connected);
     follower2Alert.set(!logged.followerMotor2Connected);
     follower3Alert.set(!logged.followerMotor3Connected);
+
+    hoodAlert.set(!logged.hoodMotorConnected);
   }
 
   public Command setState(StatusGoal stateGoal) {
