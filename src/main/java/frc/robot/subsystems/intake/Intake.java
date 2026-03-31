@@ -18,10 +18,10 @@ import frc.robot.subsystems.shooter.Shooter.StatusGoal;
 import frc.robot.util.LoggedTunableNumber;
 
 public class Intake extends SubsystemBase {
-    private final IntakeIO io;
-    private final IntakeIOAutoLogged inputs = new IntakeIOAutoLogged();
+  //private final IntakeIO io;
+ // private final IntakeIOAutoLogged inputs = new IntakeIOAutoLogged();
 
-    private intakeState statusGoal = intakeState.OFF;
+  private intakeState statusGoal = intakeState.OFF;
 
     private final LoggedTunableNumber intakekP = new LoggedTunableNumber("Intake/intake/kP",
             IntakeConsts.INTAKE_CONFIGS.kP);
