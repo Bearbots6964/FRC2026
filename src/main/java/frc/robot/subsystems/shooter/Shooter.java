@@ -1,31 +1,25 @@
-package frc.robot.subsystems.turret;
+package frc.robot.subsystems.shooter;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Millimeters;
-import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
-import static frc.robot.subsystems.turret.TurretConstants.TalonFXConstants.ROBOT_TO_TURRET_TRANSFORM;
-import static frc.robot.subsystems.turret.TurretConstants.TargetingConstants.FLYWHEEL_RADIUS;
-import static frc.robot.subsystems.turret.TurretConstants.TargetingConstants.PASSING_SPOT_LEFT;
-import static frc.robot.subsystems.turret.TurretConstants.TargetingConstants.PASSING_SPOT_RIGHT;
+import static frc.robot.subsystems.shooter.ShooterConstants.TargetingConstants.FLYWHEEL_RADIUS;
+import static frc.robot.subsystems.shooter.ShooterConstants.TargetingConstants.PASSING_SPOT_LEFT;
+import static frc.robot.subsystems.shooter.ShooterConstants.TargetingConstants.PASSING_SPOT_RIGHT;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.util.FlippingUtil;
-import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -35,28 +29,28 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.Hub;
-import frc.robot.subsystems.turret.TurretCalculator.ShotData;
-import frc.robot.subsystems.turret.TurretConstants.TalonFXConstants.FlywheelMotorConstants;
-import frc.robot.subsystems.turret.TurretConstants.TalonFXConstants.TurnMotorConstants;
-import frc.robot.subsystems.turret.TurretConstants.TargetingConstants;
+import frc.robot.subsystems.shooter.ShooterCalculator.ShotData;
+import frc.robot.subsystems.shooter.ShooterConstants.TalonFXConstants.FlywheelMotorConstants;
+import frc.robot.subsystems.shooter.ShooterConstants.TalonFXConstants.HoodMotorConstants;
+import frc.robot.subsystems.shooter.ShooterConstants.TargetingConstants;
 import frc.robot.util.LoggedTunableNumber;
-import java.lang.annotation.Target;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class Turret extends SubsystemBase {
+public class Shooter extends SubsystemBase {
 
-    private final TurretIO io;
-    private TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
+    private final ShooterIO io;
+    private ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
     private final Supplier<Pose2d> robotPoseSupplier;
     private final Supplier<ChassisSpeeds> fieldSpeedsSupplier;
+
+    public Rotation2d targetAngle = new Rotation2d();
 
     @AutoLogOutput
     Translation3d currentTarget = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
@@ -64,22 +58,25 @@ public class Turret extends SubsystemBase {
         : Hub.oppTopCenterPoint;
 
     @AutoLogOutput
-    private TurretGoal goal = TurretGoal.SCORING;
+    private ShooterGoal goal = ShooterGoal.SCORING;
 
-    private final TurretVisualizer visualizer;
+    @AutoLogOutput
+    private HoodGoal hoodGoal = HoodGoal.IDLE;
 
-    private final Alert turnMotorDisconnected;
+
     private final Alert flywheelMotorDisconnected;
-    private final Alert flywheelFollowerMotorDisconnected;
+    private final Alert flywheelFollowerMotor1Disconnected;
+    private final Alert flywheelFollowerMotor2Disconnected;
+    private final Alert flywheelFollowerMotor3Disconnected;
 
-    private final LoggedTunableNumber turnKP = new LoggedTunableNumber("Turret/Turn/kP",
-        TurnMotorConstants.TURN_GAINS.kP);
-    private final LoggedTunableNumber turnKD = new LoggedTunableNumber("Turret/Turn/kD",
-        TurnMotorConstants.TURN_GAINS.kD);
-    private final LoggedTunableNumber turnKS = new LoggedTunableNumber("Turret/Turn/kS",
-        TurnMotorConstants.TURN_GAINS.kS);
-    private final LoggedTunableNumber turnKV = new LoggedTunableNumber("Turret/Turn/kV",
-        TurnMotorConstants.TURN_GAINS.kV);
+    private final LoggedTunableNumber hoodKP = new LoggedTunableNumber("Turret/Hood/kP",
+        HoodMotorConstants.HOOD_GAINS.kP);
+    private final LoggedTunableNumber hoodKD = new LoggedTunableNumber("Turret/Hood/kD",
+        HoodMotorConstants.HOOD_GAINS.kD);
+    private final LoggedTunableNumber hoodKS = new LoggedTunableNumber("Turret/Hood/kS",
+        HoodMotorConstants.HOOD_GAINS.kS);
+    private final LoggedTunableNumber hoodKV = new LoggedTunableNumber("Turret/Hood/kV",
+        HoodMotorConstants.HOOD_GAINS.kV);
 
     private final LoggedTunableNumber flywheelKP = new LoggedTunableNumber("Turret/Flywheel/kP",
         FlywheelMotorConstants.FLYWHEEL_GAINS.kP);
@@ -95,7 +92,8 @@ public class Turret extends SubsystemBase {
     private final LoggedTunableNumber tuningHoodPosition = new LoggedTunableNumber(
         "Turret/Tuning/HoodPosition", 0.0);
 
-    private final SysIdRoutine routine;
+    private final SysIdRoutine flywheelRoutine;
+    private final SysIdRoutine hoodRoutine;
 
     public void recalc() {
         currentTarget = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
@@ -104,32 +102,35 @@ public class Turret extends SubsystemBase {
     }
 
 
-    public Turret(TurretIO io, Supplier<Pose2d> poseSupplier,
+    public Shooter(ShooterIO io, Supplier<Pose2d> poseSupplier,
         Supplier<ChassisSpeeds> fieldSpeedsSupplier) {
         this.io = io;
         this.robotPoseSupplier = poseSupplier;
         this.fieldSpeedsSupplier = fieldSpeedsSupplier;
-        visualizer = new TurretVisualizer(
-            () -> new Pose3d(poseSupplier
-                .get()
-                .rotateAround(poseSupplier.get().getTranslation(),
-                    new Rotation2d(inputs.turnPosition)))
-                .transformBy(ROBOT_TO_TURRET_TRANSFORM),
-            fieldSpeedsSupplier);
 
-        turnMotorDisconnected = new Alert("Turret turn motor disconnected.", AlertType.kError);
         flywheelMotorDisconnected = new Alert("Turret flywheel motor disconnected.",
             AlertType.kError);
-        flywheelFollowerMotorDisconnected = new Alert(
-            "Turret flywheel follower motor disconnected.", AlertType.kError);
+        flywheelFollowerMotor1Disconnected = new Alert(
+            "Turret flywheel follower motor 1 disconnected.", AlertType.kError);
+
+        flywheelFollowerMotor2Disconnected = new Alert(
+            "Turret flywheel follower motor 2 disconnected.", AlertType.kError);
+        flywheelFollowerMotor3Disconnected = new Alert(
+            "Turret flywheel follower motor 3 disconnected.", AlertType.kError);
 
         SmartDashboard.putData(
-            Commands.runOnce(() -> setGoal(TurretGoal.TUNING)).withName("Turret Tuning Mode").ignoringDisable(true));
+            Commands.runOnce(() -> setGoal(ShooterGoal.TUNING)).withName("Turret Tuning Mode").ignoringDisable(true));
 
-        routine = new SysIdRoutine(
+        flywheelRoutine = new SysIdRoutine(
             new Config(null, null, null,
                 (state) -> SignalLogger.writeString("state", state.toString())),
-            new Mechanism(io::setTurretVoltage, null, this)
+            new Mechanism(io::setFlywheelVoltage, null, this)
+        );
+
+        hoodRoutine = new SysIdRoutine(
+            new Config(Volts.per(Second).of(0.1), Volts.of(1), null,
+                (state) -> SignalLogger.writeString("state", state.toString())),
+            new Mechanism(io::setHoodVoltage, null, this)
         );
     }
 
@@ -140,34 +141,31 @@ public class Turret extends SubsystemBase {
 
         Pose2d pose = robotPoseSupplier.get();
 
-        if (goal == TurretGoal.SCORING || goal == TurretGoal.PASSING) {
+        if (goal == ShooterGoal.SCORING || goal == ShooterGoal.PASSING) {
             calculateShot(pose);
         }
 
-        if (goal == TurretGoal.PASSING) {
+        if (goal == ShooterGoal.PASSING) {
             setTarget(getPassingTarget(pose));
         }
 
-        if (goal == TurretGoal.TUNING) {
+        if (goal == ShooterGoal.TUNING) {
             io.setFlywheelSpeed(RotationsPerSecond.of(tuningFlywheelSpeed.get()));
-            io.setHoodPosition(tuningHoodPosition.get());
-            io.setTurnSetpoint(
-                TurretCalculator.calculateAzimuthAngle(pose, currentTarget, inputs.turnPosition),
-                RPM.zero());
+            io.setHoodPosition(Degrees.of(tuningHoodPosition.get()));
         }
 
         Logger.recordOutput("Turret/Distance To Target",
-            TurretCalculator.getDistanceToTarget(pose, currentTarget));
+            ShooterCalculator.getDistanceToTarget(pose, currentTarget));
 
-        visualizer.update3dPose(inputs.turnPosition, hoodPositionToAngle(inputs.hoodPosition));
         updateTunables();
 
-        turnMotorDisconnected.set(!inputs.turnMotorConnected);
-        flywheelMotorDisconnected.set(!inputs.flywheelMotorConnected);
-        flywheelFollowerMotorDisconnected.set(!inputs.flywheelMotorConnected);
+        flywheelMotorDisconnected.set(!inputs.leadMotorConnected);
+        flywheelFollowerMotor1Disconnected.set(!inputs.followerMotor1Connected);
+        flywheelFollowerMotor2Disconnected.set(!inputs.followerMotor2Connected);
+        flywheelFollowerMotor3Disconnected.set(!inputs.followerMotor3Connected);
     }
 
-    public Command setGoal(TurretGoal goal) {
+    public Command setGoal(ShooterGoal goal) {
         return runOnce(() -> {
             this.goal = goal;
             switch (goal) {
@@ -183,6 +181,15 @@ public class Turret extends SubsystemBase {
             }
         });
     }
+
+    public Command setHoodGoal(HoodGoal hoodGoal) {
+        return runOnce(() -> this.hoodGoal = hoodGoal);
+    }
+
+    public Command runEndHood() {
+        return runEnd(() -> this.hoodGoal = HoodGoal.ACTIVE, () -> this.hoodGoal = HoodGoal.IDLE);
+    }
+
 
     public void setTarget(Translation3d target) {
         this.currentTarget = target;
@@ -203,19 +210,15 @@ public class Turret extends SubsystemBase {
     private void calculateShot(Pose2d robotPose) {
         ChassisSpeeds fieldSpeeds = fieldSpeedsSupplier.get();
 
-        ShotData calculatedShot = TurretCalculator.iterativeMovingShotFromMap(robotPose,
+        ShotData calculatedShot = ShooterCalculator.iterativeMovingShotFromMap(robotPose,
             fieldSpeeds, currentTarget,
             TargetingConstants.LOOKAHEAD_ITERATIONS);
-        Angle azimuthAngle = TurretCalculator.calculateAzimuthAngle(robotPose,
-            calculatedShot.target(), inputs.turnPosition);
-        AngularVelocity azimuthVelocity = RadiansPerSecond.of(
-            -fieldSpeeds.omegaRadiansPerSecond / 2);
-        Logger.recordOutput("Turret/vel", azimuthVelocity);
-//        io.setTurnSetpoint(azimuthAngle);
-        io.setTurnSetpoint(azimuthAngle, azimuthVelocity);
-        io.setHoodPosition(actualHoodAngleToPosition(calculatedShot.getHoodAngle()));
+        Angle azimuthAngle = ShooterCalculator.calculateAzimuthAngle(robotPose,
+            calculatedShot.target());
+        targetAngle = new Rotation2d(azimuthAngle);
+        if (hoodGoal == HoodGoal.ACTIVE) io.setHoodPosition(calculatedShot.getHoodAngle());
         io.setFlywheelSpeed(
-            TurretCalculator.linearToAngularVelocity(calculatedShot.getExitVelocity(),
+            ShooterCalculator.linearToAngularVelocity(calculatedShot.getExitVelocity(),
                 FLYWHEEL_RADIUS));
 //        io.setFlywheelSpeed(calculatedShot.getExitAngularVelocity());
 
@@ -223,11 +226,11 @@ public class Turret extends SubsystemBase {
     }
 
     private void updateTunables() {
-        if (turnKP.hasChanged(hashCode())
-            || turnKD.hasChanged(hashCode())
-            || turnKV.hasChanged(hashCode())
-            || turnKS.hasChanged(hashCode())) {
-            io.setTurnPIDConstants(turnKP.get(), turnKD.get(), turnKV.get(), turnKS.get());
+        if (hoodKP.hasChanged(hashCode())
+            || hoodKD.hasChanged(hashCode())
+            || hoodKV.hasChanged(hashCode())
+            || hoodKS.hasChanged(hashCode())) {
+            io.setHoodPIDConstants(hoodKP.get(), hoodKD.get(), hoodKV.get(), hoodKS.get());
         }
 
         if (flywheelKP.hasChanged(hashCode())
@@ -240,17 +243,10 @@ public class Turret extends SubsystemBase {
 
     }
 
-    @Override
-    public void simulationPeriodic() {
-        visualizer.updateFuel(
-            TurretCalculator.angularToLinearVelocity(inputs.flywheelSpeed, FLYWHEEL_RADIUS),
-            hoodPositionToAngle(inputs.hoodPosition));
-    }
 
     private void stop() {
         io.stopFlywheel();
         io.stopHood();
-        io.stopTurn();
     }
 
     public static double hoodAngleToPosition(Angle hoodAngle) {
@@ -296,13 +292,6 @@ public class Turret extends SubsystemBase {
         return Inches.of(servoStroke).in(Millimeters);
     }
 
-    public Rotation3d getTurretRotation() {
-        return new Rotation3d(Degrees.zero(), Degrees.zero(), inputs.turnPosition);
-    }
-
-    public AngularVelocity getTurretVelocity() {
-        return inputs.turnVelocity;
-    }
 
 
 
@@ -314,19 +303,24 @@ public class Turret extends SubsystemBase {
     }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction dir) {
-        return routine.quasistatic(dir);
+        return flywheelRoutine.quasistatic(dir);
     }
 
     public Command sysIdDynamic(SysIdRoutine.Direction dir) {
-        return routine.dynamic(dir);
+        return flywheelRoutine.dynamic(dir);
     }
 
 
-    public enum TurretGoal {
+    public enum ShooterGoal {
         SCORING,
         PASSING,
         IDLE,
         TUNING,
         OFF
+    }
+
+    public enum HoodGoal {
+        ACTIVE,
+        IDLE
     }
 }

@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.indexer.Indexer;
@@ -35,17 +34,12 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.intake.Intake.IntakeGoal;
-import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberIO;
-import frc.robot.subsystems.climber.ClimberIOTalonFX;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.superstructure.Superstructure;
-import frc.robot.subsystems.superstructure.Superstructure.Goal;
-import frc.robot.subsystems.turret.Turret;
-import frc.robot.subsystems.turret.Turret.TurretGoal;
-import frc.robot.subsystems.turret.TurretIO;
-import frc.robot.subsystems.turret.TurretIOSim;
-import frc.robot.subsystems.turret.TurretIOTalonFX;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.Shooter.ShooterGoal;
+import frc.robot.subsystems.shooter.ShooterIO;
+import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.vision.*;
 import frc.robot.util.ControllerRumbleManager;
 import frc.robot.util.FuelSim;
@@ -68,7 +62,7 @@ public class RobotContainer {
     private final Vision vision;
     private final Intake intake;
 //    private final Climber climber;
-    private final Turret turret;
+    private final Shooter shooter;
     private final Indexer indexer;
 
     private final Superstructure superstructure;
@@ -125,7 +119,7 @@ public class RobotContainer {
                         });
                 intake = new Intake(new IntakeIOTalonFX());
 //                climber = new Climber(new ClimberIOTalonFX());
-                turret = new Turret(new TurretIOTalonFX(), drive::getPose, drive::getChassisSpeeds);
+                shooter = new Shooter(new ShooterIOTalonFX(), drive::getPose, drive::getChassisSpeeds);
                 indexer = new Indexer(new IndexerIOTalonFX());
 
                 this.vision = new Vision(
@@ -158,11 +152,9 @@ public class RobotContainer {
                         camera1Name, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose));
                 intake = new Intake(new IntakeIO() {});
 //                climber = new Climber(new ClimberIO() {});
-                TurretIOSim turretSim = new TurretIOSim(fuelSim);
-                turret = new Turret(turretSim, drive::getPose, drive::getChassisSpeeds);
+                shooter = new Shooter(new ShooterIO() {}, drive::getPose, drive::getChassisSpeeds);
                 indexer = new Indexer(new IndexerIO() {
                 });
-                configureFuelSimRobot(turretSim::canIntake, turretSim::intakeFuel);
 
 
                 break;
@@ -179,13 +171,13 @@ public class RobotContainer {
                 vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
                 intake = new Intake(new IntakeIO() {});
 //                climber = new Climber(new ClimberIO() {});
-                turret = new Turret(new TurretIO() {}, drive::getPose, drive::getChassisSpeeds);
+                shooter = new Shooter(new ShooterIO() {}, drive::getPose, drive::getChassisSpeeds);
 
                 indexer = new Indexer(new IndexerIO() {
                 });
                 break;
         }
-        superstructure = new Superstructure(turret, intake, indexer, drive::getPose);
+        superstructure = new Superstructure(shooter, intake, indexer, drive::getPose);
 
         configureAutonomous();
         // Set up auto routines
@@ -244,11 +236,12 @@ public class RobotContainer {
         //Eject fuel while left bumper is held
         reverseIntakeTrigger.whileTrue(intake.setGoal(IntakeGoal.EJECT));
 
-        shootTrigger.onTrue(indexer.setGoal(
-                IndexerGoal.ACTIVE));
+        shootTrigger.onTrue(DriveCommands.joystickDriveAtAngle(
+            drive, () -> -driverController.getLeftY(), () -> -driverController.getLeftX(),
+            () -> shooter.targetAngle).alongWith(Commands.waitSeconds(0.5).andThen(
+            superstructure.runEndShooting())));
 //        shootTrigger.onTrue(indexer.setGoal(IndexerGoal.ACTIVE));
-        shootTrigger.onFalse(indexer.setGoal(IndexerGoal.IDLE));
-        manualTurretControlTrigger.whileTrue(turret.setGoal(TurretGoal.TUNING).repeatedly());
+        manualTurretControlTrigger.whileTrue(shooter.setGoal(ShooterGoal.TUNING).repeatedly());
 
 //        operatorController.povUp().onTrue(intake.setGoal(IntakeGoal.TILT));
 //        operatorController.povUp().whileTrue(turret.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
@@ -269,7 +262,7 @@ public class RobotContainer {
 
     private void configureAutonomous() {
         NamedCommands.registerCommand("Lock Wheels", Commands.runOnce(drive::stopWithX, drive));
-        NamedCommands.registerCommand("Shoot",  indexer.runStopIndexer());
+        NamedCommands.registerCommand("Shoot",  indexer.runEndIndexer());
         NamedCommands.registerCommand("Deploy Intake", intake.autoIntake());
     }
 
@@ -290,7 +283,7 @@ public class RobotContainer {
         // TODO: implement method to link fuel sim with simulated intake
     }
     public void a() {
-        turret.recalc();
+        shooter.recalc();
     }
 
     /**

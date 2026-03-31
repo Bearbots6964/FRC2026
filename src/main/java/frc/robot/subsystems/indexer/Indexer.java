@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.indexer.IndexerIO.IndexerIOInputs;
 
 public class Indexer extends SubsystemBase {
 
@@ -69,19 +68,11 @@ public class Indexer extends SubsystemBase {
     }
 
     public Command runIndexer() {
-        return runOnce(() -> io.setIndexerOpenLoop(-IndexerConstants.AGITATE_SPEED_PERCENTAGE))
-            .andThen(Commands.waitSeconds(IndexerConstants.AGITATE_DURATION_SECONDS))
-            .andThen(runOnce(() -> io.setIndexerOpenLoop(IndexerConstants.MOTOR_SPEED_PERCENTAGE)));
+        return runOnce(() -> io.setIndexerOpenLoop(IndexerConstants.MOTOR_SPEED_PERCENTAGE));
     }
 
-    public Command runStopIndexer() {
-        return runOnce(() -> {
-            io.setIndexerOpenLoop(-IndexerConstants.AGITATE_SPEED_PERCENTAGE);
-            goal = IndexerGoal.ACTIVE;
-        })
-            .andThen(Commands.waitSeconds(IndexerConstants.AGITATE_DURATION_SECONDS))
-            .andThen(runOnce(
-                () -> io.setIndexerOpenLoop(IndexerConstants.MOTOR_SPEED_PERCENTAGE)).repeatedly());
+    public Command runEndIndexer() {
+        return runEnd(() -> io.setIndexerOpenLoop(IndexerConstants.MOTOR_SPEED_PERCENTAGE), io::stop);
     }
 
     public Command stopIndexer() {

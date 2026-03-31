@@ -3,54 +3,59 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.438345238095239,
-        "y": 7.354378115699405
+        "x": 3.123783249627976,
+        "y": 7.006090355282738
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.4972801147710815,
-        "y": 7.339063635028747
+        "x": 3.8059215494791667,
+        "y": 7.5311321149553585
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Left Duo Check 1"
     },
     {
       "anchor": {
-        "x": 5.655802641369048,
-        "y": 7.354378115699405
+        "x": 5.752825660342262,
+        "y": 7.342714146205358
       },
       "prevControl": {
-        "x": 5.409697939437451,
-        "y": 7.398338048446847
+        "x": 5.052498093377976,
+        "y": 7.470242931547619
       },
       "nextControl": {
-        "x": 5.901907343300645,
-        "y": 7.310418182951963
+        "x": 6.736646950388668,
+        "y": 7.163561503882094
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.592628120478912,
-        "y": 5.974354896150255
+        "x": 6.034800083705358,
+        "y": 5.618404250372024
       },
       "prevControl": {
-        "x": 7.678326401950562,
-        "y": 6.403098725830963
+        "x": 5.949827543712798,
+        "y": 6.462084449404763
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Left Defense"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.33630763536379044,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.0,
-    "maxAcceleration": 4.0,
+    "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -58,13 +63,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 142.1738727093143
+    "rotation": -89.56272171895345
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Left Duo",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 112.35962995175666
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

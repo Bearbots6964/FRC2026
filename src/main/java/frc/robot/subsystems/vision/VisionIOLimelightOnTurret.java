@@ -24,13 +24,12 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.RobotController;
-import frc.robot.subsystems.turret.TurretConstants.TalonFXConstants;
+import frc.robot.subsystems.shooter.ShooterConstants.TalonFXConstants;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
-import limelight.networktables.AngularVelocity3d;
 import org.littletonrobotics.junction.Logger;
 
 /**

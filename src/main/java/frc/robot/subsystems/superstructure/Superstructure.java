@@ -17,21 +17,18 @@ import frc.robot.Constants.Dimensions;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.LinesVertical;
 import frc.robot.subsystems.indexer.Indexer;
-import frc.robot.subsystems.indexer.Indexer.IndexerGoal;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.Intake.IntakeGoal;
-import frc.robot.subsystems.turret.Turret;
-import frc.robot.subsystems.turret.Turret.TurretGoal;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.Shooter.ShooterGoal;
 import frc.robot.util.HubShiftUtil;
 import java.util.Map;
 import java.util.function.Supplier;
 import lombok.Getter;
-import org.ironmaple.simulation.Goal;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Superstructure extends SubsystemBase {
-    private final Turret turret;
+    private final Shooter shooter;
     private final Intake intake;
     private final Indexer indexer;
 
@@ -69,8 +66,8 @@ public class Superstructure extends SubsystemBase {
     private final Map<Goal, Supplier<Command>> goalCommands;
 
     /** Creates a new Superstructure. */
-    public Superstructure(Turret turret, Intake intake, Indexer indexer, Supplier<Pose2d> poseSupplier) {
-        this.turret = turret;
+    public Superstructure(Shooter shooter, Intake intake, Indexer indexer, Supplier<Pose2d> poseSupplier) {
+        this.shooter = shooter;
         this.intake = intake;
         this.indexer = indexer;
         this.poseSupplier = poseSupplier;
@@ -78,35 +75,35 @@ public class Superstructure extends SubsystemBase {
         goalCommands = Map.of(
             Goal.SCORING,
             () -> Commands.sequence(
-                    this.turret.setGoal(TurretGoal.SCORING)
+                    this.shooter.setGoal(ShooterGoal.SCORING)
 //                    this.intake.setGoal(IntakeGoal.DEPLOY)
 //                    this.indexer.setGoal(IndexerGoal.ACTIVE)
                 )
                 .withName("Start scoring"),
             Goal.PASSING,
             () -> Commands.sequence(
-                    this.turret.setGoal(TurretGoal.PASSING).onlyIf(inAllianceZoneTrigger.negate())
+                    this.shooter.setGoal(ShooterGoal.PASSING).onlyIf(inAllianceZoneTrigger.negate())
 //                    this.intake.setGoal(IntakeGoal.DEPLOY)
 //                    this.indexer.setGoal(IndexerGoal.ACTIVE).onlyIf(inAllianceZoneTrigger.negate())
                 )
                 .withName("Start passing"),
             Goal.COLLECTING,
             () -> Commands.sequence(
-                    this.turret.setGoal(TurretGoal.IDLE)
+                    this.shooter.setGoal(ShooterGoal.IDLE)
 //                    this.intake.setGoal(IntakeGoal.DEPLOY)
 //                    this.indexer.setGoal(IndexerGoal.IDLE)
                 )
                 .withName("Start collecting"),
             Goal.EXPANDED,
             () -> Commands.sequence(
-                    this.turret.setGoal(TurretGoal.IDLE)
+                    this.shooter.setGoal(ShooterGoal.IDLE)
 //                    this.intake.setGoal(IntakeGoal.IDLE)
 //                    this.indexer.setGoal(IndexerGoal.IDLE)
                 )
                 .withName("Start expanded"),
             Goal.IDLE,
             () -> Commands.sequence(
-                    this.turret.setGoal(TurretGoal.IDLE)
+                    this.shooter.setGoal(ShooterGoal.IDLE)
 //                    this.intake.setGoal(IntakeGoal.STOW)
 //                    this.indexer.setGoal(IndexerGoal.IDLE)
                 )
@@ -147,6 +144,11 @@ public class Superstructure extends SubsystemBase {
     public Command enableShiftOverride() {
         return Commands.startEnd(() -> shiftOverride = true, () -> shiftOverride = false)
             .withName("Override active first");
+    }
+
+    public Command runEndShooting() {
+        return shooter.runEndHood()
+            .alongWith(indexer.runEndIndexer());
     }
 
     @Override

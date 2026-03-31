@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.turret;
+package frc.robot.subsystems.shooter;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
@@ -16,13 +16,11 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
-import static frc.robot.subsystems.turret.TurretConstants.TalonFXConstants.ROBOT_TO_TURRET_TRANSFORM;
-import static frc.robot.subsystems.turret.TurretConstants.TalonFXConstants.TurnMotorConstants.MAX_TURN_ANGLE;
-import static frc.robot.subsystems.turret.TurretConstants.TalonFXConstants.TurnMotorConstants.MIN_TURN_ANGLE;
-import static frc.robot.subsystems.turret.TurretConstants.TargetingConstants.DISTANCE_ABOVE_FUNNEL;
-import static frc.robot.subsystems.turret.TurretConstants.TargetingConstants.FLYWHEEL_RADIUS;
-import static frc.robot.subsystems.turret.TurretConstants.TargetingConstants.SHOT_MAP;
-import static frc.robot.subsystems.turret.TurretConstants.TargetingConstants.TOF_MAP;
+import static frc.robot.subsystems.shooter.ShooterConstants.TalonFXConstants.ROBOT_TO_TURRET_TRANSFORM;
+import static frc.robot.subsystems.shooter.ShooterConstants.TargetingConstants.DISTANCE_ABOVE_FUNNEL;
+import static frc.robot.subsystems.shooter.ShooterConstants.TargetingConstants.FLYWHEEL_RADIUS;
+import static frc.robot.subsystems.shooter.ShooterConstants.TargetingConstants.SHOT_MAP;
+import static frc.robot.subsystems.shooter.ShooterConstants.TargetingConstants.TOF_MAP;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -41,7 +39,7 @@ import frc.robot.FieldConstants.Hub;
 import org.littletonrobotics.junction.Logger;
 
 /** Add your docs here. */
-public class TurretCalculator {
+public class ShooterCalculator {
     public static Distance getDistanceToTarget(Pose2d robot, Translation3d target) {
         return Meters.of(robot.getTranslation().getDistance(target.toTranslation2d()));
     }
@@ -77,7 +75,7 @@ public class TurretCalculator {
     }
 
     // calculates the angle of a turret relative to the robot to hit a target
-    public static Angle calculateAzimuthAngle(Pose2d robot, Translation3d target, Angle currentAngle) {
+    public static Angle calculateAzimuthAngle(Pose2d robot, Translation3d target) {
         Translation2d turretTranslation = new Pose3d(robot)
             .transformBy(ROBOT_TO_TURRET_TRANSFORM)
             .toPose2d()
@@ -85,10 +83,7 @@ public class TurretCalculator {
 
         Translation2d direction = target.toTranslation2d().minus(turretTranslation);
         double angle = MathUtil.inputModulus(
-            direction.getAngle().minus(robot.getRotation()).minus(Rotation2d.k180deg).getRotations(), -0.5, 0.5);
-        double current = currentAngle.in(Rotations);
-        if (current > 0 && angle + 1 <= MAX_TURN_ANGLE.in(Rotations)) angle += 1;
-        if (current < 0 && angle - 1 >= MIN_TURN_ANGLE.in(Rotations)) angle -= 1;
+            direction.getAngle().minus(Rotation2d.k180deg).getRotations(), -0.5, 0.5);
         Logger.recordOutput("Turret/DesiredAzimuthRot", angle);
         return Rotations.of(angle);
     }

@@ -177,6 +177,9 @@ public class DriveCommands {
                     Translation2d linearVelocity =
                         getLinearVelocityFromJoysticks(xSupplier.getAsDouble(),
                             ySupplier.getAsDouble());
+                    if (Math.abs(xSupplier.getAsDouble()) < DEADBAND && Math.abs(ySupplier.getAsDouble()) < DEADBAND) {
+                        drive.stopWithX();
+                    }
 
                     // Calculate angular speed
                     double omega =
@@ -186,18 +189,22 @@ public class DriveCommands {
                     // Convert to field relative speeds & send command
                     ChassisSpeeds speeds =
                         new ChassisSpeeds(
-                            linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                            linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
+                            linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec() / 4,
+                            linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec() / 4,
                             omega);
                     boolean isFlipped =
                         DriverStation.getAlliance().isPresent()
                             && DriverStation.getAlliance().get() == Alliance.Red;
-                    drive.runVelocity(
-                        ChassisSpeeds.fromFieldRelativeSpeeds(
-                            speeds,
-                            isFlipped
-                                ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                                : drive.getRotation()));
+                    if (Math.abs(xSupplier.getAsDouble()) < DEADBAND && Math.abs(ySupplier.getAsDouble()) < DEADBAND && omega < DEADBAND) {
+                        drive.stopWithX();
+                    } else {
+                        drive.runVelocity(
+                            ChassisSpeeds.fromFieldRelativeSpeeds(
+                                speeds,
+                                isFlipped
+                                    ? drive.getRotation().plus(new Rotation2d(Math.PI))
+                                    : drive.getRotation()));
+                    }
                 },
                 drive)
 

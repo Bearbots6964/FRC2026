@@ -14,7 +14,6 @@ import frc.robot.Constants.Dimensions;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.RightBump;
 import frc.robot.FieldConstants.RightTrench;
-import frc.robot.subsystems.turret.TurretConstants;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
