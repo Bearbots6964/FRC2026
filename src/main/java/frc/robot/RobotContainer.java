@@ -244,7 +244,7 @@ public class RobotContainer {
         //Eject fuel while left bumper is held
         reverseIntakeTrigger.whileTrue(intake.setGoal(IntakeGoal.EJECT));
 
-        shootTrigger.onTrue(DriveCommands.joystickDriveAtAngle(
+        shootTrigger.whileTrue(DriveCommands.joystickDriveAtAngle(
             drive, () -> -driverController.getLeftY(), () -> -driverController.getLeftX(),
             shooter::getCurrentTarget).alongWith(Commands.waitSeconds(0.5).andThen(
             superstructure.runEndShooting())));
