@@ -96,7 +96,7 @@ public class Indexer extends SubsystemBase {
     }
 
     public Command stopIndexer() {
-        return runOnce(io::stop).alongWith(runOnce(() -> goal = IndexerGoal.IDLE));
+        return runOnce(() -> {io.stop(); goal = IndexerGoal.IDLE;});
     }
 
 
