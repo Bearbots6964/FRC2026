@@ -127,7 +127,7 @@ public class Intake extends SubsystemBase implements Identifiable {
     public Command intake() {
         //run the intake at the specified voltage when this command is scheduled, and stop it when the command ends
         return runEnd(
-            () -> io.setIntakeVoltage(intakeMotorConstants.intakeVoltage),
+            () -> io.setIntakeMotorVelocity(intakeMotorConstants.targetRPS),
             () -> io.setIntakeVoltage(Volts.of(0.0))
         );
     }
@@ -137,15 +137,14 @@ public class Intake extends SubsystemBase implements Identifiable {
             runOnce(() -> goal = IntakeGoal.DEPLOY).andThen(
                 runOnce(() -> {
                     io.setDeployPosition(IntakeConstants.DEPLOYED_ANGLE);
-                    io.setIntakeVoltage(
-                        intakeMotorConstants.intakeVoltage);
+                    io.setIntakeMotorVelocity(intakeMotorConstants.targetRPS);
                 }).repeatedly());
     }
 
     public Command eject() {
         //run the intake in reverse at the specified voltage when this command is scheduled, and stop it when the command ends
         return runEnd(
-            () -> io.setIntakeVoltage(intakeMotorConstants.intakeVoltage.unaryMinus()),
+            () -> io.setIntakeMotorVelocity(intakeMotorConstants.targetRPS.unaryMinus()),
             //eject at the specified voltage
             () -> io.setIntakeVoltage(Volts.of(0.0))
         );
