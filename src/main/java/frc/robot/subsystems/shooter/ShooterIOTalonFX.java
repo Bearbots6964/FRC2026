@@ -60,12 +60,12 @@ public class ShooterIOTalonFX implements ShooterIO {
     private final Follower followRequest2 =
         new Follower(
             FlywheelMotorConstants.FLYWHEEL_MOTOR_ID,
-            MotorAlignmentValue.Opposed);
+            MotorAlignmentValue.Aligned);
 
     private final Follower followRequest3 =
         new Follower(
             FlywheelMotorConstants.FLYWHEEL_MOTOR_ID,
-            MotorAlignmentValue.Opposed);
+            MotorAlignmentValue.Aligned);
 
     private final NeutralOut neutralOut = new NeutralOut();
 
