@@ -41,6 +41,7 @@ public class IndexerIOTalonFX implements IndexerIO {
     // Control Requests
     private final VoltageOut voltageRequest = new VoltageOut(0);
     private final DutyCycleOut dutyCycleRequest = new DutyCycleOut(0.0);
+    private final DutyCycleOut dutyCycleRequest2 = new DutyCycleOut(0.0);
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0.0);
     private final NeutralOut neutralRequest = new NeutralOut();
 
@@ -94,6 +95,7 @@ public class IndexerIOTalonFX implements IndexerIO {
     @Override
     public void setIndexerOpenLoop(double input) {
         motor.setControl(dutyCycleRequest.withOutput(input));
+        follower.setControl(dutyCycleRequest2.withOutput(-input));
     }
 
     @Override
