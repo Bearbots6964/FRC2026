@@ -6,20 +6,27 @@ package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.subsystems.intake.IntakeConstants.deployMotorConstants;
 import frc.robot.subsystems.intake.IntakeConstants.intakeMotorConstants;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.util.Identifiable;
 import java.util.List;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class Intake extends SubsystemBase {
+public class Intake extends SubsystemBase implements Identifiable {
 
     private final IntakeIO io;
     // will compile after run
@@ -52,6 +59,8 @@ public class Intake extends SubsystemBase {
     @AutoLogOutput
     private IntakeGoal goal = IntakeGoal.IDLE;
 
+    private final SysIdRoutine routine;
+
     /**
      * Creates a new Intake.
      */
@@ -63,6 +72,12 @@ public class Intake extends SubsystemBase {
         deployMotorDisconnectedAlert =
             new Alert("Deploy motor disconnected.", Alert.AlertType.kError);
         //critical alert for motor disconnection
+
+        routine = new SysIdRoutine(
+            new Config(Volts.per(Second).of(0.1), Volts.of(1), null,
+                (state) -> SignalLogger.writeString("state", state.toString())),
+            new Mechanism(io::setDeployVoltage, null, this)
+        );
 
     }
 
@@ -174,6 +189,15 @@ public class Intake extends SubsystemBase {
          * Reverse the intake and spit out balls.
          */
         EJECT
+
+    }
+
+    public Command sysIdQuasistatic(SysIdRoutine.Direction dir) {
+        return routine.quasistatic(dir);
+    }
+
+    public Command sysIdDynamic(SysIdRoutine.Direction dir) {
+        return routine.dynamic(dir);
 
     }
 

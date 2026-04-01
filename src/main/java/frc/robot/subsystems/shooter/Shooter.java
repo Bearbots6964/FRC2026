@@ -38,12 +38,13 @@ import frc.robot.subsystems.shooter.ShooterCalculator.ShotData;
 import frc.robot.subsystems.shooter.ShooterConstants.TalonFXConstants.FlywheelMotorConstants;
 import frc.robot.subsystems.shooter.ShooterConstants.TalonFXConstants.HoodMotorConstants;
 import frc.robot.subsystems.shooter.ShooterConstants.TargetingConstants;
+import frc.robot.util.Identifiable;
 import frc.robot.util.LoggedTunableNumber;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class Shooter extends SubsystemBase {
+public class Shooter extends SubsystemBase implements Identifiable {
 
     private final ShooterIO io;
     private ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();

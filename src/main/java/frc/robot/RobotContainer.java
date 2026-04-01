@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.indexer.Indexer;
@@ -43,6 +44,7 @@ import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.vision.*;
 import frc.robot.util.ControllerRumbleManager;
 import frc.robot.util.FuelSim;
+import frc.robot.util.Identifiable;
 import java.util.function.BooleanSupplier;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -188,20 +190,26 @@ public class RobotContainer {
             DriveCommands.wheelRadiusCharacterization(drive));
         autoChooser.addOption("Drive Simple FF Characterization",
             DriveCommands.feedforwardCharacterization(drive));
-        autoChooser.addOption("Drive SysId (Quasistatic Forward)",
-            drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        autoChooser.addOption("Drive SysId (Quasistatic Reverse)",
-            drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        autoChooser.addOption("Drive SysId (Dynamic Forward)",
-            drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        autoChooser.addOption("Drive SysId (Dynamic Reverse)",
-            drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        addSysIdOptions("Drive", drive);
+        addSysIdOptions("Shooter", shooter);
+        addSysIdOptions("Intake", intake);
 
         // Configure the button bindings
         configureButtonBindings();
 
         rumbleManager = new ControllerRumbleManager(
             (c) -> driverController.setRumble(RumbleType.kBothRumble, c));
+    }
+
+    private void addSysIdOptions(String name, Identifiable subsystem) {
+        autoChooser.addOption(name + " SysId (Quasistatic Forward)", subsystem.sysIdQuasistatic(
+            Direction.kForward));
+        autoChooser.addOption(name + " SysId (Quasistatic Reverse)", subsystem.sysIdQuasistatic(
+            Direction.kReverse));
+        autoChooser.addOption(name + " SysId (Dynamic Forward)", subsystem.sysIdDynamic(
+            Direction.kForward));
+        autoChooser.addOption(name + " SysId (Dynamic Reverse)", subsystem.sysIdDynamic(
+            Direction.kReverse));
     }
 
     /**

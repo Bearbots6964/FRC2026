@@ -5,6 +5,7 @@
 package frc.robot.subsystems.intake;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.AutoLog;
 
 /** Add your docs here. */
@@ -33,7 +34,7 @@ public interface IntakeIO {
     public default void setIntakeVoltage(double volts) {}
 
     /** Run the deploy motor at the specified voltage. */
-    public default void setDeployVoltage(double volts) {}
+    public default void setDeployVoltage(Voltage volts) {}
 
     public default void setDeployPosition(Angle angle) {}
     public default void setDeployPositionGainSlotTwo(Angle angle) {}

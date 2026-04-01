@@ -28,11 +28,11 @@ public class IntakeConstants {
     // Angles measured from robot, stored as Rotation2d(x, y) vector components
     // DEPLOYED_ANGLE ≈ 13.45°, RETRACTED_ANGLE ≈ 86.67°
     public static final Angle DEPLOYED_ANGLE = Degrees.of(-10.2232050549);
-    public static final Angle RETRACTED_ANGLE = Degrees.of(110.0);
+    public static final Angle RETRACTED_ANGLE = Degrees.of(91.758);
     public static final Angle TILT_ANGLE = Degrees.of(60.0);
     public static final Angle DEPLOY_TOLERANCE = Degrees.of(0.5);
 
-    public static final Angle START_ANGLE = Degrees.of(-10.2232050549);
+    public static final Angle START_ANGLE = Degrees.of(91.758);
 
     public static final class intakeMotorConstants {
 

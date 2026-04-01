@@ -180,7 +180,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     }
 
     @Override
-    public void setDeployVoltage(double volts) {
+    public void setDeployVoltage(Voltage volts) {
         deployMotor.setControl(voltageRequest.withOutput(volts));
     }
 
