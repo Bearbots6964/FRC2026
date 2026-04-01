@@ -51,7 +51,7 @@ public class ShooterIOTalonFX implements ShooterIO {
     private final StatusSignal<AngularVelocity> hoodSpeed;
     private final MotionMagicVoltage mm = new MotionMagicVoltage(0);
 
-    private final VelocityVoltage shooterVelocityVoltage = new VelocityVoltage(0);
+    private final VelocityVoltage shooterVelocityVoltage = new VelocityVoltage(0).withEnableFOC(false);
     private final VoltageOut shooterVoltageOut = new VoltageOut(0);
 
     private final Follower followRequest =
