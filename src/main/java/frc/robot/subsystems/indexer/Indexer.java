@@ -34,7 +34,7 @@ public class Indexer extends SubsystemBase {
         overcurrentDebouncer = new Debouncer(0.2);
         overcurrentTrigger = new Trigger(
             () -> overcurrentDebouncer.calculate(inputs.indexerCurrentAmps > 90.0));
-        overcurrentTrigger.onTrue(runIndexer());
+//        overcurrentTrigger.onTrue(runIndexer());
         overcurrentAlert = new Alert("Indexer hitting current limit!", AlertType.kWarning);
         visualizer = new IndexerVisualizer();
     }
