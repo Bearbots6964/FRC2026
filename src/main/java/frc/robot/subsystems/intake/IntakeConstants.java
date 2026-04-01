@@ -32,7 +32,7 @@ public class IntakeConstants {
     public static final Angle TILT_ANGLE = Degrees.of(60.0);
     public static final Angle DEPLOY_TOLERANCE = Degrees.of(0.5);
 
-    public static final Angle START_ANGLE = Degrees.of(81.123);
+    public static final Angle START_ANGLE = Degrees.of(-10.2232050549);
 
     public static final class intakeMotorConstants {
 
