@@ -1,5 +1,6 @@
 package frc.robot.subsystems.indexer;
 
+import com.ctre.phoenix6.swerve.SwerveRequest.Idle;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -76,8 +77,14 @@ public class Indexer extends SubsystemBase {
     }
 
     public Command runEndIndexer() {
-        return runEnd(() -> io.setIndexerOpenLoop(IndexerConstants.MOTOR_SPEED_PERCENTAGE),
-            io::stop);
+        return runEnd(() -> {
+                io.setIndexerOpenLoop(IndexerConstants.MOTOR_SPEED_PERCENTAGE);
+                goal = IndexerGoal.IDLE;
+            },
+            () -> {
+                io.stop();
+                goal = IndexerGoal.IDLE;
+            });
     }
 
     public Command stopIndexer() {
