@@ -79,12 +79,17 @@ public class Indexer extends SubsystemBase {
     public Command runEndIndexer() {
         return runEnd(() -> {
                 io.setIndexerOpenLoop(IndexerConstants.MOTOR_SPEED_PERCENTAGE);
-                goal = IndexerGoal.IDLE;
+                goal = IndexerGoal.ACTIVE;
             },
             () -> {
                 io.stop();
                 goal = IndexerGoal.IDLE;
-            });
+            }).finallyDo(
+            () -> {
+                io.stop();
+                goal = IndexerGoal.IDLE;
+            }
+        );
     }
 
     public Command stopIndexer() {
