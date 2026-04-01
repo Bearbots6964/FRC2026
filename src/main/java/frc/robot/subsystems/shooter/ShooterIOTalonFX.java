@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -50,6 +51,7 @@ public class ShooterIOTalonFX implements ShooterIO {
     private final StatusSignal<Voltage> hoodVolts;
     private final StatusSignal<AngularVelocity> hoodSpeed;
     private final MotionMagicVoltage mm = new MotionMagicVoltage(0);
+    private final PositionVoltage pv = new PositionVoltage(0);
 
     private final VelocityVoltage shooterVelocityVoltage = new VelocityVoltage(0).withEnableFOC(false);
     private final VoltageOut shooterVoltageOut = new VoltageOut(0);
@@ -189,7 +191,7 @@ public class ShooterIOTalonFX implements ShooterIO {
 
     @Override
     public void setHoodPosition(Angle position) {
-        hood.setControl(mm.withPosition(position));
+        hood.setControl(pv.withPosition(position));
     }
 
     @Override
