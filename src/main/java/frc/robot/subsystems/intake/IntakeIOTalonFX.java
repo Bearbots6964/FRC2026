@@ -186,7 +186,7 @@ public class IntakeIOTalonFX implements IntakeIO {
 
     @Override
     public void setDeployPosition(Angle angle) {
-        deployMotor.setControl(positionRequest.withPosition(angle).withSlot(0));
+        deployMotor.setControl(motionMagicRequest.withPosition(angle).withSlot(0));
     }
 
     @Override
