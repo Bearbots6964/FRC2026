@@ -247,7 +247,9 @@ public class RobotContainer {
         shootTrigger.whileTrue(DriveCommands.joystickDriveAtAngle(
             drive, () -> -driverController.getLeftY(), () -> -driverController.getLeftX(),
             shooter::getCurrentTarget).alongWith(Commands.waitSeconds(0.5).andThen(
-            superstructure.runEndShooting())));
+            shooter.runEndHood()
+            .alongWith(indexer.runEndIndexer()))));
+        shootTrigger.onFalse(indexer.stopIndexer());
 //        shootTrigger.onTrue(indexer.setGoal(IndexerGoal.ACTIVE));
         manualTurretControlTrigger.onTrue(shooter.setGoal(ShooterGoal.TUNING).repeatedly());
 

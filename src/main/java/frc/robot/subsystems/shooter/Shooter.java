@@ -220,6 +220,7 @@ public class Shooter extends SubsystemBase implements Identifiable {
             calculatedShot.target());
         targetAngle = new Rotation2d(azimuthAngle);
         if (hoodGoal == HoodGoal.ACTIVE) io.setHoodPosition(calculatedShot.getHoodAngle());
+        else io.setHoodPosition(Degrees.of(0.0));
         io.setFlywheelSpeed(
             ShooterCalculator.linearToAngularVelocity(calculatedShot.getExitVelocity(),
                 FLYWHEEL_RADIUS));
