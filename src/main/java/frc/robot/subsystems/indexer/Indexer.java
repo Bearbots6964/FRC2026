@@ -53,6 +53,9 @@ public class Indexer extends SubsystemBase {
             goal = IndexerGoal.IDLE;
             io.stop();
         }
+
+        if (goal == IndexerGoal.IDLE)
+            io.stop();
     }
 
     public Command setGoal(IndexerGoal goal) {
@@ -93,7 +96,7 @@ public class Indexer extends SubsystemBase {
     }
 
     public Command stopIndexer() {
-        return runOnce(io::stop);
+        return runOnce(io::stop).alongWith(runOnce(() -> goal = IndexerGoal.IDLE));
     }
 
 

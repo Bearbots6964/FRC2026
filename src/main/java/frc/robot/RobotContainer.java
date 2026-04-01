@@ -251,7 +251,7 @@ public class RobotContainer {
             .alongWith(indexer.runEndIndexer()))));
         shootTrigger.onFalse(indexer.stopIndexer());
 //        shootTrigger.onTrue(indexer.setGoal(IndexerGoal.ACTIVE));
-        manualTurretControlTrigger.onTrue(shooter.setGoal(ShooterGoal.TUNING).repeatedly());
+//        manualTurretControlTrigger.onTrue(shooter.setGoal(ShooterGoal.TUNING).repeatedly());
 
 //        operatorController.povUp().onTrue(intake.setGoal(IntakeGoal.TILT));
 //        operatorController.povUp().whileTrue(turret.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
