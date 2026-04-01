@@ -125,10 +125,10 @@ public class ShooterConstants {
                 .withStatorCurrentLimit(120);
 
             public static final MotorOutputConfigs LEFT_FLYWHEEL_OUTPUT_CONFIGS = new MotorOutputConfigs()
-                .withInverted(InvertedValue.Clockwise_Positive)
+                .withInverted(InvertedValue.CounterClockwise_Positive)
                 .withNeutralMode(NeutralModeValue.Coast);
             public static final MotorOutputConfigs RIGHT_FLYWHEEL_OUTPUT_CONFIGS = new MotorOutputConfigs()
-                .withInverted(InvertedValue.Clockwise_Positive)
+                .withInverted(InvertedValue.CounterClockwise_Positive)
                 .withNeutralMode(NeutralModeValue.Coast);
 
             public static final FeedbackConfigs FLYWHEEL_FEEDBACK_CONFIGS = new FeedbackConfigs()
