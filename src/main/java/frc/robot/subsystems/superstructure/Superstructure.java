@@ -148,7 +148,7 @@ public class Superstructure extends SubsystemBase {
 
     public Command runEndShooting() {
         return shooter.runEndHood()
-            .alongWith(indexer.runEndIndexer());
+            .alongWith(indexer.runIndexer());
     }
 
     @Override
