@@ -5,6 +5,7 @@
 package frc.robot.subsystems.intake;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.AutoLog;
 
@@ -44,5 +45,7 @@ public interface IntakeIO {
 
     /** Stop the deploy motor. */
     public default void stopDeploy() {}
+
+    public default void setIntakeMotorVelocity(AngularVelocity velocity) {}
 
 }

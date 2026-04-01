@@ -5,6 +5,7 @@
 package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
@@ -20,6 +21,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
 
 /**
@@ -42,12 +44,14 @@ public class IntakeConstants {
         public static final int intakeFollowerMotorCanID = 3;
         public static final double gearRatio = 3.0; //gear ratio is 5:1
         public static final Voltage intakeVoltage = Volts.of(11.0);
+        public static final AngularVelocity targetRPS = RotationsPerSecond.of(21.0);
 
         public static final Slot0Configs intakeMotorGains = new Slot0Configs()
-            .withKP(0.0)
+            .withKP(0.0024374)
             .withKD(0.0)
-            .withKS(0.0)
-            .withKV(0.0);
+            .withKS(0.26554)
+            .withKV(0.3734)
+            .withKA(0.0089656);
 
         public static final CurrentLimitsConfigs intakeCurrentLimits = new CurrentLimitsConfigs()
             .withStatorCurrentLimit(70.0);

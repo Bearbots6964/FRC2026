@@ -15,6 +15,7 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -55,6 +56,7 @@ public class IntakeIOTalonFX implements IntakeIO {
 
     //create a new request to reuse for setting voltages and using commands
     private final VoltageOut voltageRequest = new VoltageOut(0);
+    private final VelocityVoltage  velocityRequest = new VelocityVoltage(0);
     private final PositionVoltage positionRequest = new PositionVoltage(0);
     private final MotionMagicVoltage motionMagicRequest = new MotionMagicVoltage(0);
     private final NeutralOut neutralOut = new NeutralOut();
@@ -178,6 +180,11 @@ public class IntakeIOTalonFX implements IntakeIO {
     @Override
     public void setIntakeVoltage(Voltage volts) {
         intakeMotor.setControl(voltageRequest.withOutput(volts));
+    }
+
+    @Override
+    public void setIntakeMotorVelocity(AngularVelocity velocity) {
+        intakeMotor.setControl(velocityRequest.withVelocity(velocity));
     }
 
     @Override
