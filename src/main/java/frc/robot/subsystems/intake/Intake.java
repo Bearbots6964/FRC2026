@@ -107,14 +107,14 @@ public class Intake extends SubsystemBase implements Identifiable {
     public Command retract() {
         //run the deploy motor in reverse at the specified voltage when this command is scheduled, and stop it when the command ends
         return runOnce(
-            () -> io.setDeployPositionGainSlotTwo(IntakeConstants.RETRACTED_ANGLE)
+            () -> io.setDeployPosition(IntakeConstants.RETRACTED_ANGLE)
         );
     }
 
     public Command tilt() {
         //run the deploy motor in reverse at the specified voltage when this command is scheduled, and stop it when the command ends
         return runOnce(
-            () -> io.setDeployPositionGainSlotTwo(IntakeConstants.TILT_ANGLE)
+            () -> io.setDeployPosition(IntakeConstants.TILT_ANGLE)
         );
     }
 
