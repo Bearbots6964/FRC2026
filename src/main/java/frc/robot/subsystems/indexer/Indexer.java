@@ -68,11 +68,16 @@ public class Indexer extends SubsystemBase {
     }
 
     public Command runIndexer() {
-        return runOnce(() -> io.setIndexerOpenLoop(IndexerConstants.MOTOR_SPEED_PERCENTAGE));
+        return runOnce(() ->
+        {
+            io.setIndexerOpenLoop(IndexerConstants.MOTOR_SPEED_PERCENTAGE);
+            goal = IndexerGoal.ACTIVE;
+        });
     }
 
     public Command runEndIndexer() {
-        return runEnd(() -> io.setIndexerOpenLoop(IndexerConstants.MOTOR_SPEED_PERCENTAGE), io::stop);
+        return runEnd(() -> io.setIndexerOpenLoop(IndexerConstants.MOTOR_SPEED_PERCENTAGE),
+            io::stop);
     }
 
     public Command stopIndexer() {
