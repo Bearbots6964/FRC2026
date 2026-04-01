@@ -109,10 +109,10 @@ public class ShooterConstants {
             ----------- -> right
             F1       F3
              */
-            public static final int FLYWHEEL_MOTOR_ID = 3;
-            public static final int FLYWHEEL_FOLLOWER_1_MOTOR_ID = 4;
-            public static final int FLYWHEEL_FOLLOWER_2_MOTOR_ID = 5;
-            public static final int FLYWHEEL_FOLLOWER_3_MOTOR_ID = 6;
+            public static final int FLYWHEEL_MOTOR_ID = 6;
+            public static final int FLYWHEEL_FOLLOWER_1_MOTOR_ID = 7;
+            public static final int FLYWHEEL_FOLLOWER_2_MOTOR_ID = 8;
+            public static final int FLYWHEEL_FOLLOWER_3_MOTOR_ID = 9;
             // https://www.reca.lc/flywheel?currentLimit=%7B%22s%22%3A80%2C%22u%22%3A%22A%22%7D&efficiency=100&flywheelMomentOfInertia=%7B%22s%22%3A0%2C%22u%22%3A%22in2%2Albs%22%7D&flywheelRadius=%7B%22s%22%3A2%2C%22u%22%3A%22in%22%7D&flywheelRatio=%7B%22magnitude%22%3A1%2C%22ratioType%22%3A%22Reduction%22%7D&flywheelWeight=%7B%22s%22%3A1.5%2C%22u%22%3A%22lbs%22%7D&motor=%7B%22quantity%22%3A2%2C%22name%22%3A%22Kraken%20X60%20%28FOC%29%22%7D&motorRatio=%7B%22magnitude%22%3A1%2C%22ratioType%22%3A%22Step-up%22%7D&projectileRadius=%7B%22s%22%3A2%2C%22u%22%3A%22in%22%7D&projectileWeight=%7B%22s%22%3A0.5%2C%22u%22%3A%22lbs%22%7D&shooterMomentOfInertia=%7B%22s%22%3A4.124133%2C%22u%22%3A%22in2%2Albs%22%7D&shooterRadius=%7B%22s%22%3A2%2C%22u%22%3A%22in%22%7D&shooterTargetSpeed=%7B%22s%22%3A4800%2C%22u%22%3A%22rpm%22%7D&shooterWeight=%7B%22s%22%3A1%2C%22u%22%3A%22lbs%22%7D&useCustomFlywheelMoi=1&useCustomShooterMoi=1
             public static final Slot0Configs FLYWHEEL_GAINS = new Slot0Configs()
                 .withKP(0.02)
@@ -146,7 +146,7 @@ public class ShooterConstants {
         );
 
         public static final class HoodMotorConstants {
-            public static final int HOOD_MOTOR_ID = 5;
+            public static final int HOOD_MOTOR_ID = 10;
             public static final Angle MAX_HOOD_ANGLE = Degrees.of(15.0);
 
             public static final double MOTOR_TO_HOOD_RATIO = (50.0 / 14.0) * (360.0 / 50.0);

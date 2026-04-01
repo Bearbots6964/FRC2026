@@ -8,11 +8,13 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.Units;
@@ -25,6 +27,7 @@ import frc.robot.util.PhoenixUtil;
 public class IndexerIOTalonFX implements IndexerIO {
     // Motor
     private final TalonFX motor;
+    private final TalonFX follower;
 
     // Config
     private final TalonFXConfiguration motorConfig;
@@ -33,6 +36,7 @@ public class IndexerIOTalonFX implements IndexerIO {
     StatusSignal<Current> indexerAmpsActive;
     StatusSignal<AngularVelocity> indexerVelocity;
     StatusSignal<Voltage> indexerVoltage;
+    StatusSignal<Voltage> indexerFollowerVoltage;
 
     // Control Requests
     private final VoltageOut voltageRequest = new VoltageOut(0);
@@ -42,6 +46,7 @@ public class IndexerIOTalonFX implements IndexerIO {
 
     public IndexerIOTalonFX() {
         motor = new TalonFX(IndexerConstants.TalonFXConstants.MOTOR_ID);
+        follower = new TalonFX(TalonFXConstants.FOLLOWER_MOTOR_ID);
 
         motorConfig = new TalonFXConfiguration()
                 .withSlot0(IndexerConstants.TalonFXConstants.MOTOR_GAINS)
@@ -50,14 +55,20 @@ public class IndexerIOTalonFX implements IndexerIO {
                 .withMotorOutput(IndexerConstants.TalonFXConstants.MOTOR_OUTPUT_CONFIGS);
 
         PhoenixUtil.tryUntilOk(5, () -> motor.getConfigurator().apply(motorConfig));
+        PhoenixUtil.tryUntilOk(5, () -> follower.getConfigurator().apply(motorConfig));
 
         indexerAmpsActive = motor.getStatorCurrent();
         indexerVelocity = motor.getVelocity();
         indexerVoltage = motor.getMotorVoltage();
+        indexerFollowerVoltage = follower.getMotorVoltage();
 
         BaseStatusSignal.setUpdateFrequencyForAll(50, indexerAmpsActive, indexerVelocity, indexerVoltage);
+        BaseStatusSignal.setUpdateFrequencyForAll(4, indexerAmpsActive, indexerVelocity, indexerVoltage);
+
+        follower.setControl(new Follower(TalonFXConstants.MOTOR_ID, MotorAlignmentValue.Opposed));
 
         motor.optimizeBusUtilization();
+        follower.optimizeBusUtilization();
 
     }
 
@@ -65,6 +76,7 @@ public class IndexerIOTalonFX implements IndexerIO {
     public void updateInputs(IndexerIOInputs inputs) {
         inputs.indexerMotorConnected = BaseStatusSignal.refreshAll(indexerAmpsActive, indexerVelocity, indexerVoltage)
                 .isOK();
+        inputs.followerMotorConnected = BaseStatusSignal.refreshAll(indexerFollowerVoltage).isOK();
 
         inputs.indexerVelocityRPS = indexerVelocity.getValue().in(Units.RotationsPerSecond)
                 / IndexerConstants.TalonFXConstants.GEAR_RATIO;

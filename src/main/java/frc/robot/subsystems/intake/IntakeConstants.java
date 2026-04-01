@@ -36,8 +36,9 @@ public class IntakeConstants {
 
     public static final class intakeMotorConstants {
 
-        public static final int intakeMotorCanID = 1;
-        public static final double gearRatio = 5.0; //gear ratio is 5:1
+        public static final int intakeMotorCanID = 2;
+        public static final int intakeFollowerMotorCanID = 3;
+        public static final double gearRatio = 3.0; //gear ratio is 5:1
         public static final double intakeVoltage = 11.0;
 
         public static final Slot0Configs intakeMotorGains = new Slot0Configs()
@@ -56,7 +57,7 @@ public class IntakeConstants {
 
 
     public static final class deployMotorConstants {
-        public static final int deployMotorCanID = 2;
+        public static final int deployMotorCanID = 1;
         public static final double gearRatio = 4.0 * 4.0 * 3.0; //gear ratio is 4:1, 3:1, 3:1
         public static final double deployVoltage = 6.0;
         public static final double deployTimeoutSeconds = 5.0;

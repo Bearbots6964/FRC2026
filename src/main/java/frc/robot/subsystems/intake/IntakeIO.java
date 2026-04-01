@@ -12,6 +12,7 @@ public interface IntakeIO {
 @AutoLog
     public static class IntakeIOInputs {
         public boolean intakeMotorConnected = false;
+        public boolean intakeFollowerMotorConnected = false;
         public boolean deployMotorConnected = false;
         
         public double intakeMotorPositionDegrees = 0.0;

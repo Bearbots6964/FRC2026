@@ -15,7 +15,8 @@ public class IndexerConstants {
     public static final double AGITATE_DURATION_SECONDS = 0.1875;
 
     public static final class TalonFXConstants {
-        public static final int MOTOR_ID = 7;
+        public static final int MOTOR_ID = 4;
+        public static final int FOLLOWER_MOTOR_ID = 5;
         public static final double GEAR_RATIO = (64 / 16) * 5; // 5:1 gearbox with a 16:64 belt reduction
         public static final Slot0Configs MOTOR_GAINS = new Slot0Configs()
                 .withKP(0.0)

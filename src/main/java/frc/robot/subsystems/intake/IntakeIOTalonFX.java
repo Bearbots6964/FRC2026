@@ -11,12 +11,14 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.util.Units;
@@ -34,6 +36,7 @@ public class IntakeIOTalonFX implements IntakeIO {
 
     //instantiate intake motor and status signals
     private final TalonFX intakeMotor;
+    private final TalonFX intakeFollowerMotor;
     private final TalonFX deployMotor;
 
     //intake motor status signals
@@ -41,6 +44,8 @@ public class IntakeIOTalonFX implements IntakeIO {
     StatusSignal<AngularVelocity> intakeMotorVelocityRotPerSec;
     StatusSignal<Voltage> intakeMotorAppliedVolts;
     StatusSignal<Current> intakeMotorCurrentAmps;
+
+    StatusSignal<Voltage> intakeMotorFollowerVoltage;
 
     //deploy motor status signals
     StatusSignal<Angle> deployMotorPositionRot;
@@ -74,6 +79,7 @@ public class IntakeIOTalonFX implements IntakeIO {
         intakeConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
+
         var deployConfig = new TalonFXConfiguration()
             .withMotorOutput(deployMotorConstants.deployMotorOutputConfigs)
             .withCurrentLimits(deployMotorConstants.deployCurrentLimits)
@@ -89,6 +95,11 @@ public class IntakeIOTalonFX implements IntakeIO {
         //create motor object and apply configuration to intake motor, retrying up to 5 times with 0.25s delay
         intakeMotor = new TalonFX(intakeMotorConstants.intakeMotorCanID);
         tryUntilOk(5, () -> intakeMotor.getConfigurator().apply(intakeConfig, 0.25));
+
+        intakeFollowerMotor = new TalonFX(intakeMotorConstants.intakeMotorCanID);
+        tryUntilOk(5, () -> intakeFollowerMotor.getConfigurator().apply(intakeConfig, 0.25));
+
+        intakeMotorFollowerVoltage = intakeFollowerMotor.getMotorVoltage();
 
         //create motor object and apply configuration to deploy motor, retrying up to 5 times with 0.25s delay
         deployMotor = new TalonFX(deployMotorConstants.deployMotorCanID);
@@ -120,8 +131,14 @@ public class IntakeIOTalonFX implements IntakeIO {
             deployMotorAppliedVolts,
             deployMotorCurrentAmps);
 
+        BaseStatusSignal.setUpdateFrequencyForAll(4.0, intakeMotorFollowerVoltage);
+
         ParentDevice.optimizeBusUtilizationForAll(intakeMotor);
         ParentDevice.optimizeBusUtilizationForAll(deployMotor);
+        ParentDevice.optimizeBusUtilizationForAll(intakeFollowerMotor);
+
+        intakeFollowerMotor.setControl(new Follower(intakeMotorConstants.intakeMotorCanID, MotorAlignmentValue.Opposed));
+
         //end of constructor
     }
 
@@ -140,6 +157,7 @@ public class IntakeIOTalonFX implements IntakeIO {
             deployMotorAppliedVolts,
             deployMotorCurrentAmps
         ).isOK();
+        inputs.intakeFollowerMotorConnected = BaseStatusSignal.refreshAll(intakeMotorFollowerVoltage).isOK();
 
         //update the logged inputs with the latest values from the status signals
         inputs.intakeMotorPositionDegrees =
