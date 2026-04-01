@@ -107,7 +107,7 @@ public class IndexerIOTalonFX implements IndexerIO {
 
     @Override
     public void stop() {
-        motor.setControl(neutralRequest);
+        motor.stopMotor();
     }
 
 }
