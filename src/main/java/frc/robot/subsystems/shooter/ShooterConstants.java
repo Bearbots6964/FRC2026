@@ -48,20 +48,10 @@ public class ShooterConstants {
 
         static {
             // TODO: Fill these maps with data from testing
-//            SHOT_MAP.put(1.0, new ShotData(5, 1));
-            SHOT_MAP.put(1.469509, new ShotData(RotationsPerSecond.of(40.0), Shooter.actualHoodPositionToAngle(40.0)));
-            SHOT_MAP.put(2.005032, new ShotData(RotationsPerSecond.of(45.0), Shooter.actualHoodPositionToAngle(45.0)));
-//            SHOT_MAP.put(2.507583, new ShotData(RotationsPerSecond.of(47.0), Turret.actualHoodPositionToAngle(50.0)));
-//            SHOT_MAP.put(3.033000, new ShotData(RotationsPerSecond.of(50.0), Turret.actualHoodPositionToAngle(60.0)));
-//            SHOT_MAP.put(3.504614, new ShotData(RotationsPerSecond.of(53.0), Turret.actualHoodPositionToAngle(70.0)));
-//            SHOT_MAP.put(5.135334, new ShotData(RotationsPerSecond.of(81.0), Turret.actualHoodPositionToAngle(83.0)));
-            SHOT_MAP.put(5.135334, new ShotData(RotationsPerSecond.of(76.0), Shooter.actualHoodPositionToAngle(59.0)));
-
-            SHOT_MAP.put(4.687540, new ShotData(RotationsPerSecond.of(68.0), Shooter.actualHoodPositionToAngle(55.0)));
-            SHOT_MAP.put(4.25, new ShotData(RotationsPerSecond.of(68.0), Shooter.actualHoodPositionToAngle(52.0)));
-            SHOT_MAP.put(3.654, new ShotData(RotationsPerSecond.of(55.0), Shooter.actualHoodPositionToAngle(55.0)));
-            SHOT_MAP.put(3.269, new ShotData(RotationsPerSecond.of(50.0), Shooter.actualHoodPositionToAngle(58.0)));
-            SHOT_MAP.put(2.755, new ShotData(RotationsPerSecond.of(50.0), Shooter.actualHoodPositionToAngle(58.0)));
+            SHOT_MAP.put(3.3, new ShotData(48, 17));
+            SHOT_MAP.put(2.2, new ShotData(45, 11));
+            SHOT_MAP.put(4.84, new ShotData(60, 23));
+            SHOT_MAP.put(10.0, new ShotData(60, 27));
 
             TOF_MAP.put(5.227626, 1.5458333333);
             TOF_MAP.put(4.25, 1.525);
