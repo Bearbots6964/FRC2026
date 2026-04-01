@@ -238,7 +238,7 @@ public class RobotContainer {
         //negate means the command will only run if the intake isn't already deployed
         deployIntakeTrigger.onTrue(intake.setGoal(IntakeGoal.DEPLOY));
         //Retract intake when B button + Right Bumper is pressed
-//        retractIntakeTrigger.and(intake.isRetracted.negate()).whileTrue(intake.setGoal(IntakeGoal.STOW));
+        retractIntakeTrigger.and(intake.isRetracted.negate()).whileTrue(intake.setGoal(IntakeGoal.STOW));
         //Intake fuel while Y button is held
         stopIntakeTrigger.whileTrue(intake.setGoal(IntakeGoal.IDLE));
         //Eject fuel while left bumper is held
