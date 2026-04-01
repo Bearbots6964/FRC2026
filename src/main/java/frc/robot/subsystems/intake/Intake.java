@@ -73,10 +73,15 @@ public class Intake extends SubsystemBase implements Identifiable {
             new Alert("Deploy motor disconnected.", Alert.AlertType.kError);
         //critical alert for motor disconnection
 
+//        routine = new SysIdRoutine(
+//            new Config(Volts.per(Second).of(0.5), Volts.of(3), null,
+//                (state) -> SignalLogger.writeString("state", state.toString())),
+//            new Mechanism(io::setDeployVoltage, null, this)
+//        );
+
         routine = new SysIdRoutine(
-            new Config(Volts.per(Second).of(0.5), Volts.of(3), null,
-                (state) -> SignalLogger.writeString("state", state.toString())),
-            new Mechanism(io::setDeployVoltage, null, this)
+            new Config(null, null, null, (state) -> SignalLogger.writeString("state", state.toString())),
+            new Mechanism(io::setIntakeVoltage, null, this)
         );
 
     }
@@ -123,7 +128,7 @@ public class Intake extends SubsystemBase implements Identifiable {
         //run the intake at the specified voltage when this command is scheduled, and stop it when the command ends
         return runEnd(
             () -> io.setIntakeVoltage(intakeMotorConstants.intakeVoltage),
-            () -> io.setIntakeVoltage(0.0)
+            () -> io.setIntakeVoltage(Volts.of(0.0))
         );
     }
 
@@ -140,9 +145,9 @@ public class Intake extends SubsystemBase implements Identifiable {
     public Command eject() {
         //run the intake in reverse at the specified voltage when this command is scheduled, and stop it when the command ends
         return runEnd(
-            () -> io.setIntakeVoltage(-intakeMotorConstants.intakeVoltage),
+            () -> io.setIntakeVoltage(intakeMotorConstants.intakeVoltage.unaryMinus()),
             //eject at the specified voltage
-            () -> io.setIntakeVoltage(0.0)
+            () -> io.setIntakeVoltage(Volts.of(0.0))
         );
     }
 

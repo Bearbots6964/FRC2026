@@ -78,6 +78,7 @@ public class IntakeIOTalonFX implements IntakeIO {
             .withSlot0(intakeMotorConstants.intakeMotorGains);
         intakeConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        intakeConfig.Feedback.SensorToMechanismRatio = 3.0;
 
 
         var deployConfig = new TalonFXConfiguration()
@@ -175,7 +176,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     }
 
     @Override
-    public void setIntakeVoltage(double volts) {
+    public void setIntakeVoltage(Voltage volts) {
         intakeMotor.setControl(voltageRequest.withOutput(volts));
     }
 

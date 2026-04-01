@@ -5,6 +5,7 @@
 package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -19,6 +20,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Voltage;
 
 /**
  * Add your docs here.
@@ -39,7 +41,7 @@ public class IntakeConstants {
         public static final int intakeMotorCanID = 2;
         public static final int intakeFollowerMotorCanID = 3;
         public static final double gearRatio = 3.0; //gear ratio is 5:1
-        public static final double intakeVoltage = 11.0;
+        public static final Voltage intakeVoltage = Volts.of(11.0);
 
         public static final Slot0Configs intakeMotorGains = new Slot0Configs()
             .withKP(0.0)

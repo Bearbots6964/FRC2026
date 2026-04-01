@@ -31,7 +31,7 @@ public interface IntakeIO {
     public default void updateInputs(IntakeIOInputs inputs) {}
     
     /** Run the intake motor at the specified voltage. */
-    public default void setIntakeVoltage(double volts) {}
+    public default void setIntakeVoltage(Voltage volts) {}
 
     /** Run the deploy motor at the specified voltage. */
     public default void setDeployVoltage(Voltage volts) {}
