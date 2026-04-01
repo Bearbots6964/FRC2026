@@ -91,6 +91,7 @@ public class ShooterIOTalonFX implements ShooterIO {
                 .withSlot0(HoodMotorConstants.HOOD_GAINS)
                 .withCurrentLimits(HoodMotorConstants.HOOD_CURRENT_LIMITS)
                 .withMotorOutput(HoodMotorConstants.HOOD_OUTPUT_CONFIGS);
+        hood_configs.Feedback.SensorToMechanismRatio = HoodMotorConstants.MOTOR_TO_HOOD_RATIO;
 
         shooterFollower1_configs =
             new TalonFXConfiguration() // ASK PARKER ABOUT OUTPUT
