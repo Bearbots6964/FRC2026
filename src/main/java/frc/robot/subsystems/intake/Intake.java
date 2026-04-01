@@ -74,7 +74,7 @@ public class Intake extends SubsystemBase implements Identifiable {
         //critical alert for motor disconnection
 
         routine = new SysIdRoutine(
-            new Config(Volts.per(Second).of(0.5), Volts.of(1), null,
+            new Config(Volts.per(Second).of(0.5), Volts.of(3), null,
                 (state) -> SignalLogger.writeString("state", state.toString())),
             new Mechanism(io::setDeployVoltage, null, this)
         );
