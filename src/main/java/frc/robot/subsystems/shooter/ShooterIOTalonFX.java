@@ -221,6 +221,9 @@ public class ShooterIOTalonFX implements ShooterIO {
 
     public void setFlywheelVoltage(Voltage volts) {
         flywheel.setControl(shooterVoltageOut.withOutput(volts));
+        shooterFollower1.setVoltage(volts.in(Units.Volts));
+        shooterFollower2.setVoltage(volts.unaryMinus().in(Units.Volts));
+        shooterFollower3.setVoltage(volts.unaryMinus().in(Units.Volts));
     }
 
     public void setHoodVoltage(Voltage volts) {
