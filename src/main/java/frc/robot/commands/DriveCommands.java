@@ -184,7 +184,7 @@ public class DriveCommands {
                         angleController.calculate(
                             drive.getRotation().getRadians(), new Rotation2d(
                                 currentTarget.get().getX() - drive.getPose().getX(),
-                                currentTarget.get().getY() - drive.getPose().getY()).getRadians());
+                                currentTarget.get().getY() - drive.getPose().getY()).plus(Rotation2d.k180deg).getRadians());
 
                     // Convert to field relative speeds & send command
                     ChassisSpeeds speeds =
