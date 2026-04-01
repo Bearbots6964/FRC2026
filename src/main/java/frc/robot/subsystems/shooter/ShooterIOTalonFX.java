@@ -7,6 +7,7 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import edu.wpi.first.units.Units;
@@ -51,6 +52,7 @@ public class ShooterIOTalonFX implements ShooterIO {
     private final MotionMagicVoltage mm = new MotionMagicVoltage(0);
 
     private final VelocityVoltage shooterVelocityVoltage = new VelocityVoltage(0);
+    private final VoltageOut shooterVoltageOut = new VoltageOut(0);
 
     private final Follower followRequest =
         new Follower(
@@ -60,12 +62,12 @@ public class ShooterIOTalonFX implements ShooterIO {
     private final Follower followRequest2 =
         new Follower(
             FlywheelMotorConstants.FLYWHEEL_MOTOR_ID,
-            MotorAlignmentValue.Aligned);
+            MotorAlignmentValue.Opposed);
 
     private final Follower followRequest3 =
         new Follower(
             FlywheelMotorConstants.FLYWHEEL_MOTOR_ID,
-            MotorAlignmentValue.Aligned);
+            MotorAlignmentValue.Opposed);
 
     private final NeutralOut neutralOut = new NeutralOut();
 
@@ -217,7 +219,7 @@ public class ShooterIOTalonFX implements ShooterIO {
     }
 
     public void setFlywheelVoltage(Voltage volts) {
-        flywheel.setVoltage(volts.in(Units.Volts));
+        flywheel.setControl(shooterVoltageOut.withOutput(volts));
     }
 
     public void setHoodVoltage(Voltage volts) {
