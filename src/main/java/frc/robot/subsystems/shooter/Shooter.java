@@ -219,11 +219,16 @@ public class Shooter extends SubsystemBase implements Identifiable {
         Angle azimuthAngle = ShooterCalculator.calculateAzimuthAngle(robotPose,
             calculatedShot.target());
         targetAngle = new Rotation2d(azimuthAngle);
-        if (hoodGoal == HoodGoal.ACTIVE) io.setHoodPosition(calculatedShot.getHoodAngle());
-        else io.setHoodPosition(Degrees.of(0.0));
-        io.setFlywheelSpeed(
-            ShooterCalculator.linearToAngularVelocity(calculatedShot.getExitVelocity(),
-                FLYWHEEL_RADIUS));
+        if (hoodGoal == HoodGoal.ACTIVE) {
+            io.setHoodPosition(calculatedShot.getHoodAngle());
+            io.setFlywheelSpeed(
+                ShooterCalculator.linearToAngularVelocity(calculatedShot.getExitVelocity(),
+                    FLYWHEEL_RADIUS));
+        }
+        else {
+            io.setHoodPosition(Degrees.of(0.0));
+            io.setFlywheelSpeed(RotationsPerSecond.of(0.0));
+        }
 //        io.setFlywheelSpeed(calculatedShot.getExitAngularVelocity());
 
         Logger.recordOutput("Turret/CalculatedShot", calculatedShot);
