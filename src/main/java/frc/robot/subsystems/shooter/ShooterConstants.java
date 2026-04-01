@@ -131,8 +131,11 @@ public class ShooterConstants {
                 .withInverted(InvertedValue.CounterClockwise_Positive)
                 .withNeutralMode(NeutralModeValue.Coast);
 
+            public static final double GEAR_RATIO = (50.0 / 14.0) * (18.0 / 44.0);
             public static final FeedbackConfigs FLYWHEEL_FEEDBACK_CONFIGS = new FeedbackConfigs()
-                .withVelocityFilterTimeConstant(Seconds.of(0.0));
+                .withVelocityFilterTimeConstant(Seconds.of(0.0))
+                .withSensorToMechanismRatio(GEAR_RATIO);
+
         }
 
 

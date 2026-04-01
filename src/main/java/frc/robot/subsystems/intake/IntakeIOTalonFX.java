@@ -96,7 +96,7 @@ public class IntakeIOTalonFX implements IntakeIO {
         intakeMotor = new TalonFX(intakeMotorConstants.intakeMotorCanID);
         tryUntilOk(5, () -> intakeMotor.getConfigurator().apply(intakeConfig, 0.25));
 
-        intakeFollowerMotor = new TalonFX(intakeMotorConstants.intakeMotorCanID);
+        intakeFollowerMotor = new TalonFX(intakeMotorConstants.intakeFollowerMotorCanID);
         tryUntilOk(5, () -> intakeFollowerMotor.getConfigurator().apply(intakeConfig, 0.25));
 
         intakeMotorFollowerVoltage = intakeFollowerMotor.getMotorVoltage();

@@ -41,6 +41,7 @@ import frc.robot.subsystems.shooter.ShooterConstants.TargetingConstants;
 import frc.robot.util.Identifiable;
 import frc.robot.util.LoggedTunableNumber;
 import java.util.function.Supplier;
+import lombok.Getter;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -53,6 +54,7 @@ public class Shooter extends SubsystemBase implements Identifiable {
 
     public Rotation2d targetAngle = new Rotation2d();
 
+    @Getter
     @AutoLogOutput
     Translation3d currentTarget = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
         ? Hub.topCenterPoint

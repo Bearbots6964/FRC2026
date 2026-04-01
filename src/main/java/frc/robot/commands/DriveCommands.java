@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -27,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.FieldConstants;
+import frc.robot.FieldConstants.Hub;
 import frc.robot.FieldConstants.RightBump;
 import frc.robot.subsystems.drive.Drive;
 import java.text.DecimalFormat;
@@ -159,8 +161,7 @@ public class DriveCommands {
         Drive drive,
         DoubleSupplier xSupplier,
         DoubleSupplier ySupplier,
-        Supplier<Rotation2d> rotationSupplier) {
-
+        Supplier<Translation3d> currentTarget) {
         // Create PID controller
         ProfiledPIDController angleController =
             new ProfiledPIDController(
@@ -177,14 +178,13 @@ public class DriveCommands {
                     Translation2d linearVelocity =
                         getLinearVelocityFromJoysticks(xSupplier.getAsDouble(),
                             ySupplier.getAsDouble());
-                    if (Math.abs(xSupplier.getAsDouble()) < DEADBAND && Math.abs(ySupplier.getAsDouble()) < DEADBAND) {
-                        drive.stopWithX();
-                    }
 
                     // Calculate angular speed
                     double omega =
                         angleController.calculate(
-                            drive.getRotation().getRadians(), rotationSupplier.get().getRadians());
+                            drive.getRotation().getRadians(), new Rotation2d(
+                                currentTarget.get().getX() - drive.getPose().getX(),
+                                currentTarget.get().getY() - drive.getPose().getY()).getRadians());
 
                     // Convert to field relative speeds & send command
                     ChassisSpeeds speeds =
