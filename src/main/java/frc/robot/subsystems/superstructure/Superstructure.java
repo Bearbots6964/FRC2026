@@ -83,15 +83,14 @@ public class Superstructure extends SubsystemBase {
             Goal.SCORING,
             () -> Commands.sequence(
                     this.shooter.setGoalCommand(ShooterGoal.SCORING),
-                    this.intake.tilt(),
+                    this.intake.setGoalCommand(IntakeGoal.STOW),
                     this.indexer.setGoalCommand(IndexerGoal.ACTIVE)
                 )
                 .withName("Start scoring"),
             Goal.PASSING,
             () -> Commands.sequence(
-                    this.shooter.setGoalCommand(ShooterGoal.PASSING)
-                        .onlyIf(inAllianceZoneTrigger.negate()),
-                    this.intake.tilt(),
+                    this.shooter.setGoalCommand(ShooterGoal.PASSING),
+                    this.intake.setGoalCommand(IntakeGoal.STOW),
                     this.indexer.setGoalCommand(IndexerGoal.ACTIVE).onlyIf(inAllianceZoneTrigger.negate())
                 )
                 .withName("Start passing"),
