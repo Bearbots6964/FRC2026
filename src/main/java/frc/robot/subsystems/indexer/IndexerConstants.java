@@ -34,7 +34,7 @@ public class IndexerConstants {
                 .withNeutralMode(NeutralModeValue.Brake);
 
         public static final OpenLoopRampsConfigs MOTOR_OPEN_LOOP_RAMPS = new OpenLoopRampsConfigs()
-            .withDutyCycleOpenLoopRampPeriod(1);
+            .withDutyCycleOpenLoopRampPeriod(0.25);
 
     }
 
