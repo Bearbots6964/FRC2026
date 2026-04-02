@@ -195,7 +195,7 @@ public class DriveCommands {
                     boolean isFlipped =
                         DriverStation.getAlliance().isPresent()
                             && DriverStation.getAlliance().get() == Alliance.Red;
-                    if (Math.abs(xSupplier.getAsDouble()) < DEADBAND && Math.abs(ySupplier.getAsDouble()) < DEADBAND && omega < DEADBAND) {
+                    if (Math.abs(xSupplier.getAsDouble()) < DEADBAND && Math.abs(ySupplier.getAsDouble()) < DEADBAND && Math.abs(omega) < (DEADBAND / 10.0)) {
                         drive.stopWithX();
                     } else {
                         drive.runVelocity(
