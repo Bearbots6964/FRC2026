@@ -5,9 +5,7 @@
 package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -16,13 +14,12 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
-import frc.robot.subsystems.intake.IntakeConstants.deployMotorConstants;
+import frc.robot.subsystems.intake.IntakeConstants.DeployMode;
+import frc.robot.subsystems.intake.IntakeConstants.IntakeMode;
 import frc.robot.subsystems.intake.IntakeConstants.intakeMotorConstants;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.util.Identifiable;
-import java.util.List;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -59,6 +56,12 @@ public class Intake extends SubsystemBase implements Identifiable {
     @AutoLogOutput
     private IntakeGoal goal = IntakeGoal.IDLE;
 
+    @AutoLogOutput
+    private DeployMode deployMode = DeployMode.STOW;
+
+    @AutoLogOutput
+    private IntakeMode intakeMode = IntakeMode.STOP;
+
     private final SysIdRoutine routine;
 
     /**
@@ -80,7 +83,8 @@ public class Intake extends SubsystemBase implements Identifiable {
 //        );
 
         routine = new SysIdRoutine(
-            new Config(null, null, null, (state) -> SignalLogger.writeString("state", state.toString())),
+            new Config(null, null, null,
+                (state) -> SignalLogger.writeString("state", state.toString())),
             new Mechanism(io::setIntakeVoltage, null, this)
         );
 
@@ -97,79 +101,59 @@ public class Intake extends SubsystemBase implements Identifiable {
         intakeMotorDisconnectedAlert.set(!inputs.intakeMotorConnected);
         deployMotorDisconnectedAlert.set(!inputs.deployMotorConnected);
 
+        io.setIntakeMotorVelocity(RotationsPerSecond.of(IntakeConstants.intakeMap.get(intakeMode)));
+        io.setDeployPosition(Degrees.of(IntakeConstants.deployMap.get(deployMode)));
         //end of periodic
     }
 
-    //command to deploy the intake
-    public Command deploy() {
-        //run the deploy motor at the specified voltage when this command is scheduled, and stop it when the command ends
-        return runOnce(
-            () -> io.setDeployPosition(IntakeConstants.DEPLOYED_ANGLE)
-            //deploy at the specified voltage
-        );
-    }
-
-    public Command retract() {
-        //run the deploy motor in reverse at the specified voltage when this command is scheduled, and stop it when the command ends
-        return runOnce(
-            () -> io.setDeployPosition(IntakeConstants.RETRACTED_ANGLE)
-        );
-    }
-
     public Command tilt() {
-        //run the deploy motor in reverse at the specified voltage when this command is scheduled, and stop it when the command ends
-        return runOnce(
-            () -> io.setDeployPosition(IntakeConstants.TILT_ANGLE)
-        );
+        return Commands.repeatingSequence(
+                runOnce(() -> {
+                    intakeMode = IntakeMode.RUN_SLOW;
+                    deployMode = DeployMode.TILT;
+                }),
+                Commands.waitSeconds(IntakeConstants.tiltCycleTime / 2),
+                runOnce(() -> deployMode = DeployMode.DEPLOY),
+                Commands.waitSeconds(IntakeConstants.tiltCycleTime / 2)
+            )
+            .finallyDo(() -> {
+                intakeMode = IntakeMode.RUN;
+                deployMode = DeployMode.DEPLOY;
+            });
     }
 
-    //command to intake fuel
-    public Command intake() {
-        //run the intake at the specified voltage when this command is scheduled, and stop it when the command ends
-        return runEnd(
-            () -> io.setIntakeMotorVelocity(intakeMotorConstants.targetRPS),
-            () -> io.setIntakeVoltage(Volts.of(0.0))
-        );
-    }
 
     public Command autoIntake() {
         return
-            runOnce(() -> goal = IntakeGoal.DEPLOY).andThen(
-                runOnce(() -> {
-                    io.setDeployPosition(IntakeConstants.DEPLOYED_ANGLE);
-                    io.setIntakeMotorVelocity(intakeMotorConstants.targetRPS);
-                }).repeatedly());
+            runOnce(() -> goal = IntakeGoal.DEPLOY);
     }
 
-    public Command eject() {
-        //run the intake in reverse at the specified voltage when this command is scheduled, and stop it when the command ends
-        return runEnd(
-            () -> io.setIntakeMotorVelocity(intakeMotorConstants.targetRPS.unaryMinus()),
-            //eject at the specified voltage
-            () -> io.setIntakeVoltage(Volts.of(0.0))
-        );
+    public Command setGoalCommand(IntakeGoal goal) {
+        return runOnce(() -> setGoal(goal));
     }
 
-    public void stopIntake() {
-        io.stopIntake();
-    }
-
-    public void stopDeploy() {
-        io.stopDeploy();
-    }
-
-    public Command setGoal(IntakeGoal goal) {
-        return defer(() -> {
-            Commands.none();
-            Command toSchedule = switch (goal) {
-                case STOW -> retract().andThen(intake());
-                case DEPLOY -> deploy().andThen(intake());
-                case TILT -> tilt().andThen(intake());
-                case IDLE -> Commands.run(this::stopIntake);
-                case EJECT -> deploy().andThen(eject());
-            };
-            return toSchedule;
-        });
+    public void setGoal(IntakeGoal goal) {
+        this.goal = goal;
+        switch (goal) {
+            case STOW -> {
+                intakeMode = IntakeMode.RUN_SLOW;
+                deployMode = DeployMode.STOW;
+            }
+            case DEPLOY -> {
+                intakeMode = IntakeMode.RUN;
+                deployMode = DeployMode.DEPLOY;
+            }
+            case TILT -> {
+                intakeMode = IntakeMode.RUN_SLOW;
+                deployMode = DeployMode.TILT;
+            }
+            case IDLE -> {
+                intakeMode = IntakeMode.STOP;
+            }
+            case EJECT -> {
+                intakeMode = IntakeMode.REVERSE;
+            }
+        }
     }
 
     public static enum IntakeGoal {

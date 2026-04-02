@@ -1,17 +1,16 @@
 package frc.robot.subsystems.indexer;
 
-import com.ctre.phoenix6.swerve.SwerveRequest.Idle;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import lombok.Setter;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Indexer extends SubsystemBase {
@@ -23,6 +22,7 @@ public class Indexer extends SubsystemBase {
     private final Trigger overcurrentTrigger;
     private final Debouncer overcurrentDebouncer;
 
+    @Setter
     @AutoLogOutput
     private IndexerGoal goal = IndexerGoal.IDLE;
 
@@ -56,42 +56,18 @@ public class Indexer extends SubsystemBase {
 
         if (goal == IndexerGoal.IDLE)
             io.stop();
-    }
-
-    public Command setGoal(IndexerGoal goal) {
-        return defer(() -> {
-            Command toSchedule = Commands.none();
-            if (goal == IndexerGoal.ACTIVE && this.goal != IndexerGoal.ACTIVE) {
-                toSchedule = runIndexer();
-            } else if (goal == IndexerGoal.IDLE) {
-                toSchedule = stopIndexer();
-            }
-            this.goal = goal;
-            return toSchedule;
-        });
-    }
-
-    public Command runIndexer() {
-        return runOnce(() ->
-        {
+        else if (goal == IndexerGoal.ACTIVE)
             io.setIndexerOpenLoop(IndexerConstants.MOTOR_SPEED_PERCENTAGE);
-            goal = IndexerGoal.ACTIVE;
-        });
+    }
+
+    public Command setGoalCommand(IndexerGoal goal) {
+        return runOnce(() -> this.goal = goal);
     }
 
     public Command runEndIndexer() {
-        return runEnd(() -> {
-                io.setIndexerOpenLoop(IndexerConstants.MOTOR_SPEED_PERCENTAGE);
-                goal = IndexerGoal.ACTIVE;
-            },
-            () -> {
-                io.stop();
-                goal = IndexerGoal.IDLE;
-            }).finallyDo(
-            () -> {
-                io.stop();
-                goal = IndexerGoal.IDLE;
-            }
+        return runEnd(() -> goal = IndexerGoal.ACTIVE,
+            () -> goal = IndexerGoal.IDLE).finallyDo(
+            () -> goal = IndexerGoal.IDLE
         );
     }
 

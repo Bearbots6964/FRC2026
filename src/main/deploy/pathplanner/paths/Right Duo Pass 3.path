@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.123783249627976,
-        "y": 7.006090355282738
+        "x": 2.9409933500744048,
+        "y": 0.8349940476190476
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.8059215494791667,
-        "y": 7.5311321149553585
+        "x": 3.942912016369047,
+        "y": 0.6888681640624998
       },
       "isLocked": false,
-      "linkedName": "Left Duo Check 1"
+      "linkedName": "Right Duo Check 1"
     },
     {
       "anchor": {
-        "x": 5.76571312313988,
-        "y": 7.266653645833333
+        "x": 5.349684616815477,
+        "y": 0.7112580915178568
       },
       "prevControl": {
-        "x": 5.11091439262212,
-        "y": 7.5458684639453395
+        "x": 4.349684616815477,
+        "y": 0.7112580915178568
       },
       "nextControl": {
-        "x": 6.089653366815475,
-        "y": 7.128521251860119
+        "x": 6.349684616815477,
+        "y": 0.7112580915178568
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.812207728794643,
-        "y": 5.794424153645833
+        "x": 6.79609840029762,
+        "y": 1.7754525669642849
       },
       "prevControl": {
-        "x": 6.727235188802084,
-        "y": 6.638104352678572
+        "x": 6.709739519775595,
+        "y": 1.5408419453910436
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,7 +46,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.33630763536379044,
+      "waypointRelativePos": 0.45997250423011854,
       "rotationDegrees": 0.0
     }
   ],
@@ -63,13 +63,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -46.29690667423589
+    "rotation": 44.79086762309938
   },
   "reversed": false,
-  "folder": "Left Duo",
+  "folder": "Right Duo",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 112.35962995175666
+    "rotation": -115.79549241445328
   },
   "useDefaultConstraints": true
 }

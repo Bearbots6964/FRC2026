@@ -23,12 +23,10 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.indexer.Indexer;
-import frc.robot.subsystems.indexer.Indexer.IndexerGoal;
 import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
@@ -36,9 +34,9 @@ import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.intake.Intake.IntakeGoal;
 import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.shooter.Shooter.ShooterGoal;
 import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.shooter.Shooter.ShooterGoal;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.vision.*;
@@ -236,20 +234,18 @@ public class RobotContainer {
 
         //Deploy intake when B button is pressed, 
         //negate means the command will only run if the intake isn't already deployed
-        deployIntakeTrigger.onTrue(intake.setGoal(IntakeGoal.DEPLOY));
+        deployIntakeTrigger.onTrue(intake.setGoalCommand(IntakeGoal.DEPLOY));
         //Retract intake when B button + Right Bumper is pressed
-        retractIntakeTrigger.and(intake.isRetracted.negate()).whileTrue(intake.setGoal(IntakeGoal.STOW));
+        retractIntakeTrigger.and(intake.isRetracted.negate()).whileTrue(intake.setGoalCommand(IntakeGoal.STOW));
         //Intake fuel while Y button is held
-        stopIntakeTrigger.whileTrue(intake.setGoal(IntakeGoal.IDLE));
+        stopIntakeTrigger.whileTrue(intake.setGoalCommand(IntakeGoal.IDLE));
         //Eject fuel while left bumper is held
-        reverseIntakeTrigger.whileTrue(intake.setGoal(IntakeGoal.EJECT));
+        reverseIntakeTrigger.whileTrue(intake.setGoalCommand(IntakeGoal.EJECT));
 
         shootTrigger.whileTrue(DriveCommands.joystickDriveAtAngle(
             drive, () -> -driverController.getLeftY(), () -> -driverController.getLeftX(),
             shooter::getCurrentTarget).alongWith(Commands.waitSeconds(0.5).andThen(
-            shooter.runEndHood()
-            .alongWith(indexer.runEndIndexer()))));
-        shootTrigger.onFalse(indexer.stopIndexer());
+            superstructure.runGoal())));
 //        shootTrigger.onTrue(indexer.setGoal(IndexerGoal.ACTIVE));
 //        manualTurretControlTrigger.onTrue(shooter.setGoal(ShooterGoal.TUNING).repeatedly());
 
@@ -271,9 +267,9 @@ public class RobotContainer {
     }
 
     private void configureAutonomous() {
-        NamedCommands.registerCommand("Lock Wheels", Commands.runOnce(drive::stopWithX, drive));
-        NamedCommands.registerCommand("Shoot",  indexer.runEndIndexer());
-        NamedCommands.registerCommand("Deploy Intake", intake.autoIntake());
+        NamedCommands.registerCommand("Shoot",  Commands.runEnd(() -> shooter.setGoal(
+            ShooterGoal.SCORING), () -> shooter.setGoal(ShooterGoal.IDLE), shooter));
+        NamedCommands.registerCommand("Intake", intake.autoIntake());
     }
 
     private void configureFuelSim() {

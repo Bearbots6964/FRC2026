@@ -8,7 +8,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -17,7 +16,9 @@ import frc.robot.Constants.Dimensions;
 import frc.robot.FieldConstants;
 import frc.robot.FieldConstants.LinesVertical;
 import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.indexer.Indexer.IndexerGoal;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.Intake.IntakeGoal;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.Shooter.ShooterGoal;
 import frc.robot.util.HubShiftUtil;
@@ -28,6 +29,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Superstructure extends SubsystemBase {
+
     private final Shooter shooter;
     private final Intake intake;
     private final Indexer indexer;
@@ -45,8 +47,9 @@ public class Superstructure extends SubsystemBase {
     private boolean shiftOverride = false;
 
     /**
-     * Will trigger when hub is active, or when there is less than ACTIVE_PRESHOOT_TIME until the next active period
-     * 100 seconds is an arbitrarily long time so as to not trigger shooting when timeRemainingInCurrentShift gives Optional.empty()
+     * Will trigger when hub is active, or when there is less than ACTIVE_PRESHOOT_TIME until the
+     * next active period 100 seconds is an arbitrarily long time so as to not trigger shooting when
+     * timeRemainingInCurrentShift gives Optional.empty()
      */
     @AutoLogOutput
     public final Trigger activeHubTrigger =
@@ -61,12 +64,16 @@ public class Superstructure extends SubsystemBase {
         inAllianceZoneTrigger.and(DriverStation::isTeleop).and(activeHubTrigger.negate());
 
     @AutoLogOutput
-    public final Trigger leaveZoneTrigger = inAllianceZoneTrigger.negate().and(DriverStation::isTeleop);
+    public final Trigger leaveZoneTrigger = inAllianceZoneTrigger.negate()
+        .and(DriverStation::isTeleop);
 
     private final Map<Goal, Supplier<Command>> goalCommands;
 
-    /** Creates a new Superstructure. */
-    public Superstructure(Shooter shooter, Intake intake, Indexer indexer, Supplier<Pose2d> poseSupplier) {
+    /**
+     * Creates a new Superstructure.
+     */
+    public Superstructure(Shooter shooter, Intake intake, Indexer indexer,
+        Supplier<Pose2d> poseSupplier) {
         this.shooter = shooter;
         this.intake = intake;
         this.indexer = indexer;
@@ -75,51 +82,38 @@ public class Superstructure extends SubsystemBase {
         goalCommands = Map.of(
             Goal.SCORING,
             () -> Commands.sequence(
-                    this.shooter.setGoal(ShooterGoal.SCORING)
-//                    this.intake.setGoal(IntakeGoal.DEPLOY)
-//                    this.indexer.setGoal(IndexerGoal.ACTIVE)
+                    this.shooter.setGoalCommand(ShooterGoal.SCORING),
+                    this.intake.tilt(),
+                    this.indexer.setGoalCommand(IndexerGoal.ACTIVE)
                 )
                 .withName("Start scoring"),
             Goal.PASSING,
             () -> Commands.sequence(
-                    this.shooter.setGoal(ShooterGoal.PASSING).onlyIf(inAllianceZoneTrigger.negate())
-//                    this.intake.setGoal(IntakeGoal.DEPLOY)
-//                    this.indexer.setGoal(IndexerGoal.ACTIVE).onlyIf(inAllianceZoneTrigger.negate())
+                    this.shooter.setGoalCommand(ShooterGoal.PASSING)
+                        .onlyIf(inAllianceZoneTrigger.negate()),
+                    this.intake.tilt(),
+                    this.indexer.setGoalCommand(IndexerGoal.ACTIVE).onlyIf(inAllianceZoneTrigger.negate())
                 )
                 .withName("Start passing"),
-            Goal.COLLECTING,
-            () -> Commands.sequence(
-                    this.shooter.setGoal(ShooterGoal.IDLE)
-//                    this.intake.setGoal(IntakeGoal.DEPLOY)
-//                    this.indexer.setGoal(IndexerGoal.IDLE)
-                )
-                .withName("Start collecting"),
-            Goal.EXPANDED,
-            () -> Commands.sequence(
-                    this.shooter.setGoal(ShooterGoal.IDLE)
-//                    this.intake.setGoal(IntakeGoal.IDLE)
-//                    this.indexer.setGoal(IndexerGoal.IDLE)
-                )
-                .withName("Start expanded"),
             Goal.IDLE,
             () -> Commands.sequence(
-                    this.shooter.setGoal(ShooterGoal.IDLE)
+                    this.shooter.setGoalCommand(ShooterGoal.IDLE)
 //                    this.intake.setGoal(IntakeGoal.STOW)
 //                    this.indexer.setGoal(IndexerGoal.IDLE)
                 )
                 .withName("Idle"));
 
         activeInZoneTrigger.onTrue(this.setGoal(Goal.SCORING));
-        inactiveInZoneTrigger.onTrue(this.setGoal(Goal.COLLECTING));
-        leaveZoneTrigger.onTrue(this.setGoal(Goal.PASSING).onlyIf(() -> this.goal != Goal.COLLECTING));
+        leaveZoneTrigger.onTrue(
+            this.setGoal(Goal.PASSING));
 
-        SmartDashboard.putData("Overrides/Shift", enableShiftOverride());
     }
 
     private boolean inAllianceZone() {
         Pose2d pose = poseSupplier.get();
         boolean isBlue = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
-        return isBlue && pose.getMeasureX().lt(Units.Meters.of(LinesVertical.allianceZone).plus(Dimensions.FULL_WIDTH.div(2)))
+        return isBlue && pose.getMeasureX()
+            .lt(Units.Meters.of(LinesVertical.allianceZone).plus(Dimensions.FULL_WIDTH.div(2)))
             || !isBlue
             && pose.getMeasureX()
             .gt(Units.Meters.of(FieldConstants.fieldLength).minus(
@@ -128,27 +122,24 @@ public class Superstructure extends SubsystemBase {
 
     public Command setGoal(Goal newGoal) {
         return this.runOnce(() -> this.goal = newGoal)
-            .andThen(goalCommands.get(newGoal).get())
+//            .andThen(goalCommands.get(newGoal).get())
             .withName("Set goal");
     }
 
-    public Command toggleCollecting() {
-        return Commands.either(stopCollecting(), this.setGoal(Goal.COLLECTING), () -> this.goal == Goal.COLLECTING);
+    public Command runGoal() {
+        return goalCommands.get(goal).get().andThen(Commands.none().repeatedly()).finallyDo(
+            this::idleSubsystems);
     }
 
-    /** Handle state logic for transitioning out of COLLECTING */
-    public Command stopCollecting() {
-        return Commands.either(this.setGoal(Goal.SCORING), this.setGoal(Goal.PASSING), activeInZoneTrigger);
+    private void idleSubsystems() {
+        indexer.setGoal(IndexerGoal.IDLE);
+        shooter.setGoal(ShooterGoal.IDLE);
+        intake.setGoal(IntakeGoal.DEPLOY);
     }
 
     public Command enableShiftOverride() {
         return Commands.startEnd(() -> shiftOverride = true, () -> shiftOverride = false)
             .withName("Override active first");
-    }
-
-    public Command runEndShooting() {
-        return shooter.runEndHood()
-            .alongWith(indexer.runEndIndexer());
     }
 
     @Override
@@ -158,29 +149,25 @@ public class Superstructure extends SubsystemBase {
     }
 
     /**
-     * The high-level goal of the superstructure, which determines the behavior of the turret, intake, and indexer. The
-     * goal is automatically set based on the robot's position on the field and the hub's active/inactive state, but can also
-     * be manually selected by the driver using the setGoal command as well as the various related commands.
+     * The high-level goal of the superstructure, which determines the behavior of the turret,
+     * intake, and indexer. The goal is automatically set based on the robot's position on the field
+     * and the hub's active/inactive state, but can also be manually selected by the driver using
+     * the setGoal command as well as the various related commands.
      */
     public static enum Goal {
         /**
-         * Score fuel in the hub. Automatically activated when entering the alliance zone if the hub is active.
+         * Score fuel in the hub. Automatically activated when entering the alliance zone if the hub
+         * is active.
          */
         SCORING,
         /**
-         * Pass fuel to our alliance zone. Automatically activated when leaving the alliance zone, unless currently collecting.
+         * Pass fuel to our alliance zone. Automatically activated when leaving the alliance zone,
+         * unless currently collecting.
          */
         PASSING,
         /**
-         * Collect fuel from the field. Automatically activated when entering the alliance zone if the hub is inactive.
-         */
-        COLLECTING,
-        /**
-         * Don't actively do anything, but keep the intake expanded for extra hopper capacity.
-         */
-        EXPANDED,
-        /**
-         * Don't actively do anything, and stow the intake. Make sure to activate this before climbing to avoid extension limit penalties.
+         * Don't actively do anything, and stow the intake. Make sure to activate this before
+         * climbing to avoid extension limit penalties.
          */
         IDLE
     }

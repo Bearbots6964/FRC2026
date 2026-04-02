@@ -23,6 +23,7 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
+import java.util.EnumMap;
 
 /**
  * Add your docs here.
@@ -37,6 +38,36 @@ public class IntakeConstants {
     public static final Angle DEPLOY_TOLERANCE = Degrees.of(0.5);
 
     public static final Angle START_ANGLE = Degrees.of(91.758);
+
+    public enum DeployMode {
+        STOW,
+        DEPLOY,
+        TILT
+    }
+
+    public enum IntakeMode {
+        RUN,
+        RUN_SLOW,
+        STOP,
+        REVERSE
+    }
+
+    public static EnumMap<DeployMode, Double> deployMap = new EnumMap<>(DeployMode.class);
+    public static EnumMap<IntakeMode, Double> intakeMap = new EnumMap<>(IntakeMode.class);
+    static {
+        deployMap.put(DeployMode.STOW, RETRACTED_ANGLE.in(Degrees));
+        deployMap.put(DeployMode.DEPLOY, DEPLOYED_ANGLE.in(Degrees));
+        deployMap.put(DeployMode.TILT, TILT_ANGLE.in(Degrees));
+
+        intakeMap.put(IntakeMode.RUN, 21.0);
+        intakeMap.put(IntakeMode.RUN_SLOW, 5.0);
+        intakeMap.put(IntakeMode.STOP, 0.0);
+        intakeMap.put(IntakeMode.REVERSE, -21.0);
+    }
+
+    public static final double tiltCycleTime = 1.0;
+
+
 
     public static final class intakeMotorConstants {
 
@@ -105,8 +136,8 @@ public class IntakeConstants {
             .withReverseSoftLimitThreshold(DEPLOYED_ANGLE);
 
         public static final MotionMagicConfigs MOTION_MAGIC_CONFIGS = new MotionMagicConfigs()
-            .withMotionMagicAcceleration(1.0)
-            .withMotionMagicCruiseVelocity(0.25);
+            .withMotionMagicCruiseVelocity(2.0)
+            .withMotionMagicAcceleration(4.0);
     }
 
 }

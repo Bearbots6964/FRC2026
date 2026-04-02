@@ -122,7 +122,7 @@ public class Shooter extends SubsystemBase implements Identifiable {
             "Turret flywheel follower motor 3 disconnected.", AlertType.kError);
 
         SmartDashboard.putData(
-            Commands.runOnce(() -> setGoal(ShooterGoal.TUNING)).withName("Turret Tuning Mode").ignoringDisable(true));
+            Commands.runOnce(() -> setGoalCommand(ShooterGoal.TUNING)).withName("Turret Tuning Mode").ignoringDisable(true));
 
         flywheelRoutine = new SysIdRoutine(
             new Config(null, null, null,
@@ -168,21 +168,24 @@ public class Shooter extends SubsystemBase implements Identifiable {
         flywheelFollowerMotor3Disconnected.set(!inputs.followerMotor3Connected);
     }
 
-    public Command setGoal(ShooterGoal goal) {
-        return runOnce(() -> {
-            this.goal = goal;
-            switch (goal) {
-                case SCORING, TUNING:
-                    setTarget(Hub.topCenterPoint);
-                    break;
-                case PASSING:
-                    setTarget(getPassingTarget(robotPoseSupplier.get()));
-                    break;
-                case IDLE, OFF:
-                    stop();
-                    break;
-            }
-        });
+    public Command setGoalCommand(ShooterGoal goal) {
+        return runOnce(() -> setGoal(goal));
+    }
+
+    public void setGoal(ShooterGoal goal) {
+        this.goal = goal;
+        switch (goal) {
+            case SCORING, TUNING:
+                setTarget(Hub.topCenterPoint);
+                break;
+            case PASSING:
+                setTarget(getPassingTarget(robotPoseSupplier.get()));
+                break;
+            case IDLE, OFF:
+                stop();
+                break;
+        }
+
     }
 
     public Command setHoodGoal(HoodGoal hoodGoal) {
@@ -255,7 +258,7 @@ public class Shooter extends SubsystemBase implements Identifiable {
 
     private void stop() {
         io.stopFlywheel();
-        io.stopHood();
+        io.setHoodPosition(Degrees.of(0.0));
     }
 
     public static double hoodAngleToPosition(Angle hoodAngle) {
