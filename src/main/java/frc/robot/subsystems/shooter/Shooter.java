@@ -61,10 +61,8 @@ public class Shooter extends SubsystemBase implements Identifiable {
         : Hub.oppTopCenterPoint;
 
     @AutoLogOutput
-    private ShooterGoal goal = ShooterGoal.SCORING;
+    private ShooterGoal goal = ShooterGoal.IDLE;
 
-    @AutoLogOutput
-    private HoodGoal hoodGoal = HoodGoal.IDLE;
 
 
     private final Alert flywheelMotorDisconnected;
@@ -188,13 +186,6 @@ public class Shooter extends SubsystemBase implements Identifiable {
 
     }
 
-    public Command setHoodGoal(HoodGoal hoodGoal) {
-        return runOnce(() -> this.hoodGoal = hoodGoal);
-    }
-
-    public Command runEndHood() {
-        return runEnd(() -> this.hoodGoal = HoodGoal.ACTIVE, () -> this.hoodGoal = HoodGoal.IDLE);
-    }
 
 
     public void setTarget(Translation3d target) {
@@ -222,7 +213,7 @@ public class Shooter extends SubsystemBase implements Identifiable {
         Angle azimuthAngle = ShooterCalculator.calculateAzimuthAngle(robotPose,
             calculatedShot.target());
         targetAngle = new Rotation2d(azimuthAngle);
-        if (hoodGoal == HoodGoal.ACTIVE) {
+        if (goal == ShooterGoal.PASSING || goal == ShooterGoal.SCORING) {
             io.setHoodPosition(calculatedShot.getHoodAngle());
             io.setFlywheelSpeed(
                 ShooterCalculator.linearToAngularVelocity(calculatedShot.getExitVelocity(),
