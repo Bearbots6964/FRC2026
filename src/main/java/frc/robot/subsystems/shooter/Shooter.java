@@ -221,7 +221,7 @@ public class Shooter extends SubsystemBase implements Identifiable {
         }
         else {
             io.setHoodPosition(Degrees.of(0.0));
-            io.setFlywheelSpeed(RotationsPerSecond.of(0.0));
+            io.stopFlywheel();
         }
 //        io.setFlywheelSpeed(calculatedShot.getExitAngularVelocity());
 
@@ -248,6 +248,7 @@ public class Shooter extends SubsystemBase implements Identifiable {
 
 
     private void stop() {
+        goal = ShooterGoal.IDLE;
         io.stopFlywheel();
         io.setHoodPosition(Degrees.of(0.0));
     }

@@ -131,7 +131,7 @@ public class Superstructure extends SubsystemBase {
             this::idleSubsystems);
     }
 
-    private void idleSubsystems() {
+    public void idleSubsystems() {
         indexer.setGoal(IndexerGoal.IDLE);
         shooter.setGoal(ShooterGoal.IDLE);
         intake.setGoal(IntakeGoal.DEPLOY);

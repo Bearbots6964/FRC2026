@@ -244,7 +244,7 @@ public class RobotContainer {
         shootTrigger.whileTrue(DriveCommands.joystickDriveAtAngle(
             drive, () -> -driverController.getLeftY(), () -> -driverController.getLeftX(),
             shooter::getCurrentTarget, () -> -operatorController.getRightX()).alongWith(
-            superstructure.runGoal()));
+            superstructure.runGoal()).finallyDo(superstructure::idleSubsystems));
 //        shootTrigger.onTrue(indexer.setGoal(IndexerGoal.ACTIVE));
 //        manualTurretControlTrigger.onTrue(shooter.setGoal(ShooterGoal.TUNING).repeatedly());
 
@@ -268,7 +268,7 @@ public class RobotContainer {
     private void configureAutonomous() {
         NamedCommands.registerCommand("Shoot",  Commands.runEnd(() -> shooter.setGoal(
             ShooterGoal.SCORING), () -> shooter.setGoal(ShooterGoal.IDLE), shooter));
-        NamedCommands.registerCommand("Intake", intake.autoIntake());
+        NamedCommands.registerCommand("Intake", intake.setGoalCommand(IntakeGoal.DEPLOY));
     }
 
     private void configureFuelSim() {
