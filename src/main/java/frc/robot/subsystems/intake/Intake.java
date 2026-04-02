@@ -114,7 +114,7 @@ public class Intake extends SubsystemBase implements Identifiable {
 
     public Command autoIntake() {
         return
-            runOnce(() -> goal = IntakeGoal.DEPLOY);
+            run(() -> goal = IntakeGoal.DEPLOY);
     }
 
     public Command setGoalCommand(IntakeGoal goal) {
