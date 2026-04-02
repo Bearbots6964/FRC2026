@@ -107,19 +107,8 @@ public class Intake extends SubsystemBase implements Identifiable {
     }
 
     public Command tilt() {
-        return Commands.repeatingSequence(
-                runOnce(() -> {
-                    intakeMode = IntakeMode.RUN_SLOW;
-                    deployMode = DeployMode.TILT;
-                }),
-                Commands.waitSeconds(IntakeConstants.tiltCycleTime / 2),
-                runOnce(() -> deployMode = DeployMode.DEPLOY),
-                Commands.waitSeconds(IntakeConstants.tiltCycleTime / 2)
-            )
-            .finallyDo(() -> {
-                intakeMode = IntakeMode.RUN;
-                deployMode = DeployMode.DEPLOY;
-            });
+        return Commands.waitSeconds(1.25)
+            .andThen(runOnce(() -> goal = IntakeGoal.STOW));
     }
 
 
