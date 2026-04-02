@@ -266,8 +266,7 @@ public class RobotContainer {
     }
 
     private void configureAutonomous() {
-        NamedCommands.registerCommand("Shoot",  Commands.runEnd(() -> shooter.setGoal(
-            ShooterGoal.SCORING), () -> shooter.setGoal(ShooterGoal.IDLE), shooter));
+        NamedCommands.registerCommand("Shoot",  superstructure.runGoal());
         NamedCommands.registerCommand("Intake", intake.setGoalCommand(IntakeGoal.DEPLOY));
     }
 
