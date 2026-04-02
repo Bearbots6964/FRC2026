@@ -187,6 +187,9 @@ public class ShooterIOTalonFX implements ShooterIO {
     @Override
     public void setFlywheelSpeed(AngularVelocity speed) {
         flywheel.setControl(shooterVelocityVoltage.withVelocity(speed));
+        shooterFollower1.setControl(followRequest);
+        shooterFollower2.setControl(followRequest2);
+        shooterFollower3.setControl(followRequest3);
     }
 
     @Override
