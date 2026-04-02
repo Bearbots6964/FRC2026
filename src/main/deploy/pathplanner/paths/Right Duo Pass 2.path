@@ -173,13 +173,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -115.79549241445328
+    "rotation": -117.67139317970002
   },
   "reversed": false,
   "folder": "Right Duo",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -115.79549241445328
+    "rotation": -117.67139317970002
   },
   "useDefaultConstraints": true
 }

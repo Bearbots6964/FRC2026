@@ -69,7 +69,7 @@
   "folder": "Left Duo",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 112.35962995175666
+    "rotation": 116.711429747
   },
   "useDefaultConstraints": true
 }
