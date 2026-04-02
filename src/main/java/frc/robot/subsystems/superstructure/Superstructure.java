@@ -127,10 +127,11 @@ public class Superstructure extends SubsystemBase {
     }
 
     public Command runGoal() {
-        return goalCommands.get(goal).get();
+        return goalCommands.get(goal).get().andThen(Commands.none().repeatedly()).finallyDo(
+            this::idleSubsystems);
     }
 
-    public void idleSubsystems() {
+    private void idleSubsystems() {
         indexer.setGoal(IndexerGoal.IDLE);
         shooter.setGoal(ShooterGoal.IDLE);
         intake.setGoal(IntakeGoal.DEPLOY);
