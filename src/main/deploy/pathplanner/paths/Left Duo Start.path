@@ -3,12 +3,12 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.4618039320928755,
+        "x": 4.432309337797619,
         "y": 7.367509343193384
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.3379945602326035,
+        "x": 5.308499965937347,
         "y": 7.290697159348674
       },
       "isLocked": false,
@@ -110,7 +110,11 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.8089110088832485,
+      "waypointRelativePos": 0.4225888324873097,
+      "rotationDegrees": 180.0
+    },
+    {
+      "waypointRelativePos": 0.7780377538071064,
       "rotationDegrees": -91.0859313603771
     },
     {
@@ -152,7 +156,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
+    "maxVelocity": 2.0,
     "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -167,7 +171,7 @@
   "folder": "Left Duo",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

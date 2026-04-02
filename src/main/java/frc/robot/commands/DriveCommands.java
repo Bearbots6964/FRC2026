@@ -161,7 +161,8 @@ public class DriveCommands {
         Drive drive,
         DoubleSupplier xSupplier,
         DoubleSupplier ySupplier,
-        Supplier<Translation3d> currentTarget) {
+        Supplier<Translation3d> currentTarget,
+        DoubleSupplier omegaSupplier) {
         // Create PID controller
         ProfiledPIDController angleController =
             new ProfiledPIDController(
@@ -179,6 +180,12 @@ public class DriveCommands {
                         getLinearVelocityFromJoysticks(xSupplier.getAsDouble(),
                             ySupplier.getAsDouble());
 
+                    // Apply rotation deadband
+                    double controllerOmega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND) / 4.0;
+
+                    // Square rotation value for more precise control
+                    controllerOmega = Math.copySign(controllerOmega * controllerOmega, controllerOmega);
+
                     // Calculate angular speed
                     double omega =
                         angleController.calculate(
@@ -186,18 +193,19 @@ public class DriveCommands {
                                 currentTarget.get().getX() - drive.getPose().getX(),
                                 currentTarget.get().getY() - drive.getPose().getY()).plus(Rotation2d.k180deg).getRadians());
 
-                    // Convert to field relative speeds & send command
-                    ChassisSpeeds speeds =
-                        new ChassisSpeeds(
-                            linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec() / 4,
-                            linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec() / 4,
-                            omega);
-                    boolean isFlipped =
-                        DriverStation.getAlliance().isPresent()
-                            && DriverStation.getAlliance().get() == Alliance.Red;
-                    if (Math.abs(xSupplier.getAsDouble()) < DEADBAND && Math.abs(ySupplier.getAsDouble()) < DEADBAND && Math.abs(omega) < (DEADBAND / 10.0)) {
+                    omega += controllerOmega;
+                    if (Math.abs(xSupplier.getAsDouble()) < DEADBAND && Math.abs(ySupplier.getAsDouble()) < DEADBAND && Math.abs(omega) < (DEADBAND / 4)) {
                         drive.stopWithX();
                     } else {
+                        // Convert to field relative speeds & send command
+                        ChassisSpeeds speeds =
+                            new ChassisSpeeds(
+                                linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec() / 4,
+                                linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec() / 4,
+                                omega);
+                        boolean isFlipped =
+                            DriverStation.getAlliance().isPresent()
+                                && DriverStation.getAlliance().get() == Alliance.Red;
                         drive.runVelocity(
                             ChassisSpeeds.fromFieldRelativeSpeeds(
                                 speeds,

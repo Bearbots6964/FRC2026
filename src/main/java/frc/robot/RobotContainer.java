@@ -75,8 +75,6 @@ public class RobotContainer {
 
     // Bindings
     // Driver
-    private final Trigger slowMovementTrigger = driverController.leftTrigger();
-    private final Trigger fineTurningTrigger = driverController.rightTrigger();
     private final Trigger traverseBumpTrigger = driverController.a();
     private final Trigger lockWheelsTrigger = driverController.x();
     private final Trigger alignToTowerTrigger = driverController.start();
@@ -222,9 +220,9 @@ public class RobotContainer {
             DriveCommands.joystickDrive(drive, () -> -driverController.getLeftY(),
                 () -> -driverController.getLeftX(), () -> -driverController.getRightX()));
 
-        slowMovementTrigger.whileTrue(DriveCommands.joystickDriveSlowly(drive, () -> -driverController.getLeftY(),
-            () -> -driverController.getLeftX(), () -> -driverController.getRightX()));
-        fineTurningTrigger.whileTrue(DriveCommands.joystickDriveFollowingVelocity(drive, () -> -driverController.getLeftY(), () -> -driverController.getLeftX()));
+//        slowMovementTrigger.whileTrue(DriveCommands.joystickDriveSlowly(drive, () -> -driverController.getLeftY(),
+//            () -> -driverController.getLeftX(), () -> -driverController.getRightX()));
+//        fineTurningTrigger.whileTrue(DriveCommands.joystickDriveFollowingVelocity(drive, () -> -driverController.getLeftY(), () -> -driverController.getLeftX()));
 //        drive.nearBumpTrigger.whileTrue(
 //            DriveCommands.joystickDriveOverBump(drive, () -> -driverController.getLeftY(),
 //                () -> -driverController.getLeftX()));
@@ -232,6 +230,7 @@ public class RobotContainer {
         // Switch to X pattern when X button is pressed
         lockWheelsTrigger.onTrue(Commands.runOnce(drive::stopWithX, drive));
 
+        driverController.rightTrigger().or(operatorController.rightTrigger()).whileTrue(Commands.run(drive::stopWithX, drive));
         //Deploy intake when B button is pressed, 
         //negate means the command will only run if the intake isn't already deployed
         deployIntakeTrigger.onTrue(intake.setGoalCommand(IntakeGoal.DEPLOY));
@@ -244,8 +243,8 @@ public class RobotContainer {
 
         shootTrigger.whileTrue(DriveCommands.joystickDriveAtAngle(
             drive, () -> -driverController.getLeftY(), () -> -driverController.getLeftX(),
-            shooter::getCurrentTarget).alongWith(Commands.waitSeconds(0.5).andThen(
-            superstructure.runGoal())));
+            shooter::getCurrentTarget, () -> -operatorController.getRightX()).alongWith(
+            superstructure.runGoal()));
 //        shootTrigger.onTrue(indexer.setGoal(IndexerGoal.ACTIVE));
 //        manualTurretControlTrigger.onTrue(shooter.setGoal(ShooterGoal.TUNING).repeatedly());
 
