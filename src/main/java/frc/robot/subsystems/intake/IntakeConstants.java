@@ -136,8 +136,8 @@ public class IntakeConstants {
             .withReverseSoftLimitThreshold(DEPLOYED_ANGLE);
 
         public static final MotionMagicConfigs MOTION_MAGIC_CONFIGS = new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity(2.0)
-            .withMotionMagicAcceleration(4.0);
+            .withMotionMagicCruiseVelocity(0.5)
+            .withMotionMagicAcceleration(1.0);
     }
 
 }
