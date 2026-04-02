@@ -217,8 +217,12 @@ public class ShooterIOTalonFX implements ShooterIO {
         hood.setControl(neutralOut);
     }
 
-    public void stopShooter() {
+    @Override
+    public void stopFlywheel() {
         flywheel.setControl(neutralOut);
+        shooterFollower1.setControl(neutralOut);
+        shooterFollower2.setControl(neutralOut);
+        shooterFollower3.setControl(neutralOut);
     }
 
     public void setFlywheelVoltage(Voltage volts) {
