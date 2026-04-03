@@ -50,7 +50,7 @@ public class ShooterConstants {
             // TODO: Fill these maps with data from testing
             SHOT_MAP.put(2.2, new ShotData(45, 11));
             SHOT_MAP.put(3.3, new ShotData(50, 15));
-            SHOT_MAP.put(3.6, new ShotData(75, 18.4));
+            SHOT_MAP.put(3.6, new ShotData(55, 18.4));
             SHOT_MAP.put(4.84, new ShotData(60, 23));
             SHOT_MAP.put(10.0, new ShotData(60, 27));
 
