@@ -3,33 +3,47 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5648933686755955,
-        "y": 1.7125650111607138
+        "x": 1.8368314267113095,
+        "y": 2.034221400669643
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.7164184425074134,
-        "y": 1.419426981985689
+        "x": 3.3025764043898813,
+        "y": 4.291729678199405
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Outpost Aim"
     },
     {
       "anchor": {
-        "x": 0.6753692336309525,
-        "y": 0.6638681175595229
+        "x": 0.711054454985119,
+        "y": 5.828029436383929
       },
       "prevControl": {
-        "x": 1.5461090219572466,
-        "y": 0.9687793900923658
+        "x": 1.3206803850446431,
+        "y": 5.778926571800596
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Outpost"
+      "linkedName": "Outpost Depot"
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.6364822387695312,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 5.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -48,7 +62,7 @@
   "folder": "Outpost",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -138.7422133061
   },
   "useDefaultConstraints": true
 }

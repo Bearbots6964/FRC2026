@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.576638904389881,
-        "y": 6.351603004092262
+        "x": 0.711054454985119,
+        "y": 5.828029436383929
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8873227771577383,
-        "y": 6.324686151413691
+        "x": 1.340378627232143,
+        "y": 5.7081678757440475
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Outpost Depot"
     },
     {
       "anchor": {
-        "x": 0.7011849423363095,
-        "y": 5.966732793898809
+        "x": 2.1048172433035717,
+        "y": 5.117669224330357
       },
       "prevControl": {
-        "x": 1.3060392485119048,
-        "y": 6.016569754464287
+        "x": 1.604326915922619,
+        "y": 5.417261951264882
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,16 +31,9 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "Intake",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.75,
+    "maxVelocity": 2.0,
     "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -49,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 155.87067154905745
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Outpost",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

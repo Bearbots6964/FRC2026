@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.9409933500744048,
-        "y": 0.8349940476190476
+        "x": 2.6597122395833335,
+        "y": 1.1462915271577379
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.942912016369047,
-        "y": 0.6888681640624998
+        "x": 3.661630905877976,
+        "y": 1.00016564360119
       },
       "isLocked": false,
       "linkedName": "Right Duo Check 1"
@@ -54,7 +54,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
+    "maxVelocity": 3.75,
     "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -69,7 +69,7 @@
   "folder": "Right Duo",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -117.67139317970002
+    "rotation": -122.61108432083628
   },
   "useDefaultConstraints": true
 }

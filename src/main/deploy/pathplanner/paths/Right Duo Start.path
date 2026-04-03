@@ -80,12 +80,12 @@
     },
     {
       "anchor": {
-        "x": 2.9409933500744048,
-        "y": 0.8349940476190476
+        "x": 2.6597122395833335,
+        "y": 1.1462915271577379
       },
       "prevControl": {
-        "x": 3.936305152529762,
-        "y": 0.5770816592261907
+        "x": 2.870438569568452,
+        "y": 0.3100746372767855
       },
       "nextControl": null,
       "isLocked": false,
@@ -143,7 +143,7 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
+    "maxVelocity": 3.75,
     "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -152,7 +152,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -117.67139317970002
+    "rotation": -122.61108432083628
   },
   "reversed": false,
   "folder": "Right Duo",

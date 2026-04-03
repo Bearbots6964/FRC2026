@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 0.9544480561755952,
-        "y": 0.820271344866071
+        "x": 1.8368314267113095,
+        "y": 2.034221400669643
       },
       "prevControl": {
-        "x": 0.6920087425595238,
-        "y": 0.7099938151041669
+        "x": 1.574392113095238,
+        "y": 1.9239438709077388
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Outpost Aim"
     }
   ],
   "rotationTargets": [],
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
+    "maxVelocity": 3.75,
     "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
