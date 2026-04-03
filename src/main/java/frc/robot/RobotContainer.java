@@ -230,7 +230,7 @@ public class RobotContainer {
         // Switch to X pattern when X button is pressed
         lockWheelsTrigger.onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-        driverController.rightTrigger().or(operatorController.rightTrigger()).whileTrue(Commands.run(drive::stopWithX, drive));
+//        driverController.rightTrigger().or(operatorController.rightTrigger()).whileTrue(Commands.run(drive::stopWithX, drive));
         //Deploy intake when B button is pressed, 
         //negate means the command will only run if the intake isn't already deployed
         deployIntakeTrigger.onTrue(intake.setGoalCommand(IntakeGoal.DEPLOY));
@@ -245,6 +245,8 @@ public class RobotContainer {
             drive, () -> -driverController.getLeftY(), () -> -driverController.getLeftX(),
             shooter::getCurrentTarget, () -> -operatorController.getRightX()).alongWith(
             superstructure.runGoal()).finallyDo(superstructure::idleSubsystems));
+        spinShooterTrigger.whileTrue(DriveCommands.joystickDrive(drive, () -> -driverController.getLeftY() / 4,
+            () -> -driverController.getLeftX() / 4, () -> -operatorController.getRightX() / 4).alongWith(superstructure.runGoal()).finallyDo(superstructure::idleSubsystems));
 //        shootTrigger.onTrue(indexer.setGoal(IndexerGoal.ACTIVE));
 //        manualTurretControlTrigger.onTrue(shooter.setGoal(ShooterGoal.TUNING).repeatedly());
 

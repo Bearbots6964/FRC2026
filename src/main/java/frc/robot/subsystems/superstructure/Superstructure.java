@@ -25,6 +25,7 @@ import frc.robot.util.HubShiftUtil;
 import java.util.Map;
 import java.util.function.Supplier;
 import lombok.Getter;
+import org.ironmaple.simulation.Goal;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -82,14 +83,14 @@ public class Superstructure extends SubsystemBase {
         goalCommands = Map.of(
             Goal.SCORING,
             () -> Commands.sequence(
-                    this.shooter.setGoalCommand(ShooterGoal.SCORING),
+                    this.shooter.setGoalCommand(ShooterGoal.SCORING).andThen(runOnce(() -> this.shooter.setEnableShooter(true))),
                     this.intake.setGoalCommand(IntakeGoal.STOW),
                     this.indexer.setGoalCommand(IndexerGoal.ACTIVE)
                 )
                 .withName("Start scoring"),
             Goal.PASSING,
             () -> Commands.sequence(
-                    this.shooter.setGoalCommand(ShooterGoal.PASSING),
+                    this.shooter.setGoalCommand(ShooterGoal.PASSING).andThen(runOnce(() -> this.shooter.setEnableShooter(true))),
                     this.intake.setGoalCommand(IntakeGoal.STOW),
                     this.indexer.setGoalCommand(IndexerGoal.ACTIVE).onlyIf(inAllianceZoneTrigger.negate())
                 )
@@ -122,6 +123,11 @@ public class Superstructure extends SubsystemBase {
     public Command setGoal(Goal newGoal) {
         return this.runOnce(() -> this.goal = newGoal)
 //            .andThen(goalCommands.get(newGoal).get())
+            .andThen(runOnce(() -> this.shooter.setGoal(switch(newGoal) {
+                case SCORING -> ShooterGoal.SCORING;
+                case PASSING -> ShooterGoal.PASSING;
+                case IDLE -> ShooterGoal.IDLE;
+            })))
             .withName("Set goal");
     }
 
@@ -132,7 +138,7 @@ public class Superstructure extends SubsystemBase {
 
     public void idleSubsystems() {
         indexer.setGoal(IndexerGoal.IDLE);
-        shooter.setGoal(ShooterGoal.IDLE);
+        shooter.setEnableShooter(false);
         intake.setGoal(IntakeGoal.DEPLOY);
     }
 

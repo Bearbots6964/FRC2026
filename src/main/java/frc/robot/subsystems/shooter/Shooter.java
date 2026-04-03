@@ -42,6 +42,7 @@ import frc.robot.util.Identifiable;
 import frc.robot.util.LoggedTunableNumber;
 import java.util.function.Supplier;
 import lombok.Getter;
+import lombok.Setter;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -62,6 +63,12 @@ public class Shooter extends SubsystemBase implements Identifiable {
 
     @AutoLogOutput
     private ShooterGoal goal = ShooterGoal.IDLE;
+
+
+    @Setter
+    @AutoLogOutput
+    private boolean enableShooter = false;
+
 
 
 
@@ -213,7 +220,7 @@ public class Shooter extends SubsystemBase implements Identifiable {
         Angle azimuthAngle = ShooterCalculator.calculateAzimuthAngle(robotPose,
             calculatedShot.target());
         targetAngle = new Rotation2d(azimuthAngle);
-        if (goal == ShooterGoal.PASSING || goal == ShooterGoal.SCORING) {
+        if (enableShooter) {
             io.setHoodPosition(calculatedShot.getHoodAngle());
             io.setFlywheelSpeed(
                 ShooterCalculator.linearToAngularVelocity(calculatedShot.getExitVelocity(),
