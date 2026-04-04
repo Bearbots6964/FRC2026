@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Volt;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -46,8 +47,8 @@ public class IndexerIOTalonFX implements IndexerIO {
     private final NeutralOut neutralRequest = new NeutralOut();
 
     public IndexerIOTalonFX() {
-        motor = new TalonFX(IndexerConstants.TalonFXConstants.MOTOR_ID);
-        follower = new TalonFX(TalonFXConstants.FOLLOWER_MOTOR_ID);
+        motor = new TalonFX(IndexerConstants.TalonFXConstants.MOTOR_ID, new CANBus("Drivebase"));
+        follower = new TalonFX(TalonFXConstants.FOLLOWER_MOTOR_ID, new CANBus("Drivebase"));
 
         motorConfig = new TalonFXConfiguration()
                 .withSlot0(IndexerConstants.TalonFXConstants.MOTOR_GAINS)

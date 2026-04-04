@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.Rotations;
 import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -100,16 +101,16 @@ public class IntakeIOTalonFX implements IntakeIO {
         deployConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         //create motor object and apply configuration to intake motor, retrying up to 5 times with 0.25s delay
-        intakeMotor = new TalonFX(intakeMotorConstants.intakeMotorCanID);
+        intakeMotor = new TalonFX(intakeMotorConstants.intakeMotorCanID, new CANBus("Drivebase"));
         tryUntilOk(5, () -> intakeMotor.getConfigurator().apply(intakeConfig, 0.25));
 
-        intakeFollowerMotor = new TalonFX(intakeMotorConstants.intakeFollowerMotorCanID);
+        intakeFollowerMotor = new TalonFX(intakeMotorConstants.intakeFollowerMotorCanID, new CANBus("Drivebase"));
         tryUntilOk(5, () -> intakeFollowerMotor.getConfigurator().apply(intakeConfig, 0.25));
 
         intakeMotorFollowerVoltage = intakeFollowerMotor.getMotorVoltage();
 
         //create motor object and apply configuration to deploy motor, retrying up to 5 times with 0.25s delay
-        deployMotor = new TalonFX(deployMotorConstants.deployMotorCanID);
+        deployMotor = new TalonFX(deployMotorConstants.deployMotorCanID, new CANBus("Drivebase"));
         tryUntilOk(5, () -> deployMotor.getConfigurator().apply(deployConfig, 0.25));
 
         // set the deploy motor to the retracted position on startup to ensure it starts in a known state, and to prevent it from trying to move to an out-of-bounds position
