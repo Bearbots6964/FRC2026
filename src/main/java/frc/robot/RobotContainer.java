@@ -268,7 +268,7 @@ public class RobotContainer {
     }
 
     private void configureAutonomous() {
-        NamedCommands.registerCommand("Shoot",  superstructure.runGoal());
+        NamedCommands.registerCommand("Shoot",  superstructure.runGoal().alongWith(DriveCommands.joystickDriveAtAngle(drive, () -> 0.0, () -> 0.0, shooter::getCurrentTarget, () -> 0.0)));
         NamedCommands.registerCommand("Intake", intake.setGoalCommand(IntakeGoal.DEPLOY));
     }
 
