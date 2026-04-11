@@ -81,7 +81,7 @@ public class ShooterIOTalonFX implements ShooterIO {
         shooterFollower2 = new TalonFX(FlywheelMotorConstants.FLYWHEEL_FOLLOWER_2_MOTOR_ID, new CANBus("Drivebase"));
         shooterFollower3 = new TalonFX(FlywheelMotorConstants.FLYWHEEL_FOLLOWER_3_MOTOR_ID, new CANBus("Drivebase"));
 
-        hood = new TalonFX(HoodMotorConstants.HOOD_MOTOR_ID, new CANBus("Drivebase"));
+        hood = new TalonFX(HoodMotorConstants.HOOD_MOTOR_ID);
 
         shooter_configs =
             new TalonFXConfiguration() // ASK PARKER ABOUT OUTPUT
