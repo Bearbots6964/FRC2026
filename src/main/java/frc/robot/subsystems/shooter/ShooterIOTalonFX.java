@@ -1,7 +1,6 @@
 package frc.robot.subsystems.shooter;
 
 import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
@@ -76,10 +75,10 @@ public class ShooterIOTalonFX implements ShooterIO {
 
     public ShooterIOTalonFX() {
 
-        flywheel = new TalonFX(FlywheelMotorConstants.FLYWHEEL_MOTOR_ID, new CANBus("Drivebase"));
-        shooterFollower1 = new TalonFX(FlywheelMotorConstants.FLYWHEEL_FOLLOWER_1_MOTOR_ID, new CANBus("Drivebase"));
-        shooterFollower2 = new TalonFX(FlywheelMotorConstants.FLYWHEEL_FOLLOWER_2_MOTOR_ID, new CANBus("Drivebase"));
-        shooterFollower3 = new TalonFX(FlywheelMotorConstants.FLYWHEEL_FOLLOWER_3_MOTOR_ID, new CANBus("Drivebase"));
+        flywheel = new TalonFX(FlywheelMotorConstants.FLYWHEEL_MOTOR_ID);
+        shooterFollower1 = new TalonFX(FlywheelMotorConstants.FLYWHEEL_FOLLOWER_1_MOTOR_ID);
+        shooterFollower2 = new TalonFX(FlywheelMotorConstants.FLYWHEEL_FOLLOWER_2_MOTOR_ID);
+        shooterFollower3 = new TalonFX(FlywheelMotorConstants.FLYWHEEL_FOLLOWER_3_MOTOR_ID);
 
         hood = new TalonFX(HoodMotorConstants.HOOD_MOTOR_ID);
 
