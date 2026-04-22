@@ -91,8 +91,6 @@ public class IntakeIOTalonFX implements IntakeIO {
             .withMotorOutput(deployMotorConstants.deployMotorOutputConfigs)
             .withCurrentLimits(deployMotorConstants.deployCurrentLimits)
             .withSlot0(deployMotorConstants.deployMotorGains)
-            .withSlot1(
-                deployMotorConstants.retractGains) // the intake extends quite fast when assisted by gravity deploying, and I partially can't figure out why, partially can't get it tuned, and partially am lazy, so I'm adding a separate slot with more aggressive gains to use when retracting, which should help it retract faster and more reliably which we'll need in the defense-heavy neutral zone
             .withSoftwareLimitSwitch(deployMotorConstants.deploySoftwareLimitSwitchConfigs)
             .withMotionMagic(deployMotorConstants.MOTION_MAGIC_CONFIGS)
             .withFeedback(deployMotorConstants.deployFeedbackConfigs);

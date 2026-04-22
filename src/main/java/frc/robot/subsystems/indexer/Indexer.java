@@ -58,6 +58,8 @@ public class Indexer extends SubsystemBase {
             io.stop();
         else if (goal == IndexerGoal.ACTIVE)
             io.setIndexerOpenLoop(IndexerConstants.MOTOR_SPEED_PERCENTAGE);
+        else if (goal == IndexerGoal.REVERSE)
+            io.setIndexerOpenLoop(-IndexerConstants.MOTOR_SPEED_PERCENTAGE);
     }
 
     public Command setGoalCommand(IndexerGoal goal) {
@@ -78,7 +80,8 @@ public class Indexer extends SubsystemBase {
 
     public enum IndexerGoal {
         ACTIVE,
-        IDLE
+        IDLE,
+        REVERSE
     }
 
 }

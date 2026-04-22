@@ -6,6 +6,8 @@ package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -83,9 +85,9 @@ public class Intake extends SubsystemBase implements Identifiable {
 //        );
 
         routine = new SysIdRoutine(
-            new Config(null, null, null,
+            new Config(Volts.per(Second).of(0.5), Volts.of(3), null,
                 (state) -> SignalLogger.writeString("state", state.toString())),
-            new Mechanism(io::setIntakeVoltage, null, this)
+            new Mechanism(io::setDeployVoltage, null, this)
         );
 
     }

@@ -62,7 +62,7 @@ public class Shooter extends SubsystemBase implements Identifiable {
         : Hub.oppTopCenterPoint;
 
     @AutoLogOutput
-    private ShooterGoal goal = ShooterGoal.IDLE;
+    private ShooterGoal goal = ShooterGoal.SCORING;
 
 
     @Setter
@@ -179,6 +179,7 @@ public class Shooter extends SubsystemBase implements Identifiable {
 
     public void setGoal(ShooterGoal goal) {
         this.goal = goal;
+        System.out.println("Shooter goal set to " + goal);
         switch (goal) {
             case SCORING, TUNING:
                 setTarget(Hub.topCenterPoint);

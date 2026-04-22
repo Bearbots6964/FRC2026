@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.indexer.Indexer.IndexerGoal;
 import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
@@ -239,7 +240,8 @@ public class RobotContainer {
         //Intake fuel while Y button is held
         stopIntakeTrigger.whileTrue(intake.setGoalCommand(IntakeGoal.IDLE));
         //Eject fuel while left bumper is held
-        reverseIntakeTrigger.whileTrue(intake.setGoalCommand(IntakeGoal.EJECT));
+        reverseIntakeTrigger.whileTrue(intake.setGoalCommand(IntakeGoal.EJECT).alongWith(indexer.setGoalCommand(
+            IndexerGoal.REVERSE))).onFalse(indexer.setGoalCommand(IndexerGoal.IDLE).alongWith(intake.setGoalCommand(IntakeGoal.DEPLOY)));
 
         shootTrigger.whileTrue(DriveCommands.joystickDriveAtAngle(
             drive, () -> -driverController.getLeftY(), () -> -driverController.getLeftX(),
@@ -248,7 +250,7 @@ public class RobotContainer {
         spinShooterTrigger.whileTrue(DriveCommands.joystickDrive(drive, () -> -driverController.getLeftY() / 4,
             () -> -driverController.getLeftX() / 4, () -> -operatorController.getRightX() / 4).alongWith(superstructure.runGoal()).finallyDo(superstructure::idleSubsystems));
 //        shootTrigger.onTrue(indexer.setGoal(IndexerGoal.ACTIVE));
-//        manualTurretControlTrigger.onTrue(shooter.setGoal(ShooterGoal.TUNING).repeatedly());
+        manualTurretControlTrigger.onTrue(shooter.setGoalCommand(ShooterGoal.TUNING).repeatedly());
 
 //        operatorController.povUp().onTrue(intake.setGoal(IntakeGoal.TILT));
 //        operatorController.povUp().whileTrue(turret.sysIdQuasistatic(SysIdRoutine.Direction.kForward));

@@ -23,6 +23,7 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.Shooter.ShooterGoal;
 import frc.robot.util.HubShiftUtil;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 import lombok.Getter;
 import org.ironmaple.simulation.Goal;
@@ -82,17 +83,17 @@ public class Superstructure extends SubsystemBase {
 
         goalCommands = Map.of(
             Goal.SCORING,
-            () -> Commands.sequence(
-                    this.shooter.setGoalCommand(ShooterGoal.SCORING).andThen(runOnce(() -> this.shooter.setEnableShooter(true))),
-                    this.intake.setGoalCommand(IntakeGoal.STOW),
-                    this.indexer.setGoalCommand(IndexerGoal.ACTIVE)
+            () -> Commands.parallel(
+                    runOnce(() -> this.shooter.setEnableShooter(true)),
+                    Commands.waitSeconds(0.5).andThen(this.indexer.setGoalCommand(IndexerGoal.ACTIVE)),
+                    Commands.runOnce(() -> System.out.println("Shoot intake"), intake).andThen(Commands.waitSeconds(1.25)).andThen(this.intake.setGoalCommand(IntakeGoal.STOW))
                 )
                 .withName("Start scoring"),
             Goal.PASSING,
             () -> Commands.sequence(
-                    this.shooter.setGoalCommand(ShooterGoal.PASSING).andThen(runOnce(() -> this.shooter.setEnableShooter(true))),
-                    this.intake.setGoalCommand(IntakeGoal.STOW),
-                    this.indexer.setGoalCommand(IndexerGoal.ACTIVE).onlyIf(inAllianceZoneTrigger.negate())
+                    runOnce(() -> this.shooter.setEnableShooter(true)),
+                    this.indexer.setGoalCommand(IndexerGoal.ACTIVE)
+//                    Commands.waitSeconds(1.25).andThen(this.intake.setGoalCommand(IntakeGoal.STOW))
                 )
                 .withName("Start passing"),
             Goal.IDLE,
@@ -103,9 +104,15 @@ public class Superstructure extends SubsystemBase {
                 )
                 .withName("Idle"));
 
-        activeInZoneTrigger.onTrue(this.setGoal(Goal.SCORING));
+        inAllianceZoneTrigger.onTrue(runOnce(() -> {
+                goal = Goal.SCORING;
+                this.shooter.setGoal(ShooterGoal.SCORING);
+            }));
         leaveZoneTrigger.onTrue(
-            this.setGoal(Goal.PASSING));
+            runOnce(() -> {
+                goal = Goal.PASSING;
+                this.shooter.setGoal(ShooterGoal.PASSING);
+            }));
 
     }
 
@@ -123,7 +130,7 @@ public class Superstructure extends SubsystemBase {
     public Command setGoal(Goal newGoal) {
         return this.runOnce(() -> this.goal = newGoal)
 //            .andThen(goalCommands.get(newGoal).get())
-            .andThen(runOnce(() -> this.shooter.setGoal(switch(newGoal) {
+            .andThen(runOnce(() -> this.shooter.setGoal(switch (newGoal) {
                 case SCORING -> ShooterGoal.SCORING;
                 case PASSING -> ShooterGoal.PASSING;
                 case IDLE -> ShooterGoal.IDLE;
@@ -132,14 +139,15 @@ public class Superstructure extends SubsystemBase {
     }
 
     public Command runGoal() {
-        return goalCommands.get(goal).get().andThen(Commands.none().repeatedly()).finallyDo(
+        return Commands.defer(() -> goalCommands.get(goal).get(), Set.of(intake, indexer, shooter)).andThen(Commands.none().repeatedly()).finallyDo(
             this::idleSubsystems);
     }
 
     public void idleSubsystems() {
-        indexer.setGoal(IndexerGoal.IDLE);
         shooter.setEnableShooter(false);
         intake.setGoal(IntakeGoal.DEPLOY);
+
+        indexer.setGoal(IndexerGoal.IDLE);
     }
 
     public Command enableShiftOverride() {

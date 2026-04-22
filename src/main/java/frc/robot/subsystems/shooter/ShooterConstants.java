@@ -48,10 +48,13 @@ public class ShooterConstants {
 
         static {
             // TODO: Fill these maps with data from testing
-            SHOT_MAP.put(2.2, new ShotData(45, 11));
-            SHOT_MAP.put(3.3, new ShotData(55, 15));
-            SHOT_MAP.put(3.6, new ShotData(60, 18.4));
-            SHOT_MAP.put(4.84, new ShotData(60, 23));
+
+            SHOT_MAP.put(1.9, new ShotData(49, 5));
+            SHOT_MAP.put(2.2, new ShotData(50, 9));
+            SHOT_MAP.put(3.0, new ShotData(50, 14));
+            SHOT_MAP.put(3.4, new ShotData(54, 16));
+            SHOT_MAP.put(3.6, new ShotData(54, 18.4));
+            SHOT_MAP.put(4.84, new ShotData(60, 20));
             SHOT_MAP.put(10.0, new ShotData(60, 27));
 
             TOF_MAP.put(5.227626, 1.5458333333);
@@ -106,11 +109,11 @@ public class ShooterConstants {
             public static final int FLYWHEEL_FOLLOWER_3_MOTOR_ID = 9;
             // https://www.reca.lc/flywheel?currentLimit=%7B%22s%22%3A80%2C%22u%22%3A%22A%22%7D&efficiency=100&flywheelMomentOfInertia=%7B%22s%22%3A0%2C%22u%22%3A%22in2%2Albs%22%7D&flywheelRadius=%7B%22s%22%3A2%2C%22u%22%3A%22in%22%7D&flywheelRatio=%7B%22magnitude%22%3A1%2C%22ratioType%22%3A%22Reduction%22%7D&flywheelWeight=%7B%22s%22%3A1.5%2C%22u%22%3A%22lbs%22%7D&motor=%7B%22quantity%22%3A2%2C%22name%22%3A%22Kraken%20X60%20%28FOC%29%22%7D&motorRatio=%7B%22magnitude%22%3A1%2C%22ratioType%22%3A%22Step-up%22%7D&projectileRadius=%7B%22s%22%3A2%2C%22u%22%3A%22in%22%7D&projectileWeight=%7B%22s%22%3A0.5%2C%22u%22%3A%22lbs%22%7D&shooterMomentOfInertia=%7B%22s%22%3A4.124133%2C%22u%22%3A%22in2%2Albs%22%7D&shooterRadius=%7B%22s%22%3A2%2C%22u%22%3A%22in%22%7D&shooterTargetSpeed=%7B%22s%22%3A4800%2C%22u%22%3A%22rpm%22%7D&shooterWeight=%7B%22s%22%3A1%2C%22u%22%3A%22lbs%22%7D&useCustomFlywheelMoi=1&useCustomShooterMoi=1
             public static final Slot0Configs FLYWHEEL_GAINS = new Slot0Configs()
-                .withKP(0.02)
+                .withKP(0.15662)
                 .withKD(0.0)
-                .withKS(.23092)
-                .withKV(0.12149)
-                .withKA(0.0082697);
+                .withKS(.5)
+                .withKV(0.14135)
+                .withKA(0.23979);
 
             public static final CurrentLimitsConfigs FLYWHEEL_CURRENT_LIMITS = new CurrentLimitsConfigs()
                 .withStatorCurrentLimit(120);

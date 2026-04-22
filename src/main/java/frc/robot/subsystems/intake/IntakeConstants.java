@@ -32,7 +32,7 @@ public class IntakeConstants {
 
     // Angles measured from robot, stored as Rotation2d(x, y) vector components
     // DEPLOYED_ANGLE ≈ 13.45°, RETRACTED_ANGLE ≈ 86.67°
-    public static final Angle DEPLOYED_ANGLE = Degrees.of(-30.2232050549);
+    public static final Angle DEPLOYED_ANGLE = Degrees.of(-37.2232050549);
     public static final Angle RETRACTED_ANGLE = Degrees.of(103.966125);
     public static final Angle TILT_ANGLE = Degrees.of(60.0);
     public static final Angle DEPLOY_TOLERANCE = Degrees.of(0.5);
@@ -101,12 +101,13 @@ public class IntakeConstants {
         public static final double retractTimeoutSeconds = 5.0;
         // https://www.reca.lc/arm?armMass=%7B%22s%22%3A9.781%2C%22u%22%3A%22lbs%22%7D&comLength=%7B%22s%22%3A10.7756464614%2C%22u%22%3A%22in%22%7D&currentLimit=%7B%22s%22%3A80%2C%22u%22%3A%22A%22%7D&efficiency=100&endAngle=%7B%22s%22%3A90%2C%22u%22%3A%22deg%22%7D&iterationLimit=10000&motor=%7B%22quantity%22%3A1%2C%22name%22%3A%22Kraken%20X44%20%28FOC%29%22%7D&ratio=%7B%22magnitude%22%3A48%2C%22ratioType%22%3A%22Reduction%22%7D&startAngle=%7B%22s%22%3A0%2C%22u%22%3A%22deg%22%7D
         public static final Slot0Configs deployMotorGains = new Slot0Configs()
-            .withKP(90.0)
-            .withKD(18.182)
-            .withKS(1.0225)
-            .withKV(1.399)
-            .withKA(1.6273)
-            .withKG(0.503)
+            .withKP(69.211)
+            .withKD(10)
+            .withKS(1.0728)
+            .withKV(2.5138)
+            .withKA(1.2276)
+            .withKG(0.27666)
+            .withGravityArmPositionOffset(-0.156)
             .withGravityType(GravityTypeValue.Arm_Cosine);
         public static final Slot1Configs retractGains = new Slot1Configs()
             .withKP(60.0)
