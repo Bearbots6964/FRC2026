@@ -30,11 +30,13 @@ public class VisionConstants {
     // Camera names, must match names configured on coprocessor
     public static String camera0Name = "Left-Camera";
     public static String camera1Name = "Right-Camera";
+    public static String camera2Name = "Back-Camera";
 
     // Robot to camera transforms
     // (Not used by Limelight, configure in web UI instead)
     public static Transform3d robotToCamera0 = new Transform3d(Inches.of(-13.541109), Inches.of(11.816561), Inches.of(11.807330+3.702225), new Rotation3d(Degrees.of(-3.925087), Degrees.of(-15.0), Degrees.of(90.0)));
     public static Transform3d robotToCamera1 = new Transform3d(Inches.of(-13.541109), Inches.of(-11.816561), Inches.of(11.807330+3.702225), new Rotation3d(Degrees.of(3.925087), Degrees.of(-15.0), Degrees.of(-90.0)));
+    public static Transform3d robotToCamera2 = new Transform3d(Inches.of(-12.952218), Inches.of(0.484892), Inches.of(5.220422+3.702225), new Rotation3d(Degrees.of(0.0), Degrees.of(-15.0), Degrees.of(180.0)));
 
     public static Transform3d turretToLimelight = new Transform3d(Units.inchesToMeters(-7.773307), 0.0, Units.inchesToMeters(4.728530), new Rotation3d(0, Units.degreesToRadians(-30.0), Units.degreesToRadians(-180.0)));
 

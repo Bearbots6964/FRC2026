@@ -124,7 +124,8 @@ public class RobotContainer {
                 this.vision = new Vision(
                     drive,
                     new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                    new VisionIOPhotonVision(camera1Name, robotToCamera1)
+                    new VisionIOPhotonVision(camera1Name, robotToCamera1),
+                    new VisionIOPhotonVision(camera2Name, robotToCamera2)
                     );
                 break;
             case SIM:
@@ -257,6 +258,7 @@ public class RobotContainer {
 //        operatorController.povRight().whileTrue(turret.sysIdQuasistatic(Direction.kReverse));
 //        operatorController.povDown().whileTrue(turret.sysIdDynamic(SysIdRoutine.Direction.kForward));
 //        operatorController.povLeft().whileTrue(turret.sysIdDynamic(Direction.kReverse));
+        operatorController.start().whileTrue(indexer.runEndIndexer());
 
         // Reset gyro / odometry
         final Runnable resetGyro =

@@ -32,10 +32,10 @@ public class IntakeConstants {
 
     // Angles measured from robot, stored as Rotation2d(x, y) vector components
     // DEPLOYED_ANGLE ≈ 13.45°, RETRACTED_ANGLE ≈ 86.67°
-    public static final Angle DEPLOYED_ANGLE = Degrees.of(-37.2232050549);
+    public static final Angle DEPLOYED_ANGLE = Degrees.of(-20.2232050549);
     public static final Angle RETRACTED_ANGLE = Degrees.of(103.966125);
     public static final Angle TILT_ANGLE = Degrees.of(60.0);
-    public static final Angle DEPLOY_TOLERANCE = Degrees.of(0.5);
+    public static final Angle DEPLOY_TOLERANCE = Degrees.of(5.0);
 
     public static final Angle START_ANGLE = Degrees.of(91.758);
 
@@ -49,7 +49,8 @@ public class IntakeConstants {
         RUN,
         RUN_SLOW,
         STOP,
-        REVERSE
+        REVERSE,
+        REVERSE_SLOW
     }
 
     public static EnumMap<DeployMode, Double> deployMap = new EnumMap<>(DeployMode.class);

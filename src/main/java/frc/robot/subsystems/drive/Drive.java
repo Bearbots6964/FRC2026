@@ -10,6 +10,7 @@ package frc.robot.subsystems.drive;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
@@ -177,7 +178,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer, Ident
         sysId = new SysIdRoutine(
             new SysIdRoutine.Config(
                 null, null, null,
-                (state) -> Logger.recordOutput("Drive/SysIdState", state.toString())),
+                (state) -> SignalLogger.writeString("state", state.toString())),
             new SysIdRoutine.Mechanism((voltage) -> runCharacterization(voltage.in(Volts)), null,
                 this));
     }

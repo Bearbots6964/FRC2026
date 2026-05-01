@@ -9,7 +9,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class IndexerConstants {
 
-    public static final double MOTOR_SPEED_PERCENTAGE = 0.45;
+    public static final double MOTOR_SPEED_PERCENTAGE = 0.75;
 
     public static final double AGITATE_SPEED_PERCENTAGE = 0.2;
     public static final double AGITATE_DURATION_SECONDS = 0.1875;

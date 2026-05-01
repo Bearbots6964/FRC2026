@@ -36,6 +36,15 @@ public class Vision extends SubsystemBase {
     private final VisionIOInputsAutoLogged[] inputs;
     private final Alert[] disconnectedAlerts;
 
+    List<Pose3d> allTagPoses = new LinkedList<>();
+    List<Pose3d> allRobotPoses = new LinkedList<>();
+    List<Pose3d> allRobotPosesAccepted = new LinkedList<>();
+    List<Pose3d> allRobotPosesRejected = new LinkedList<>();
+    List<Pose3d> tagPoses = new LinkedList<>();
+    List<Pose3d> robotPoses = new LinkedList<>();
+    List<Pose3d> robotPosesAccepted = new LinkedList<>();
+    List<Pose3d> robotPosesRejected = new LinkedList<>();
+
     public Vision(VisionConsumer consumer, VisionIO... io) {
         this.consumer = consumer;
         this.io = io;
@@ -71,10 +80,10 @@ public class Vision extends SubsystemBase {
         }
 
         // Initialize logging values
-        List<Pose3d> allTagPoses = new LinkedList<>();
-        List<Pose3d> allRobotPoses = new LinkedList<>();
-        List<Pose3d> allRobotPosesAccepted = new LinkedList<>();
-        List<Pose3d> allRobotPosesRejected = new LinkedList<>();
+        allTagPoses.clear();
+        allRobotPoses.clear();
+        allRobotPosesAccepted.clear();
+        allRobotPosesRejected.clear();
 
         // Loop over cameras
         for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
@@ -82,10 +91,10 @@ public class Vision extends SubsystemBase {
             disconnectedAlerts[cameraIndex].set(!inputs[cameraIndex].connected);
 
             // Initialize logging values
-            List<Pose3d> tagPoses = new LinkedList<>();
-            List<Pose3d> robotPoses = new LinkedList<>();
-            List<Pose3d> robotPosesAccepted = new LinkedList<>();
-            List<Pose3d> robotPosesRejected = new LinkedList<>();
+            tagPoses.clear();
+            robotPoses.clear();
+            robotPosesAccepted.clear();
+            robotPosesRejected.clear();
 
             // Add tag poses
             for (int tagId : inputs[cameraIndex].tagIds) {

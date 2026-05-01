@@ -98,7 +98,7 @@ public class ShooterConstants {
         }
 
         public static final class FlywheelMotorConstants {
-            /*  ^ front
+            /*  ^ front/top
             M        F2
             ----------- -> right
             F1       F3
@@ -112,7 +112,7 @@ public class ShooterConstants {
                 .withKP(0.15662)
                 .withKD(0.0)
                 .withKS(.5)
-                .withKV(0.14135)
+                .withKV(0.1358851675)
                 .withKA(0.23979);
 
             public static final CurrentLimitsConfigs FLYWHEEL_CURRENT_LIMITS = new CurrentLimitsConfigs()
@@ -125,7 +125,7 @@ public class ShooterConstants {
                 .withInverted(InvertedValue.CounterClockwise_Positive)
                 .withNeutralMode(NeutralModeValue.Coast);
 
-            public static final double GEAR_RATIO = (50.0 / 14.0) * (18.0 / 44.0);
+            public static final double GEAR_RATIO = (34.0 / 30.0) * (26.0 / 28.0);
             public static final FeedbackConfigs FLYWHEEL_FEEDBACK_CONFIGS = new FeedbackConfigs()
                 .withVelocityFilterTimeConstant(Seconds.of(0.0))
                 .withSensorToMechanismRatio(GEAR_RATIO);

@@ -103,7 +103,12 @@ public class Intake extends SubsystemBase implements Identifiable {
         intakeMotorDisconnectedAlert.set(!inputs.intakeMotorConnected);
         deployMotorDisconnectedAlert.set(!inputs.deployMotorConnected);
 
-        io.setIntakeMotorVelocity(RotationsPerSecond.of(IntakeConstants.intakeMap.get(intakeMode)));
+        if (deployMode == DeployMode.DEPLOY && !isDeployed.getAsBoolean()) {
+            io.setIntakeMotorVelocity(RotationsPerSecond.of(IntakeConstants.intakeMap.get(IntakeMode.REVERSE_SLOW)));
+        } else {
+            io.setIntakeMotorVelocity(
+                RotationsPerSecond.of(IntakeConstants.intakeMap.get(intakeMode)));
+        }
         io.setDeployPosition(Degrees.of(IntakeConstants.deployMap.get(deployMode)));
         //end of periodic
     }
