@@ -7,6 +7,7 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
+import static frc.robot.subsystems.shooter.ShooterConstants.TalonFXConstants.ROBOT_TO_TURRET_TRANSFORM;
 import static frc.robot.subsystems.shooter.ShooterConstants.TargetingConstants.FLYWHEEL_RADIUS;
 import static frc.robot.subsystems.shooter.ShooterConstants.TargetingConstants.PASSING_SPOT_LEFT;
 import static frc.robot.subsystems.shooter.ShooterConstants.TargetingConstants.PASSING_SPOT_RIGHT;
@@ -14,6 +15,7 @@ import static frc.robot.subsystems.shooter.ShooterConstants.TargetingConstants.P
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -40,6 +42,7 @@ import frc.robot.subsystems.shooter.ShooterConstants.TalonFXConstants.HoodMotorC
 import frc.robot.subsystems.shooter.ShooterConstants.TargetingConstants;
 import frc.robot.util.Identifiable;
 import frc.robot.util.LoggedTunableNumber;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import lombok.Getter;
 import lombok.Setter;
@@ -54,6 +57,9 @@ public class Shooter extends SubsystemBase implements Identifiable {
     private final Supplier<ChassisSpeeds> fieldSpeedsSupplier;
 
     public Rotation2d targetAngle = new Rotation2d();
+
+    @Getter
+    private double indexerVelocity = 0.0;
 
     @Getter
     @AutoLogOutput
@@ -220,6 +226,8 @@ public class Shooter extends SubsystemBase implements Identifiable {
             TargetingConstants.LOOKAHEAD_ITERATIONS);
         Angle azimuthAngle = ShooterCalculator.calculateAzimuthAngle(robotPose,
             calculatedShot.target());
+        double dist = robotPose.getTranslation().getDistance(currentTarget.toTranslation2d());
+        indexerVelocity = TargetingConstants.INDEXER_MAP.get(dist);
         targetAngle = new Rotation2d(azimuthAngle);
         if (enableShooter) {
             io.setHoodPosition(calculatedShot.getHoodAngle());
@@ -234,6 +242,10 @@ public class Shooter extends SubsystemBase implements Identifiable {
 //        io.setFlywheelSpeed(calculatedShot.getExitAngularVelocity());
 
         Logger.recordOutput("Turret/CalculatedShot", calculatedShot);
+    }
+
+    public Command runSlowlyCommand(DoubleSupplier speed) {
+        return runEnd(() -> io.setFlywheelVoltage(Volts.of(speed.getAsDouble())), io::stopFlywheel);
     }
 
     private void updateTunables() {

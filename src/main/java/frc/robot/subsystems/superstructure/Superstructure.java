@@ -85,14 +85,14 @@ public class Superstructure extends SubsystemBase {
             Goal.SCORING,
             () -> Commands.parallel(
                     runOnce(() -> this.shooter.setEnableShooter(true)),
-                    Commands.waitSeconds(0.5).andThen(this.indexer.setGoalCommand(IndexerGoal.ACTIVE)),
+                    Commands.waitSeconds(0.65).andThen(this.indexer.setGoalCommand(IndexerGoal.ACTIVE)),
                     Commands.runOnce(() -> System.out.println("Shoot intake"), intake).andThen(Commands.waitSeconds(1.25)).andThen(this.intake.setGoalCommand(IntakeGoal.STOW))
                 )
                 .withName("Start scoring"),
             Goal.PASSING,
             () -> Commands.sequence(
                     runOnce(() -> this.shooter.setEnableShooter(true)),
-                    this.indexer.setGoalCommand(IndexerGoal.ACTIVE)
+                    Commands.waitSeconds(0.2).andThen(this.indexer.setGoalCommand(IndexerGoal.ACTIVE))
 //                    Commands.waitSeconds(1.25).andThen(this.intake.setGoalCommand(IntakeGoal.STOW))
                 )
                 .withName("Start passing"),

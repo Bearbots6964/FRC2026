@@ -1,6 +1,7 @@
 package frc.robot.subsystems.indexer;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -17,12 +18,12 @@ public class IndexerConstants {
     public static final class TalonFXConstants {
         public static final int MOTOR_ID = 4;
         public static final int FOLLOWER_MOTOR_ID = 5;
-        public static final double GEAR_RATIO = (64 / 16) * 5; // 5:1 gearbox with a 16:64 belt reduction
+        public static final double GEAR_RATIO = 50.0 / 30; // 5:1 gearbox with a 16:64 belt reduction
         public static final Slot0Configs MOTOR_GAINS = new Slot0Configs()
                 .withKP(0.0)
                 .withKD(0.0)
-                .withKS(0.0)
-                .withKV(0.0);
+                .withKS(.5)
+                .withKV(0.353);
 
         public static final CurrentLimitsConfigs MOTOR_CURRENT_LIMITS = new CurrentLimitsConfigs()
             .withStatorCurrentLimit(120)
@@ -31,10 +32,13 @@ public class IndexerConstants {
 
         public static final MotorOutputConfigs MOTOR_OUTPUT_CONFIGS = new MotorOutputConfigs()
                 .withInverted(InvertedValue.CounterClockwise_Positive)
-                .withNeutralMode(NeutralModeValue.Brake);
+                .withNeutralMode(NeutralModeValue.Coast);
 
         public static final OpenLoopRampsConfigs MOTOR_OPEN_LOOP_RAMPS = new OpenLoopRampsConfigs()
             .withDutyCycleOpenLoopRampPeriod(0.25);
+
+        public static final FeedbackConfigs  MOTOR_FEEDBACK_CONFIGS = new FeedbackConfigs()
+            .withSensorToMechanismRatio(GEAR_RATIO);
 
     }
 

@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.6597122395833335,
-        "y": 1.1462915271577379
+        "x": 3.7376914062499997,
+        "y": 0.801313622556753
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.543115187872024,
-        "y": 0.28234212239583256
+        "x": 4.562325892857143,
+        "y": 0.7674980003720233
       },
       "isLocked": false,
       "linkedName": "Right Duo Check 1"
     },
     {
       "anchor": {
-        "x": 5.446666852678572,
-        "y": 0.6389904203869048
+        "x": 5.4055982607886905,
+        "y": 0.801313622556753
       },
       "prevControl": {
-        "x": 4.446666852678572,
-        "y": 0.6389904203869049
+        "x": 4.957310314360119,
+        "y": 0.7997166573660707
       },
       "nextControl": {
-        "x": 6.446666852678572,
-        "y": 0.6389904203869048
+        "x": 6.405591915627675,
+        "y": 0.8048759647308038
       },
       "isLocked": false,
       "linkedName": null
@@ -47,15 +47,15 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.45997250423011854,
-      "rotationDegrees": 0.0
+      "rotationDegrees": -90.0
     }
   ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.0,
-    "maxAcceleration": 2.0,
+    "maxVelocity": 4.25,
+    "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -69,7 +69,7 @@
   "folder": "Right Duo",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -122.61108432083628
+    "rotation": -104.32138964320545
   },
   "useDefaultConstraints": true
 }

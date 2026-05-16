@@ -4,13 +4,14 @@
   "holonomicMode": true,
   "pathFolders": [
     "Left Duo",
-    "New Folder",
+    "Left Bump",
     "Outpost",
+    "Right Bump",
     "Right Duo"
   ],
   "autoFolders": [],
-  "defaultMaxVel": 2.0,
-  "defaultMaxAccel": 2.0,
+  "defaultMaxVel": 4.25,
+  "defaultMaxAccel": 5.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,

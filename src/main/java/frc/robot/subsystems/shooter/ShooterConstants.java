@@ -45,23 +45,56 @@ public class ShooterConstants {
         public static final InterpolatingTreeMap<Double, ShotData> SHOT_MAP = new InterpolatingTreeMap<>(
             InverseInterpolator.forDouble(), ShotData::interpolate);
         public static final InterpolatingDoubleTreeMap TOF_MAP = new InterpolatingDoubleTreeMap();
+        public static final InterpolatingDoubleTreeMap INDEXER_MAP = new InterpolatingDoubleTreeMap();
+
+        private static void f(double dist, double sh, double ho) {
+            SHOT_MAP.put(dist, new ShotData(sh, ho));
+        }
+        private static void t(double dist, double t) {
+            TOF_MAP.put(dist, t);
+        }
+        private static void i(double dist, double v) {
+            INDEXER_MAP.put(dist, v);
+        }
 
         static {
             // TODO: Fill these maps with data from testing
 
-            SHOT_MAP.put(1.9, new ShotData(49, 5));
-            SHOT_MAP.put(2.2, new ShotData(50, 9));
-            SHOT_MAP.put(3.0, new ShotData(50, 14));
-            SHOT_MAP.put(3.4, new ShotData(54, 16));
-            SHOT_MAP.put(3.6, new ShotData(54, 18.4));
-            SHOT_MAP.put(4.84, new ShotData(60, 20));
-            SHOT_MAP.put(10.0, new ShotData(60, 27));
+            f(1.5, 32, 0);
+            f(2, 32, 6);
+            f(2.5, 35, 9);
+            f(3, 35, 12);
+            f(3.3, 40, 13);
+//            f(3.5, 37, 13);
+            f(4, 40, 17);
+            f(4.5, 44, 17);
+            f(5, 50, 17);
+            f(10, 85, 30);
 
-            TOF_MAP.put(5.227626, 1.5458333333);
-            TOF_MAP.put(4.25, 1.525);
-            TOF_MAP.put(3.654, 1.15);
-            TOF_MAP.put(3.269, 1.0916666667);
-            TOF_MAP.put(2.755, 0.8458333333);
+            t(2.5, 0.94);
+
+            i(2, 10);
+            i(2.5, 11);
+            i(3, 15);
+            i(3.5, 19);
+            i(5, 22);
+            i(10, 50);
+
+
+
+//            SHOT_MAP.put(1.9, new ShotData(49, 5));
+//            SHOT_MAP.put(2.2, new ShotData(50, 9));
+//            SHOT_MAP.put(3.0, new ShotData(50, 14));
+//            SHOT_MAP.put(3.4, new ShotData(54, 16));
+//            SHOT_MAP.put(3.6, new ShotData(54, 18.4));
+//            SHOT_MAP.put(4.84, new ShotData(60, 20));
+//            SHOT_MAP.put(10.0, new ShotData(60, 27));
+//
+//            TOF_MAP.put(5.227626, 1.5458333333);
+//            TOF_MAP.put(4.25, 1.525);
+//            TOF_MAP.put(3.654, 1.15);
+//            TOF_MAP.put(3.269, 1.0916666667);
+//            TOF_MAP.put(2.755, 0.8458333333);
         }
 
         public static final int LOOKAHEAD_ITERATIONS = 2;

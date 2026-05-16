@@ -62,7 +62,7 @@ public class RobotContainer {
     private final Drive drive;
     private final Vision vision;
     private final Intake intake;
-//    private final Climber climber;
+    //    private final Climber climber;
     private final Shooter shooter;
     private final Indexer indexer;
 
@@ -118,15 +118,16 @@ public class RobotContainer {
                         });
                 intake = new Intake(new IntakeIOTalonFX());
 //                climber = new Climber(new ClimberIOTalonFX());
-                shooter = new Shooter(new ShooterIOTalonFX(), drive::getPose, drive::getChassisSpeeds);
-                indexer = new Indexer(new IndexerIOTalonFX());
+                shooter = new Shooter(new ShooterIOTalonFX(), drive::getPose,
+                    drive::getChassisSpeeds);
+                indexer = new Indexer(new IndexerIOTalonFX(), shooter::getIndexerVelocity);
 
                 this.vision = new Vision(
                     drive,
                     new VisionIOPhotonVision(camera0Name, robotToCamera0),
                     new VisionIOPhotonVision(camera1Name, robotToCamera1),
                     new VisionIOPhotonVision(camera2Name, robotToCamera2)
-                    );
+                );
                 break;
             case SIM:
                 // Sim robot, instantiate physics sim IO implementations
@@ -150,31 +151,42 @@ public class RobotContainer {
                         camera0Name, robotToCamera0, driveSimulation::getSimulatedDriveTrainPose),
                     new VisionIOPhotonVisionSim(
                         camera1Name, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose));
-                intake = new Intake(new IntakeIO() {});
-//                climber = new Climber(new ClimberIO() {});
-                shooter = new Shooter(new ShooterIO() {}, drive::getPose, drive::getChassisSpeeds);
-                indexer = new Indexer(new IndexerIO() {
+                intake = new Intake(new IntakeIO() {
                 });
-
+//                climber = new Climber(new ClimberIO() {});
+                shooter = new Shooter(new ShooterIO() {
+                }, drive::getPose, drive::getChassisSpeeds);
+                indexer = new Indexer(new IndexerIO() {
+                }, shooter::getIndexerVelocity);
 
                 break;
 
             default:
                 // Replayed robot, disable IO implementations
                 drive = new Drive(
-                    new GyroIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {},
-                    new ModuleIO() {},
-                    (pose) -> {});
-                vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
-                intake = new Intake(new IntakeIO() {});
+                    new GyroIO() {
+                    },
+                    new ModuleIO() {
+                    },
+                    new ModuleIO() {
+                    },
+                    new ModuleIO() {
+                    },
+                    new ModuleIO() {
+                    },
+                    (pose) -> {
+                    });
+                vision = new Vision(drive, new VisionIO() {
+                }, new VisionIO() {
+                });
+                intake = new Intake(new IntakeIO() {
+                });
 //                climber = new Climber(new ClimberIO() {});
-                shooter = new Shooter(new ShooterIO() {}, drive::getPose, drive::getChassisSpeeds);
+                shooter = new Shooter(new ShooterIO() {
+                }, drive::getPose, drive::getChassisSpeeds);
 
                 indexer = new Indexer(new IndexerIO() {
-                });
+                }, shooter::getIndexerVelocity);
                 break;
         }
         superstructure = new Superstructure(shooter, intake, indexer, drive::getPose);
@@ -237,19 +249,24 @@ public class RobotContainer {
         //negate means the command will only run if the intake isn't already deployed
         deployIntakeTrigger.onTrue(intake.setGoalCommand(IntakeGoal.DEPLOY));
         //Retract intake when B button + Right Bumper is pressed
-        retractIntakeTrigger.and(intake.isRetracted.negate()).whileTrue(intake.setGoalCommand(IntakeGoal.STOW));
+        retractIntakeTrigger.and(intake.isRetracted.negate())
+            .whileTrue(intake.setGoalCommand(IntakeGoal.STOW));
         //Intake fuel while Y button is held
         stopIntakeTrigger.whileTrue(intake.setGoalCommand(IntakeGoal.IDLE));
         //Eject fuel while left bumper is held
-        reverseIntakeTrigger.whileTrue(intake.setGoalCommand(IntakeGoal.EJECT).alongWith(indexer.setGoalCommand(
-            IndexerGoal.REVERSE))).onFalse(indexer.setGoalCommand(IndexerGoal.IDLE).alongWith(intake.setGoalCommand(IntakeGoal.DEPLOY)));
+        reverseIntakeTrigger.whileTrue(
+            intake.setGoalCommand(IntakeGoal.EJECT).alongWith(indexer.setGoalCommand(
+                IndexerGoal.REVERSE))).onFalse(indexer.setGoalCommand(IndexerGoal.IDLE)
+            .alongWith(intake.setGoalCommand(IntakeGoal.DEPLOY)));
 
         shootTrigger.whileTrue(DriveCommands.joystickDriveAtAngle(
             drive, () -> -driverController.getLeftY(), () -> -driverController.getLeftX(),
             shooter::getCurrentTarget, () -> -operatorController.getRightX()).alongWith(
             superstructure.runGoal()).finallyDo(superstructure::idleSubsystems));
-        spinShooterTrigger.whileTrue(DriveCommands.joystickDrive(drive, () -> -driverController.getLeftY() / 4,
-            () -> -driverController.getLeftX() / 4, () -> -operatorController.getRightX() / 4).alongWith(superstructure.runGoal()).finallyDo(superstructure::idleSubsystems));
+        spinShooterTrigger.whileTrue(
+            DriveCommands.joystickDrive(drive, () -> -driverController.getLeftY() / 4,
+                    () -> -driverController.getLeftX() / 4, () -> -operatorController.getRightX())
+                .alongWith(superstructure.runGoal()).finallyDo(superstructure::idleSubsystems));
 //        shootTrigger.onTrue(indexer.setGoal(IndexerGoal.ACTIVE));
         manualTurretControlTrigger.onTrue(shooter.setGoalCommand(ShooterGoal.TUNING).repeatedly());
 
@@ -258,7 +275,8 @@ public class RobotContainer {
 //        operatorController.povRight().whileTrue(turret.sysIdQuasistatic(Direction.kReverse));
 //        operatorController.povDown().whileTrue(turret.sysIdDynamic(SysIdRoutine.Direction.kForward));
 //        operatorController.povLeft().whileTrue(turret.sysIdDynamic(Direction.kReverse));
-        operatorController.start().whileTrue(indexer.runEndIndexer());
+        operatorController.start()
+            .whileTrue(indexer.runEndIndexer().alongWith(shooter.runSlowlyCommand(() -> 2.5)));
 
         // Reset gyro / odometry
         final Runnable resetGyro =
@@ -272,7 +290,12 @@ public class RobotContainer {
     }
 
     private void configureAutonomous() {
-        NamedCommands.registerCommand("Shoot",  superstructure.runGoal().alongWith(DriveCommands.joystickDriveAtAngle(drive, () -> 0.0, () -> 0.0, shooter::getCurrentTarget, () -> 0.0)));
+        NamedCommands.registerCommand("Shoot", superstructure.runGoal().alongWith(
+            DriveCommands.joystickDriveAtAngle(drive, () -> 0.0, () -> 0.0,
+                shooter::getCurrentTarget, () -> 0.0)).finallyDo(() -> intake.setGoal(IntakeGoal.DEPLOY)));
+        NamedCommands.registerCommand("Shoot Only", superstructure.runGoal()
+            .alongWith(Commands.runOnce(() -> System.out.println("Superstructure running")))
+            .finallyDo(() -> System.out.println("Superstructure stopped")));
         NamedCommands.registerCommand("Intake", intake.setGoalCommand(IntakeGoal.DEPLOY));
     }
 
@@ -292,6 +315,7 @@ public class RobotContainer {
     private void configureFuelSimRobot(BooleanSupplier ableToIntake, Runnable intakeCallback) {
         // TODO: implement method to link fuel sim with simulated intake
     }
+
     public void a() {
         shooter.recalc();
     }

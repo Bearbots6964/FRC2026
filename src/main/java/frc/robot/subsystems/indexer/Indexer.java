@@ -4,6 +4,10 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.shooter.ShooterConstants;
+import frc.robot.subsystems.shooter.ShooterConstants.TargetingConstants;
+import frc.robot.util.LoggedTunableNumber;
+import java.util.function.DoubleSupplier;
 import lombok.Setter;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -28,8 +32,13 @@ public class Indexer extends SubsystemBase {
 
     private final IndexerVisualizer visualizer;
 
-    public Indexer(IndexerIO io) {
+    private final DoubleSupplier speedSupplier;
+    private final LoggedTunableNumber tuningIndexerSpeed = new LoggedTunableNumber(
+        "Indexer/Tuning/SpeedRPS", 0.0);
+
+    public Indexer(IndexerIO io, DoubleSupplier speedSupplier) {
         this.io = io;
+        this.speedSupplier = speedSupplier;
 
         motorDisconnected = new Alert("Indexer motor disconnected", AlertType.kError);
         overcurrentDebouncer = new Debouncer(0.2);
@@ -53,11 +62,13 @@ public class Indexer extends SubsystemBase {
             goal = IndexerGoal.IDLE;
             io.stop();
         }
+        var speed = speedSupplier.getAsDouble();
+        Logger.recordOutput("Indexer/TargetSpeed", speed);
 
         if (goal == IndexerGoal.IDLE)
             io.stop();
         else if (goal == IndexerGoal.ACTIVE)
-            io.setIndexerOpenLoop(IndexerConstants.MOTOR_SPEED_PERCENTAGE);
+            io.setIndexerVelocity(speed);
         else if (goal == IndexerGoal.REVERSE)
             io.setIndexerOpenLoop(-IndexerConstants.MOTOR_SPEED_PERCENTAGE);
     }
