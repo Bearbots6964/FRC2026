@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
@@ -113,8 +114,8 @@ public class DriveCommands {
     }
 
     /**
-     * Field relative drive command using two joysticks (controlling linear and angular
-     * velocities) with limited speed.
+     * Field relative drive command using two joysticks (controlling linear and angular velocities)
+     * with limited speed.
      */
     public static Command joystickDriveSlowly(
         Drive drive,
@@ -163,7 +164,8 @@ public class DriveCommands {
         DoubleSupplier xSupplier,
         DoubleSupplier ySupplier,
         Supplier<Translation3d> currentTarget,
-        DoubleSupplier omegaSupplier) {
+        DoubleSupplier omegaSupplier,
+        BooleanSupplier xTheWheels) {
         // Create PID controller
         ProfiledPIDController angleController =
             new ProfiledPIDController(
@@ -183,7 +185,8 @@ public class DriveCommands {
                             ySupplier.getAsDouble());
 
                     // Apply rotation deadband
-                    double controllerOmega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND) / 4.0;
+                    double controllerOmega =
+                        MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND) / 4.0;
 
                     // Square rotation value for more precise control
                     controllerOmega = Math.copySign(controllerOmega * controllerOmega, controllerOmega);
@@ -193,10 +196,12 @@ public class DriveCommands {
                         angleController.calculate(
                             drive.getRotation().getRadians(), new Rotation2d(
                                 currentTarget.get().getX() - drive.getPose().getX(),
-                                currentTarget.get().getY() - drive.getPose().getY()).plus(Rotation2d.k180deg).getRadians());
+                                currentTarget.get().getY() - drive.getPose().getY()).plus(
+                                Rotation2d.k180deg).getRadians());
 
                     omega += controllerOmega;
-                    if (Math.abs(xSupplier.getAsDouble()) < DEADBAND && Math.abs(ySupplier.getAsDouble()) < DEADBAND && Math.abs(omega) < (1.0/12.0) * Math.PI) {
+                    if (Math.abs(xSupplier.getAsDouble()) < DEADBAND
+                        && Math.abs(ySupplier.getAsDouble()) < DEADBAND && xTheWheels.getAsBoolean()) {
                         drive.stopWithX();
                     } else {
                         // Convert to field relative speeds & send command

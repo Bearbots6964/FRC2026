@@ -261,7 +261,7 @@ public class RobotContainer {
 
         shootTrigger.whileTrue(DriveCommands.joystickDriveAtAngle(
             drive, () -> -driverController.getLeftY(), () -> -driverController.getLeftX(),
-            shooter::getCurrentTarget, () -> -operatorController.getRightX()).alongWith(
+            shooter::getCurrentTarget, () -> -operatorController.getRightX(), () -> operatorController.x().getAsBoolean()).alongWith(
             superstructure.runGoal()).finallyDo(superstructure::idleSubsystems));
         spinShooterTrigger.whileTrue(
             DriveCommands.joystickDrive(drive, () -> -driverController.getLeftY() / 4,
@@ -292,7 +292,7 @@ public class RobotContainer {
     private void configureAutonomous() {
         NamedCommands.registerCommand("Shoot", superstructure.runGoal().alongWith(
             DriveCommands.joystickDriveAtAngle(drive, () -> 0.0, () -> 0.0,
-                shooter::getCurrentTarget, () -> 0.0)).finallyDo(() -> intake.setGoal(IntakeGoal.DEPLOY)));
+                shooter::getCurrentTarget, () -> 0.0, () -> false)).finallyDo(() -> intake.setGoal(IntakeGoal.DEPLOY)));
         NamedCommands.registerCommand("Shoot Only", superstructure.runGoal()
             .alongWith(Commands.runOnce(() -> System.out.println("Superstructure running")))
             .finallyDo(() -> System.out.println("Superstructure stopped")));
