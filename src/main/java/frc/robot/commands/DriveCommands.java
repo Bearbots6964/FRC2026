@@ -196,7 +196,7 @@ public class DriveCommands {
                                 currentTarget.get().getY() - drive.getPose().getY()).plus(Rotation2d.k180deg).getRadians());
 
                     omega += controllerOmega;
-                    if (Math.abs(xSupplier.getAsDouble()) < DEADBAND && Math.abs(ySupplier.getAsDouble()) < DEADBAND && Math.abs(omega) < (DEADBAND / 4)) {
+                    if (Math.abs(xSupplier.getAsDouble()) < DEADBAND && Math.abs(ySupplier.getAsDouble()) < DEADBAND && Math.abs(omega) < DEADBAND) {
                         drive.stopWithX();
                     } else {
                         // Convert to field relative speeds & send command
