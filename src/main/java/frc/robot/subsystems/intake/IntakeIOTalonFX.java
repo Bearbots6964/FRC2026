@@ -214,4 +214,10 @@ public class IntakeIOTalonFX implements IntakeIO {
         deployMotor.setControl(neutralOut);
     }
 
+    @Override
+    public void changeMotorPositionDegrees(double degrees) {
+        var pos = deployMotorPositionRot.getValueAsDouble() * 360.0;
+        deployMotor.setPosition((pos + degrees) / 360.0);
+    }
+
 }

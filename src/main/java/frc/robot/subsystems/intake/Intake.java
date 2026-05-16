@@ -185,5 +185,14 @@ public class Intake extends SubsystemBase implements Identifiable {
 
     }
 
+    private static final double posMod = 3.0;
+    public Command posUp() {
+        return Commands.runOnce(() -> io.changeMotorPositionDegrees(posMod));
+    }
+
+    public Command posDown() {
+        return Commands.runOnce(() -> io.changeMotorPositionDegrees(-posMod));
+    }
+
 //end of class
 }

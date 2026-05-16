@@ -48,4 +48,6 @@ public interface IntakeIO {
 
     public default void setIntakeMotorVelocity(AngularVelocity velocity) {}
 
+    public default void changeMotorPositionDegrees(double degrees) {}
+
 }

@@ -287,6 +287,9 @@ public class RobotContainer {
                 : () -> drive.setPose(
                     new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
         resetGyroTrigger.onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
+
+        operatorController.povDown().onTrue(intake.posUp());
+        operatorController.povUp().onTrue(intake.posDown());
     }
 
     private void configureAutonomous() {
